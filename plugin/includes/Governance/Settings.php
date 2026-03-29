@@ -68,6 +68,7 @@ final class Settings {
             $all_caps = [
                 'templates:read', 'templates:write', 'templates:delete',
                 'pages:write',
+                'global-styles:write',
                 'theme-builder:read', 'theme-builder:write',
                 'global-widgets:read', 'global-widgets:write',
                 'library:export', 'library:import',

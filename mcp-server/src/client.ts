@@ -53,6 +53,31 @@ export interface SiteInfo {
   capabilities: string[];
 }
 
+export interface GlobalColor {
+  id?: string;
+  title: string;
+  color: string;  // hex, e.g. "#1A56DB"
+}
+
+export interface GlobalTypographyEntry {
+  id?: string;
+  title: string;
+  font_family?: string;
+  font_size?: number;      // px
+  font_weight?: string;    // "400", "700", etc.
+  line_height?: number;    // em multiplier, e.g. 1.6
+  letter_spacing?: number; // px
+  text_transform?: 'none' | 'uppercase' | 'lowercase' | 'capitalize';
+}
+
+export interface GlobalStylesData {
+  kit_id: number;
+  system_colors:     Array<{ _id: string; title: string; color: string }>;
+  custom_colors:     Array<{ _id: string; title: string; color: string }>;
+  system_typography: unknown[];
+  custom_typography: unknown[];
+}
+
 export type SiteContextRole = 'freelancer' | 'agency' | 'site-owner' | 'ai-agent';
 export type SiteContextPurpose = 'ecommerce' | 'corporate' | 'portfolio' | 'blog' | 'community' | 'other';
 
@@ -298,6 +323,31 @@ export class ElementifyClient {
 
   async assessSite(): Promise<SiteAssessment> {
     const res = await this.http.get<SiteAssessment>('/site/assessment');
+    return res.data;
+  }
+
+  // ------------------------------------------------------------------ //
+  // Global Styles
+  // ------------------------------------------------------------------ //
+
+  async getGlobalStyles(): Promise<GlobalStylesData> {
+    const res = await this.http.get<GlobalStylesData>('/site/global-styles');
+    return res.data;
+  }
+
+  async setGlobalColors(
+    colors: GlobalColor[],
+    slot: 'system' | 'custom' = 'system',
+  ): Promise<{ kit_id: number; slot: string; colors: GlobalColor[]; updated: true }> {
+    const res = await this.http.put('/site/global-styles/colors', { colors, slot });
+    return res.data;
+  }
+
+  async setGlobalTypography(
+    typography: GlobalTypographyEntry[],
+    slot: 'system' | 'custom' = 'system',
+  ): Promise<{ kit_id: number; slot: string; typography: unknown[]; updated: true }> {
+    const res = await this.http.put('/site/global-styles/typography', { typography, slot });
     return res.data;
   }
 

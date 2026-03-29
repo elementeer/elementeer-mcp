@@ -148,8 +148,9 @@ describe('buildRecommendations — rule engine', () => {
       makeContext({ user_role: 'ai-agent' }),
     );
     expect(recs.every((r) => r.automated)).toBe(true);
-    // set_logo is NOT automated, categorize_templates IS
+    // set_logo is NOT automated; define_global_colors and categorize_templates ARE
     expect(recs.some((r) => r.id === 'set_logo')).toBe(false);
+    expect(recs.some((r) => r.id === 'define_global_colors')).toBe(true);
     expect(recs.some((r) => r.id === 'categorize_templates')).toBe(true);
   });
 

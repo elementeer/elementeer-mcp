@@ -183,6 +183,30 @@ final class Router {
             ],
         ] );
 
+        // Global Styles — Elementor Kit colors + typography
+        $gs = new \Elementify\MCP\Api\GlobalStyles();
+        register_rest_route( self::NAMESPACE, '/site/global-styles', [
+            [
+                'methods'             => 'GET',
+                'callback'            => [ $gs, 'get_global_styles' ],
+                'permission_callback' => '__return_true',
+            ],
+        ] );
+        register_rest_route( self::NAMESPACE, '/site/global-styles/colors', [
+            [
+                'methods'             => 'PUT',
+                'callback'            => [ $gs, 'set_colors' ],
+                'permission_callback' => '__return_true',
+            ],
+        ] );
+        register_rest_route( self::NAMESPACE, '/site/global-styles/typography', [
+            [
+                'methods'             => 'PUT',
+                'callback'            => [ $gs, 'set_typography' ],
+                'permission_callback' => '__return_true',
+            ],
+        ] );
+
         // Site context — user role + site purpose + brand notes
         $context = new \Elementify\MCP\Api\SiteContext();
         register_rest_route( self::NAMESPACE, '/site/context', [
