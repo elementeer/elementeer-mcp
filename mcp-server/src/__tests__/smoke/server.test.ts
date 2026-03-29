@@ -29,6 +29,11 @@ const EXPECTED_TOOLS = [
   'get_site_info',
   'list_sites',
   'switch_site',
+  // Pages
+  'list_elementor_pages',
+  'get_page_data',
+  'save_page_section_as_template',
+  'save_full_page_as_template',
 ] as const;
 
 describe('MCP server smoke tests', () => {
@@ -58,6 +63,8 @@ describe('MCP server smoke tests', () => {
         getTemplateData: async () => ({ id: 1, elementor_data: [] }),
         updateTemplateData: async () => ({ id: 1, updated: true }),
         getSiteInfo: async () => ({ name: '', url: '', wp_version: '', elementor_version: null, elementor_pro: false, activation_mode: 'standalone-free', template_count: 0, capabilities: [] }),
+        listElementorPages: async () => ({ posts: [], total: 0, total_pages: 1 }),
+        getPageData: async () => ({ post_id: 1, post_title: '', post_type: 'page', element_count: 0, elementor_data: [] }),
       } as unknown as ElementifyClient;
     };
 

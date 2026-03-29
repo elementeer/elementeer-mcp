@@ -73,14 +73,14 @@ export class ElementifyClient {
     // Response interceptor — normalize errors
     this.http.interceptors.response.use(
       (res) => res,
-      (err: AxiosError<ElementifyError>) => {
+      (err: AxiosError<unknown>) => {
         throw this.handleError(err);
       },
     );
   }
 
   /** @internal — public for unit testing only */
-  handleError(err: AxiosError<ElementifyError>): ElementifyApiError {
+  handleError(err: AxiosError<unknown>): ElementifyApiError {
     if (!err.response) {
       return new ElementifyApiError(
         'not_found',
@@ -89,7 +89,8 @@ export class ElementifyClient {
       );
     }
 
-    const { status, data } = err.response;
+    const { status } = err.response;
+    const data = err.response.data as ElementifyError | undefined;
     const code = data?.code as string | undefined;
 
     // Critical distinction: scope errors must NOT surface as "invalid key"
@@ -221,6 +222,33 @@ export class ElementifyClient {
 
   async getSiteInfo(): Promise<SiteInfo> {
     const res = await this.http.get<SiteInfo>('/site');
+    return res.data;
+  }
+
+  // ------------------------------------------------------------------ //
+  // Pages
+  // ------------------------------------------------------------------ //
+
+  async listElementorPages(params: { post_type?: string; per_page?: number; page?: number }) {
+    const res = await this.http.get('/pages', { params });
+    return res.data as {
+      posts: Array<{
+        id: number;
+        title: string;
+        slug: string;
+        post_type: string;
+        status: string;
+        url: string;
+        modified: string;
+      }>;
+      total: number;
+      total_pages: number;
+    };
+  }
+
+  async getPageData(params: { id: number; extract?: string; index?: number }) {
+    const { id, ...query } = params;
+    const res = await this.http.get(`/pages/${id}/data`, { params: query });
     return res.data;
   }
 }

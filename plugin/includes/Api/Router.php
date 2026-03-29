@@ -120,6 +120,43 @@ final class Router {
             ],
         ] );
 
+        // Pages — read Elementor data from any page/post
+        $pages = new Pages();
+
+        register_rest_route( self::NAMESPACE, '/pages', [
+            [
+                'methods'             => 'GET',
+                'callback'            => [ $pages, 'list_pages' ],
+                'permission_callback' => '__return_true',
+                'args'                => [
+                    'post_type' => [
+                        'type'              => 'string',
+                        'default'           => 'page',
+                        'sanitize_callback' => 'sanitize_text_field',
+                    ],
+                    'per_page' => [ 'type' => 'integer', 'default' => 50 ],
+                    'page'     => [ 'type' => 'integer', 'default' => 1 ],
+                ],
+            ],
+        ] );
+
+        register_rest_route( self::NAMESPACE, '/pages/(?P<id>\d+)/data', [
+            [
+                'methods'             => 'GET',
+                'callback'            => [ $pages, 'get_page_data' ],
+                'permission_callback' => '__return_true',
+                'args'                => [
+                    'id'      => [ 'type' => 'integer', 'required' => true ],
+                    'extract' => [
+                        'type'              => 'string',
+                        'enum'              => [ 'all', 'section' ],
+                        'sanitize_callback' => 'sanitize_text_field',
+                    ],
+                    'index'   => [ 'type' => 'integer', 'minimum' => 0 ],
+                ],
+            ],
+        ] );
+
         // Site info
         register_rest_route( self::NAMESPACE, '/site', [
             [
