@@ -31,6 +31,10 @@ const EXPECTED_TOOLS = [
   'switch_site',
   // Assessment
   'assess_site',
+  // Recommendations + Context
+  'set_site_context',
+  'get_site_context',
+  'get_recommendations',
   // Pages
   'list_elementor_pages',
   'get_page_data',
@@ -67,6 +71,8 @@ describe('MCP server smoke tests', () => {
         getTemplateData: async () => ({ id: 1, elementor_data: [] }),
         updateTemplateData: async () => ({ id: 1, updated: true }),
         getSiteInfo: async () => ({ name: '', url: '', wp_version: '', elementor_version: null, elementor_pro: false, activation_mode: 'standalone-free', template_count: 0, capabilities: [] }),
+        getSiteContext: async () => ({ user_role: null, site_purpose: null, brand_notes: null, target_audience: null, primary_language: null, set_at: null }),
+        setSiteContext: async (ctx: object) => ({ ...ctx, set_at: '' }),
         assessSite: async () => ({
           assessed_at: '', wordpress: { version: '', language: '', timezone: '', is_multisite: false, site_name: '', site_tagline: '', admin_url: '' },
           elementor: { version: null, pro: false, pro_version: null, active_kit_id: null },

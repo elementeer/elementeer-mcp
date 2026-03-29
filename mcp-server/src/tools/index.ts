@@ -6,6 +6,7 @@ import { registerOrganizationTools } from './organization.js';
 import { registerSiteTools } from './site.js';
 import { registerPageTools } from './pages.js';
 import { registerAssessmentTools } from './assessment.js';
+import { registerRecommendationTools } from './recommendations.js';
 
 export function registerAllTools(
   server: McpServer,
@@ -17,4 +18,5 @@ export function registerAllTools(
   registerSiteTools(server, getClient);
   registerPageTools(server, getClient);
   registerAssessmentTools(server, getClient);
+  registerRecommendationTools(server, getClient);
 }

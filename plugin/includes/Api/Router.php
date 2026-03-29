@@ -182,5 +182,20 @@ final class Router {
                 'permission_callback' => '__return_true',
             ],
         ] );
+
+        // Site context — user role + site purpose + brand notes
+        $context = new \Elementify\MCP\Api\SiteContext();
+        register_rest_route( self::NAMESPACE, '/site/context', [
+            [
+                'methods'             => 'GET',
+                'callback'            => [ $context, 'get_context' ],
+                'permission_callback' => '__return_true',
+            ],
+            [
+                'methods'             => 'PUT',
+                'callback'            => [ $context, 'set_context' ],
+                'permission_callback' => '__return_true',
+            ],
+        ] );
     }
 }

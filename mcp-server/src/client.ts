@@ -53,6 +53,18 @@ export interface SiteInfo {
   capabilities: string[];
 }
 
+export type SiteContextRole = 'freelancer' | 'agency' | 'site-owner' | 'ai-agent';
+export type SiteContextPurpose = 'ecommerce' | 'corporate' | 'portfolio' | 'blog' | 'community' | 'other';
+
+export interface SiteContext {
+  user_role: SiteContextRole | null;
+  site_purpose: SiteContextPurpose | null;
+  brand_notes: string | null;
+  target_audience: string | null;
+  primary_language: string | null;
+  set_at: string | null;
+}
+
 export interface AssessmentIssue {
   severity: 'critical' | 'warning' | 'info';
   code: string;
@@ -286,6 +298,16 @@ export class ElementifyClient {
 
   async assessSite(): Promise<SiteAssessment> {
     const res = await this.http.get<SiteAssessment>('/site/assessment');
+    return res.data;
+  }
+
+  async getSiteContext(): Promise<SiteContext> {
+    const res = await this.http.get<SiteContext>('/site/context');
+    return res.data;
+  }
+
+  async setSiteContext(ctx: Partial<Omit<SiteContext, 'set_at'>>): Promise<SiteContext> {
+    const res = await this.http.put<SiteContext>('/site/context', ctx);
     return res.data;
   }
 
