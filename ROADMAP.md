@@ -4,6 +4,43 @@
 
 ---
 
+## Produkt-Positionierung & Freemium-Strategie
+
+Elementify konkurriert nicht mit Elementor — es **multipliziert** Elementor. Die Pricing-Logik ist:
+
+| Kombination | übertrifft |
+|---|---|
+| Elementify Free + Elementor Free | Elementor Essential (paid) |
+| Elementify Basic + Elementor Free | Elementor Advanced |
+| Elementify Basic + Elementor Advanced | Elementor Expert |
+| Elementify One + Elementor One | unschlagbar — volle agentic Kontrolle |
+
+Einzelne Elementify-Module (Stock Images, AI Generation, Governance Pro, Multi-Site) sind granular zubuchbar — kein Alles-oder-Nichts-Upgrade.
+
+### Was Elementify Free bereits bietet, das Elementor Essential nicht hat
+- `assess_site` — vollständiger Site-Health-Report (Elementor: nicht vorhanden)
+- `get_recommendations` — kontextbezogener Aktionsplan (Elementor: nicht vorhanden)
+- `set_global_colors` / `set_global_typography` — automatisiert, nicht nur manuell
+- `creator_mode` — Template-Komposition aus bestehender Library per Brief
+- `wizard_brand_setup` — koordinierter Brand-Setup in einem Schritt
+- Multi-Site-Support (Elementor verlangt separate Lizenzen)
+- `compose_page_from_templates` — Layout-Assembly ohne Editor
+
+### Was Elementify Basic zusätzlich bietet
+- Vollständige Creator Mode AI-Integration (automatische Section-Generierung)
+- Theme Builder Wizard (Header/Footer automatisch aus Library bauen)
+- Stock Images Integration (Pexels/Unsplash API)
+- Governance-Profiles für Agencies
+- Change-Review-Queue (AI schlägt vor, Mensch approves)
+
+### Was Elementify One zusätzlich bietet
+- AI Image Generation (integriert, kein separater Service nötig)
+- Vollständige agentic Site-Verwaltung (inkl. Posts, Media, Users)
+- White-Label-fähig für Agencies
+- Priority Support + SLA
+
+---
+
 ## Status (2026-03-29)
 
 | Bereich | Stand |
@@ -18,9 +55,17 @@
 | Multi-Site-Support | ✅ vollständig |
 | Admin-UI + API-Key-Verwaltung | ✅ vollständig |
 | Governance-Layer (Basis) | ✅ Basis, ausbaufähig |
-| Onboarding / Assessment | ❌ nicht begonnen |
-| Theme Builder Integration | ❌ nicht begonnen |
-| Global Styles / Kit | ❌ nicht begonnen |
+| Site Assessment | ✅ assess_site — 10 Datenkategorien + Issues |
+| Site Context (Onboarding-Basis) | ✅ set/get_site_context |
+| Recommendation Engine | ✅ get_recommendations — 20 Regeln, context-aware |
+| Global Styles (Colors + Typography) | ✅ get/set_global_styles, set_global_colors, set_global_typography |
+| Logo Setter | ✅ set_site_logo |
+| Brand Setup Wizard | ✅ wizard_brand_setup (dry-run + execute) |
+| Creator Mode | ✅ creator_mode (keyword matching + composition) |
+| Theme Builder schreiben | ❌ nicht begonnen |
+| Stock Images Integration | ❌ nicht begonnen |
+| AI Image Generation | ❌ nicht begonnen |
+| Change Review Queue | ❌ nicht begonnen |
 
 ---
 
