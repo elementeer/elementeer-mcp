@@ -251,4 +251,14 @@ export class ElementifyClient {
     const res = await this.http.get(`/pages/${id}/data`, { params: query });
     return res.data;
   }
+
+  async updatePageData(
+    id: number,
+    elementorData: unknown[],
+  ): Promise<{ id: number; updated: true }> {
+    const res = await this.http.put<{ id: number; updated: true }>(`/pages/${id}/data`, {
+      elementor_data: elementorData,
+    });
+    return res.data;
+  }
 }

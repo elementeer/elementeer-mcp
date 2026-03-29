@@ -155,6 +155,14 @@ final class Router {
                     'index'   => [ 'type' => 'integer', 'minimum' => 0 ],
                 ],
             ],
+            [
+                'methods'             => 'PUT',
+                'callback'            => [ $pages, 'update_page_data' ],
+                'permission_callback' => '__return_true',
+                'args'                => [
+                    'id' => [ 'type' => 'integer', 'required' => true ],
+                ],
+            ],
         ] );
 
         // Site info

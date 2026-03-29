@@ -16,6 +16,7 @@ function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> 
     getSiteInfo: vi.fn(),
     listElementorPages: vi.fn().mockResolvedValue({ posts: [], total: 0, total_pages: 1 }),
     getPageData: vi.fn().mockResolvedValue({ post_id: 1, post_title: 'Test Page', post_type: 'page', element_count: 0, elementor_data: [] }),
+    updatePageData: vi.fn().mockResolvedValue({ id: 1, updated: true }),
     ...overrides,
   } as unknown as ElementifyClient;
 }
@@ -143,6 +144,106 @@ describe('Page tools', () => {
       expect(text).toContain('Section [0]');
       expect(text).toContain('"Landing Page"');
       expect(text).toContain('"sec1"');
+    });
+  });
+
+  // ------------------------------------------------------------------ //
+  // update_page_data
+  // ------------------------------------------------------------------ //
+  describe('update_page_data', () => {
+    it('calls updatePageData with id and elementor_data', async () => {
+      const data = [{ id: 'c1', elType: 'container', elements: [] }];
+      vi.mocked(client.updatePageData).mockResolvedValueOnce({ id: 42, updated: true });
+
+      const result = await callTool('update_page_data', { id: 42, elementor_data: data });
+
+      expect(client.updatePageData).toHaveBeenCalledWith(42, data);
+      expect(result.content[0]!.text).toContain('Page 42 updated');
+    });
+
+    it('passes site_id to getClient', async () => {
+      vi.mocked(client.updatePageData).mockResolvedValueOnce({ id: 7, updated: true });
+
+      await callTool('update_page_data', { id: 7, elementor_data: [], site_id: 'prod' });
+
+      expect(getClient).toHaveBeenCalledWith('prod');
+    });
+  });
+
+  // ------------------------------------------------------------------ //
+  // compose_page_from_templates
+  // ------------------------------------------------------------------ //
+  describe('compose_page_from_templates', () => {
+    const tpl1Elements = [
+      { id: 'a', elType: 'container', elements: [] },
+      { id: 'b', elType: 'container', elements: [] },
+    ];
+    const tpl2Elements = [
+      { id: 'c', elType: 'container', elements: [] },
+    ];
+
+    it('merges all sections from two templates into a new template', async () => {
+      vi.mocked(client.getTemplateData)
+        .mockResolvedValueOnce({ id: 10, elementor_data: tpl1Elements })
+        .mockResolvedValueOnce({ id: 20, elementor_data: tpl2Elements });
+      vi.mocked(client.createTemplate).mockResolvedValueOnce({
+        id: 99, title: 'PAGE_Composed', type: 'page', status: 'publish',
+        author: 1, date: '', modified: '', categories: [], tags: [],
+      });
+      vi.mocked(client.updateTemplateData).mockResolvedValueOnce({ id: 99, updated: true });
+
+      const result = await callTool('compose_page_from_templates', {
+        sources: [{ template_id: 10 }, { template_id: 20 }],
+        save_as_template: { title: 'PAGE_Composed', template_type: 'page', status: 'publish' },
+      });
+
+      expect(client.getTemplateData).toHaveBeenCalledTimes(2);
+      expect(client.updateTemplateData).toHaveBeenCalledWith(99, [...tpl1Elements, ...tpl2Elements]);
+      const text = result.content[0]!.text;
+      expect(text).toContain('3 top-level element');
+      expect(text).toContain('PAGE_Composed');
+      expect(text).toContain('ID: 99');
+    });
+
+    it('respects section indices per source', async () => {
+      vi.mocked(client.getTemplateData)
+        .mockResolvedValueOnce({ id: 10, elementor_data: tpl1Elements })
+        .mockResolvedValueOnce({ id: 20, elementor_data: tpl2Elements });
+      vi.mocked(client.createTemplate).mockResolvedValueOnce({
+        id: 77, title: 'Filtered', type: 'page', status: 'publish',
+        author: 1, date: '', modified: '', categories: [], tags: [],
+      });
+      vi.mocked(client.updateTemplateData).mockResolvedValueOnce({ id: 77, updated: true });
+
+      await callTool('compose_page_from_templates', {
+        sources: [{ template_id: 10, sections: [1] }, { template_id: 20 }],
+        save_as_template: { title: 'Filtered' },
+      });
+
+      // Only index 1 from tpl1 + all of tpl2
+      expect(client.updateTemplateData).toHaveBeenCalledWith(77, [tpl1Elements[1], ...tpl2Elements]);
+    });
+
+    it('writes to page when write_to_page is set', async () => {
+      vi.mocked(client.getTemplateData).mockResolvedValueOnce({ id: 10, elementor_data: tpl1Elements });
+      vi.mocked(client.updatePageData).mockResolvedValueOnce({ id: 55, updated: true });
+
+      const result = await callTool('compose_page_from_templates', {
+        sources: [{ template_id: 10 }],
+        write_to_page: { page_id: 55 },
+      });
+
+      expect(client.updatePageData).toHaveBeenCalledWith(55, tpl1Elements);
+      expect(result.content[0]!.text).toContain('Written to page 55');
+    });
+
+    it('returns error if neither save_as_template nor write_to_page is set', async () => {
+      const result = await callTool('compose_page_from_templates', {
+        sources: [{ template_id: 10 }],
+      }) as { content: Array<{ text: string }>; isError?: boolean };
+
+      expect(result.isError).toBe(true);
+      expect(result.content[0]!.text).toContain('specify at least one');
     });
   });
 

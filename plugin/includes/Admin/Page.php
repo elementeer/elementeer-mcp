@@ -137,6 +137,7 @@ final class Page {
                                 'templates:read'    => 'Templates — Read (list &amp; get)',
                                 'templates:write'   => 'Templates — Write (create &amp; update)',
                                 'templates:delete'  => 'Templates — Delete',
+                                'pages:write'       => 'Pages — Write Elementor data to live pages',
                                 'theme-builder:read'  => 'Theme Builder — Read',
                                 'theme-builder:write' => 'Theme Builder — Write',
                                 'global-widgets:read'  => 'Global Widgets — Read',
@@ -149,6 +150,7 @@ final class Page {
                             ];
                             $cap_groups = [
                                 'Templates'       => [ 'templates:read', 'templates:write', 'templates:delete' ],
+                                'Pages'           => [ 'pages:write' ],
                                 'Theme Builder'   => [ 'theme-builder:read', 'theme-builder:write' ],
                                 'Global Widgets'  => [ 'global-widgets:read', 'global-widgets:write' ],
                                 'Library'         => [ 'library:export', 'library:import' ],

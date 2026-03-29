@@ -108,6 +108,57 @@ final class Pages {
     }
 
     /**
+     * PUT /pages/{id}/data
+     *
+     * Writes Elementor JSON back to any post/page, replacing its _elementor_data.
+     * Flushes Elementor's CSS cache so changes are reflected immediately.
+     * Requires 'pages:write' capability.
+     */
+    public function update_page_data( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+        $auth = $this->auth->authorize( $request, 'pages:write' );
+        if ( is_wp_error( $auth ) ) return $auth;
+
+        $id   = (int) $request->get_param( 'id' );
+        $post = get_post( $id );
+
+        if ( ! $post || $post->post_status === 'trash' ) {
+            return new WP_Error( 'not_found', 'Post not found.', [ 'status' => 404 ] );
+        }
+
+        $edit_mode = get_post_meta( $id, '_elementor_edit_mode', true );
+        if ( $edit_mode !== 'builder' ) {
+            return new WP_Error(
+                'not_elementor',
+                'This post was not built with Elementor.',
+                [ 'status' => 422 ]
+            );
+        }
+
+        $body = $request->get_json_params() ?: [];
+
+        if ( ! isset( $body['elementor_data'] ) || ! is_array( $body['elementor_data'] ) ) {
+            return new WP_Error(
+                'invalid_data',
+                'elementor_data must be a JSON array.',
+                [ 'status' => 400 ]
+            );
+        }
+
+        $encoded = wp_json_encode( $body['elementor_data'] );
+        update_post_meta( $id, '_elementor_data', wp_slash( $encoded ) );
+
+        // Clear Elementor's CSS cache so changes are live immediately
+        if ( class_exists( '\Elementor\Plugin' ) ) {
+            \Elementor\Plugin::$instance->files_manager->clear_cache();
+        }
+
+        // Touch modified date
+        wp_update_post( [ 'ID' => $id ] );
+
+        return new WP_REST_Response( [ 'id' => $id, 'updated' => true ], 200 );
+    }
+
+    /**
      * GET /pages
      *
      * Lists all posts/pages that were built with Elementor (have _elementor_edit_mode = builder).

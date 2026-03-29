@@ -112,6 +112,124 @@ export function registerPageTools(
     },
   );
 
+  // update_page_data
+  server.tool(
+    'update_page_data',
+    'Write Elementor JSON back to a live page or post, replacing its full layout. Use this to apply a composed or AI-built layout to a page. The elementor_data must be a valid Elementor JSON array (array of top-level containers/sections). Requires pages:write capability.',
+    {
+      site_id:        z.string().optional().describe('Site ID from config'),
+      id:             z.number().int().describe('Page/post ID to update'),
+      elementor_data: z.array(z.record(z.unknown())).describe('Full Elementor JSON — array of top-level containers/sections'),
+    },
+    async ({ site_id, id, elementor_data }) => {
+      const client = getClient(site_id);
+      await client.updatePageData(id, elementor_data);
+      return {
+        content: [{ type: 'text', text: `✅ Page ${id} updated. Elementor cache cleared.` }],
+      };
+    },
+  );
+
+  // compose_page_from_templates
+  server.tool(
+    'compose_page_from_templates',
+    'Compose a new Elementor layout by merging sections from multiple templates — in order. For each source template you can optionally pick specific section indices; omitting sections takes all top-level elements. The composed layout can be saved as a new template, written directly to a page, or both.',
+    {
+      site_id: z.string().optional().describe('Site ID from config'),
+      sources: z
+        .array(
+          z.object({
+            template_id: z.number().int().describe('Source template ID'),
+            sections:    z.array(z.number().int().min(0)).optional().describe('0-based indices of sections to include (omit = take all)'),
+          }),
+        )
+        .min(1)
+        .describe('Ordered list of templates to merge'),
+      save_as_template: z
+        .object({
+          title:         z.string().describe('New template title'),
+          template_type: z.enum(['section', 'container', 'page', 'widget']).optional().default('page'),
+          status:        z.enum(['publish', 'draft']).optional().default('publish'),
+        })
+        .optional()
+        .describe('If provided, save the composed layout as a new library template'),
+      write_to_page: z
+        .object({
+          page_id: z.number().int().describe('Target page/post ID (must be an Elementor page, requires pages:write)'),
+        })
+        .optional()
+        .describe('If provided, write the composed layout directly to this page'),
+    },
+    async ({ site_id, sources, save_as_template, write_to_page }) => {
+      if (!save_as_template && !write_to_page) {
+        return {
+          content: [{ type: 'text', text: 'Error: specify at least one of save_as_template or write_to_page.' }],
+          isError: true,
+        };
+      }
+
+      const client = getClient(site_id);
+
+      // Step 1: collect sections from all source templates
+      const composed: unknown[] = [];
+      const sourceLog: string[] = [];
+
+      for (const src of sources) {
+        const tplData = await client.getTemplateData(src.template_id);
+        const elements = tplData.elementor_data as unknown[];
+
+        if (!Array.isArray(elements) || elements.length === 0) {
+          sourceLog.push(`  Template ${src.template_id}: no Elementor data — skipped`);
+          continue;
+        }
+
+        if (src.sections && src.sections.length > 0) {
+          const picked = src.sections.map((i) => elements[i]).filter(Boolean);
+          composed.push(...picked);
+          sourceLog.push(`  Template ${src.template_id}: sections [${src.sections.join(', ')}] — ${picked.length} element(s)`);
+        } else {
+          composed.push(...elements);
+          sourceLog.push(`  Template ${src.template_id}: all ${elements.length} element(s)`);
+        }
+      }
+
+      if (composed.length === 0) {
+        return {
+          content: [{ type: 'text', text: 'Nothing to compose — all sources were empty or all indices were out of range.' }],
+          isError: true,
+        };
+      }
+
+      const results: string[] = [
+        `Composed ${composed.length} top-level element(s) from ${sources.length} template(s):`,
+        ...sourceLog,
+        '',
+      ];
+
+      // Step 2: save as template
+      if (save_as_template) {
+        const created = await client.createTemplate({
+          title:  save_as_template.title,
+          type:   save_as_template.template_type ?? 'page',
+          status: save_as_template.status ?? 'publish',
+        });
+        await client.updateTemplateData(created.id, composed);
+        results.push(`✅ Saved as template: "${save_as_template.title}" (ID: ${created.id})`);
+        results.push(`   Shortcode: [elementor-template id="${created.id}"]`);
+      }
+
+      // Step 3: write to page
+      if (write_to_page) {
+        await client.updatePageData(write_to_page.page_id, composed);
+        results.push(`✅ Written to page ${write_to_page.page_id}. Elementor cache cleared.`);
+      }
+
+      return {
+        content: [{ type: 'text', text: results.join('\n') }],
+      };
+    },
+  );
+
   // save_full_page_as_template
   server.tool(
     'save_full_page_as_template',

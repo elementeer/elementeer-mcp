@@ -32,6 +32,8 @@ const EXPECTED_TOOLS = [
   // Pages
   'list_elementor_pages',
   'get_page_data',
+  'update_page_data',
+  'compose_page_from_templates',
   'save_page_section_as_template',
   'save_full_page_as_template',
 ] as const;
@@ -65,6 +67,7 @@ describe('MCP server smoke tests', () => {
         getSiteInfo: async () => ({ name: '', url: '', wp_version: '', elementor_version: null, elementor_pro: false, activation_mode: 'standalone-free', template_count: 0, capabilities: [] }),
         listElementorPages: async () => ({ posts: [], total: 0, total_pages: 1 }),
         getPageData: async () => ({ post_id: 1, post_title: '', post_type: 'page', element_count: 0, elementor_data: [] }),
+        updatePageData: async () => ({ id: 1, updated: true as const }),
       } as unknown as ElementifyClient;
     };
 
