@@ -8,6 +8,7 @@ import { registerPageTools } from './pages.js';
 import { registerAssessmentTools } from './assessment.js';
 import { registerRecommendationTools } from './recommendations.js';
 import { registerGlobalStylesTools } from './global-styles.js';
+import { registerWizardTools } from './wizard.js';
 
 export function registerAllTools(
   server: McpServer,
@@ -21,4 +22,5 @@ export function registerAllTools(
   registerAssessmentTools(server, getClient);
   registerRecommendationTools(server, getClient);
   registerGlobalStylesTools(server, getClient);
+  registerWizardTools(server, getClient);
 }

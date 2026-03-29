@@ -39,6 +39,10 @@ const EXPECTED_TOOLS = [
   'get_global_styles',
   'set_global_colors',
   'set_global_typography',
+  // Wizard
+  'set_site_logo',
+  'wizard_brand_setup',
+  'creator_mode',
   // Pages
   'list_elementor_pages',
   'get_page_data',
@@ -75,6 +79,8 @@ describe('MCP server smoke tests', () => {
         getTemplateData: async () => ({ id: 1, elementor_data: [] }),
         updateTemplateData: async () => ({ id: 1, updated: true }),
         getSiteInfo: async () => ({ name: '', url: '', wp_version: '', elementor_version: null, elementor_pro: false, activation_mode: 'standalone-free', template_count: 0, capabilities: [] }),
+        getLogo: async () => ({ logo_id: null, logo_url: null, set: false }),
+        setLogo: async () => ({ logo_id: 1, logo_url: null, updated: true as const }),
         getGlobalStyles: async () => ({ kit_id: 1, system_colors: [], custom_colors: [], system_typography: [], custom_typography: [] }),
         setGlobalColors: async () => ({ kit_id: 1, slot: 'system_colors', colors: [], updated: true as const }),
         setGlobalTypography: async () => ({ kit_id: 1, slot: 'system_typography', typography: [], updated: true as const }),

@@ -148,8 +148,8 @@ describe('buildRecommendations — rule engine', () => {
       makeContext({ user_role: 'ai-agent' }),
     );
     expect(recs.every((r) => r.automated)).toBe(true);
-    // set_logo is NOT automated; define_global_colors and categorize_templates ARE
-    expect(recs.some((r) => r.id === 'set_logo')).toBe(false);
+    // set_logo is now automated (via set_site_logo); define_global_colors and categorize_templates also ARE
+    expect(recs.some((r) => r.id === 'set_logo')).toBe(true);
     expect(recs.some((r) => r.id === 'define_global_colors')).toBe(true);
     expect(recs.some((r) => r.id === 'categorize_templates')).toBe(true);
   });
@@ -289,11 +289,15 @@ describe('recommendation MCP tools', () => {
     it('automated_only filter removes non-automated recs', async () => {
       vi.mocked(client.assessSite).mockResolvedValueOnce(makeAssessment({
         brand: { logo_set: false, logo_id: null, global_colors_count: 0, global_typography_count: 0 },
+        performance: { css_print_method: 'internal', optimized_dom: false, load_fa4_shim: false },
         template_library: { total: 30, by_type: {}, uncategorized: 15, published: 30, draft: 0 },
       }));
       const result = await call('get_recommendations', { automated_only: true });
       const text = result.content[0]!.text;
-      expect(text).not.toContain('set_logo');
+      // set_logo is now automated (via set_site_logo tool)
+      expect(text).toContain('set_logo');
+      // switch_css_to_external is NOT automated — should not appear
+      expect(text).not.toContain('switch_css_to_external');
       expect(text).toContain('categorize_templates');
     });
 

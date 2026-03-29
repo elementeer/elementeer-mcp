@@ -327,6 +327,20 @@ export class ElementifyClient {
   }
 
   // ------------------------------------------------------------------ //
+  // Logo
+  // ------------------------------------------------------------------ //
+
+  async getLogo(): Promise<{ logo_id: number | null; logo_url: string | null; set: boolean }> {
+    const res = await this.http.get('/site/logo');
+    return res.data;
+  }
+
+  async setLogo(mediaId: number): Promise<{ logo_id: number; logo_url: string | null; updated: true }> {
+    const res = await this.http.put('/site/logo', { media_id: mediaId });
+    return res.data;
+  }
+
+  // ------------------------------------------------------------------ //
   // Global Styles
   // ------------------------------------------------------------------ //
 

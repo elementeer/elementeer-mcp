@@ -183,6 +183,21 @@ final class Router {
             ],
         ] );
 
+        // Site logo
+        $logo = new \Elementify\MCP\Api\Logo();
+        register_rest_route( self::NAMESPACE, '/site/logo', [
+            [
+                'methods'             => 'GET',
+                'callback'            => [ $logo, 'get_logo' ],
+                'permission_callback' => '__return_true',
+            ],
+            [
+                'methods'             => 'PUT',
+                'callback'            => [ $logo, 'set_logo' ],
+                'permission_callback' => '__return_true',
+            ],
+        ] );
+
         // Global Styles — Elementor Kit colors + typography
         $gs = new \Elementify\MCP\Api\GlobalStyles();
         register_rest_route( self::NAMESPACE, '/site/global-styles', [
