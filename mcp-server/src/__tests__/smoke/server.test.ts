@@ -29,6 +29,8 @@ const EXPECTED_TOOLS = [
   'get_site_info',
   'list_sites',
   'switch_site',
+  // Assessment
+  'assess_site',
   // Pages
   'list_elementor_pages',
   'get_page_data',
@@ -65,6 +67,15 @@ describe('MCP server smoke tests', () => {
         getTemplateData: async () => ({ id: 1, elementor_data: [] }),
         updateTemplateData: async () => ({ id: 1, updated: true }),
         getSiteInfo: async () => ({ name: '', url: '', wp_version: '', elementor_version: null, elementor_pro: false, activation_mode: 'standalone-free', template_count: 0, capabilities: [] }),
+        assessSite: async () => ({
+          assessed_at: '', wordpress: { version: '', language: '', timezone: '', is_multisite: false, site_name: '', site_tagline: '', admin_url: '' },
+          elementor: { version: null, pro: false, pro_version: null, active_kit_id: null },
+          brand: { logo_set: false, logo_id: null, global_colors_count: 0, global_typography_count: 0 },
+          theme_builder: {}, template_library: { total: 0, by_type: {}, uncategorized: 0, published: 0, draft: 0 },
+          pages: { elementor_total: 0, by_post_type: {} }, performance: { css_print_method: 'internal', optimized_dom: false, load_fa4_shim: false },
+          plugins: { active_count: 0, classified: {}, woocommerce: false, multilingual: false },
+          custom_post_types: [], user_roles: [], issues: [], issues_count: { critical: 0, warning: 0, info: 0 },
+        }),
         listElementorPages: async () => ({ posts: [], total: 0, total_pages: 1 }),
         getPageData: async () => ({ post_id: 1, post_title: '', post_type: 'page', element_count: 0, elementor_data: [] }),
         updatePageData: async () => ({ id: 1, updated: true as const }),

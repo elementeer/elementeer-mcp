@@ -53,6 +53,65 @@ export interface SiteInfo {
   capabilities: string[];
 }
 
+export interface AssessmentIssue {
+  severity: 'critical' | 'warning' | 'info';
+  code: string;
+  message: string;
+  count?: number;
+}
+
+export interface SiteAssessment {
+  assessed_at: string;
+  wordpress: {
+    version: string;
+    language: string;
+    timezone: string;
+    is_multisite: boolean;
+    site_name: string;
+    site_tagline: string;
+    admin_url: string;
+  };
+  elementor: {
+    version: string | null;
+    pro: boolean;
+    pro_version: string | null;
+    active_kit_id: number | null;
+  };
+  brand: {
+    logo_set: boolean;
+    logo_id: number | null;
+    global_colors_count: number;
+    global_typography_count: number;
+  };
+  theme_builder: Record<string, Array<{ id: number; title: string; status: string }>>;
+  template_library: {
+    total: number;
+    by_type: Record<string, number>;
+    uncategorized: number;
+    published: number;
+    draft: number;
+  };
+  pages: {
+    elementor_total: number;
+    by_post_type: Record<string, number>;
+  };
+  performance: {
+    css_print_method: string;
+    optimized_dom: boolean;
+    load_fa4_shim: boolean;
+  };
+  plugins: {
+    active_count: number;
+    classified: Record<string, string[]>;
+    woocommerce: boolean;
+    multilingual: boolean;
+  };
+  custom_post_types: Array<{ name: string; label: string; rest: boolean }>;
+  user_roles: string[];
+  issues: AssessmentIssue[];
+  issues_count: { critical: number; warning: number; info: number };
+}
+
 export class ElementifyClient {
   private http: AxiosInstance;
 
@@ -222,6 +281,11 @@ export class ElementifyClient {
 
   async getSiteInfo(): Promise<SiteInfo> {
     const res = await this.http.get<SiteInfo>('/site');
+    return res.data;
+  }
+
+  async assessSite(): Promise<SiteAssessment> {
+    const res = await this.http.get<SiteAssessment>('/site/assessment');
     return res.data;
   }
 

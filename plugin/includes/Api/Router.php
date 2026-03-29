@@ -173,5 +173,14 @@ final class Router {
                 'permission_callback' => '__return_true',
             ],
         ] );
+
+        // Site assessment — comprehensive snapshot for AI recommendation engine
+        register_rest_route( self::NAMESPACE, '/site/assessment', [
+            [
+                'methods'             => 'GET',
+                'callback'            => [ new \Elementify\MCP\Api\Assessment(), 'get_assessment' ],
+                'permission_callback' => '__return_true',
+            ],
+        ] );
     }
 }
