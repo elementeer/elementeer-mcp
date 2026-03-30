@@ -91,3 +91,12 @@ export function setDefaultSite(siteId: string): void {
   });
   saveConfig(config);
 }
+
+export function getIntegrations(): { pexels_api_key?: string; unsplash_access_key?: string } {
+  try {
+    const config = loadConfig();
+    return (config as { integrations?: { pexels_api_key?: string; unsplash_access_key?: string } }).integrations ?? {};
+  } catch {
+    return {};
+  }
+}

@@ -165,6 +165,24 @@ final class Router {
             ],
         ] );
 
+        // Media sideload
+        register_rest_route( self::NAMESPACE, '/media/sideload', [
+            [
+                'methods'             => 'POST',
+                'callback'            => [ new \Elementify\MCP\Api\MediaSideload(), 'sideload' ],
+                'permission_callback' => '__return_true',
+            ],
+        ] );
+
+        // Theme Builder templates
+        register_rest_route( self::NAMESPACE, '/theme-builder/templates', [
+            [
+                'methods'             => 'POST',
+                'callback'            => [ new \Elementify\MCP\Api\ThemeBuilder(), 'create_template' ],
+                'permission_callback' => '__return_true',
+            ],
+        ] );
+
         // Site info
         register_rest_route( self::NAMESPACE, '/site', [
             [

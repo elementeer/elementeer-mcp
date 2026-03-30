@@ -411,4 +411,25 @@ export class ElementifyClient {
     });
     return res.data;
   }
+
+  async sideloadImage(params: {
+    url: string;
+    title?: string;
+    alt_text?: string;
+    caption?: string;
+  }): Promise<{ id: number; url: string | null; mime_type: string | null; title: string }> {
+    const res = await this.http.post('/media/sideload', params);
+    return res.data;
+  }
+
+  async createThemeBuilderTemplate(params: {
+    title: string;
+    type: string;
+    elementor_data?: unknown[];
+    conditions?: string;
+    status?: string;
+  }): Promise<{ id: number; title: string; type: string; status: string; conditions: string[] }> {
+    const res = await this.http.post('/theme-builder/templates', params);
+    return res.data;
+  }
 }

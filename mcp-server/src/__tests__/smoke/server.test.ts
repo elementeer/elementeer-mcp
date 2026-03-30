@@ -50,6 +50,13 @@ const EXPECTED_TOOLS = [
   'compose_page_from_templates',
   'save_page_section_as_template',
   'save_full_page_as_template',
+  // Stock Images
+  'search_stock_images',
+  'sideload_stock_image',
+  // Theme Builder Wizard
+  'wizard_theme_builder',
+  // Explain
+  'explain_recommendation',
 ] as const;
 
 describe('MCP server smoke tests', () => {
@@ -98,6 +105,8 @@ describe('MCP server smoke tests', () => {
         listElementorPages: async () => ({ posts: [], total: 0, total_pages: 1 }),
         getPageData: async () => ({ post_id: 1, post_title: '', post_type: 'page', element_count: 0, elementor_data: [] }),
         updatePageData: async () => ({ id: 1, updated: true as const }),
+        sideloadImage: async () => ({ id: 1, url: 'https://example.com/img.jpg', mime_type: 'image/jpeg', title: 'Test' }),
+        createThemeBuilderTemplate: async () => ({ id: 1, title: '', type: 'header', status: 'publish', conditions: ['include/general'] }),
       } as unknown as ElementifyClient;
     };
 

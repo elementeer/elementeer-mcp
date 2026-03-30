@@ -64,6 +64,7 @@ function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> 
     listElementorPages: vi.fn(),
     getPageData: vi.fn(),
     updatePageData: vi.fn().mockResolvedValue({ id: 5, updated: true }),
+    createThemeBuilderTemplate: vi.fn().mockResolvedValue({ id: 200, title: 'Main Header', type: 'header', status: 'publish', conditions: ['include/general'] }),
     ...overrides,
   } as unknown as ElementifyClient;
 }
@@ -274,6 +275,122 @@ describe('wizard tools', () => {
       const text = result.content[0]!.text;
       expect(text).toContain('no match found');
       expect(text).toContain('save_page_section_as_template');
+    });
+  });
+
+  // ---------------------------------------------------------------- //
+  // wizard_theme_builder
+  // ---------------------------------------------------------------- //
+  describe('wizard_theme_builder', () => {
+    it('calls createThemeBuilderTemplate with correct type and conditions', async () => {
+      const result = await call('wizard_theme_builder', {
+        type: 'header',
+        title: 'Main Header',
+        conditions: 'all',
+        status: 'publish',
+      });
+
+      expect(client.createThemeBuilderTemplate).toHaveBeenCalledWith({
+        title: 'Main Header',
+        type: 'header',
+        elementor_data: undefined,
+        conditions: 'all',
+        status: 'publish',
+      });
+
+      const text = result.content[0]!.text;
+      expect(text).toContain('Template created');
+      expect(text).toContain('200');
+      expect(text).toContain('header');
+    });
+
+    it('dry_run does NOT call createThemeBuilderTemplate', async () => {
+      const result = await call('wizard_theme_builder', {
+        type: 'footer',
+        title: 'Main Footer',
+        dry_run: true,
+      });
+
+      expect(client.createThemeBuilderTemplate).not.toHaveBeenCalled();
+      const text = result.content[0]!.text;
+      expect(text).toContain('Dry run complete');
+      expect(text).toContain('footer');
+    });
+
+    it('source_template_id causes getTemplateData to be called', async () => {
+      vi.mocked(client.getTemplateData).mockResolvedValueOnce({
+        id: 5,
+        elementor_data: [{ id: 'el1', elType: 'section', elements: [] }],
+      });
+
+      await call('wizard_theme_builder', {
+        type: 'header',
+        title: 'Copied Header',
+        source_template_id: 5,
+      });
+
+      expect(client.getTemplateData).toHaveBeenCalledWith(5);
+      expect(client.createThemeBuilderTemplate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          elementor_data: [{ id: 'el1', elType: 'section', elements: [] }],
+        }),
+      );
+    });
+
+    it('source_template_id with dry_run does NOT call getTemplateData', async () => {
+      await call('wizard_theme_builder', {
+        type: 'header',
+        title: 'Dry Header',
+        source_template_id: 5,
+        dry_run: true,
+      });
+
+      expect(client.getTemplateData).not.toHaveBeenCalled();
+      expect(client.createThemeBuilderTemplate).not.toHaveBeenCalled();
+    });
+
+    it('sections causes listTemplates and getTemplateData to be called', async () => {
+      vi.mocked(client.listTemplates).mockResolvedValueOnce({
+        templates: [
+          makeTemplate(10, 'SECTION_Header Nav', ['header', 'nav'], []),
+        ],
+        total: 1,
+        total_pages: 1,
+      });
+      vi.mocked(client.getTemplateData).mockResolvedValueOnce({
+        id: 10,
+        elementor_data: [{ id: 'nav', elType: 'container', elements: [] }],
+      });
+
+      await call('wizard_theme_builder', {
+        type: 'header',
+        title: 'Composed Header',
+        sections: ['header'],
+      });
+
+      expect(client.listTemplates).toHaveBeenCalledWith({ status: 'publish', per_page: 100 });
+      expect(client.getTemplateData).toHaveBeenCalledWith(10);
+    });
+
+    it('output contains template ID and conditions', async () => {
+      const result = await call('wizard_theme_builder', {
+        type: 'header',
+        title: 'Test Header',
+      });
+
+      const text = result.content[0]!.text;
+      expect(text).toContain('200');
+      expect(text).toContain('include/general');
+    });
+
+    it('shows blank template message when no sections or source provided', async () => {
+      const result = await call('wizard_theme_builder', {
+        type: 'header',
+        title: 'Blank Header',
+      });
+
+      const text = result.content[0]!.text;
+      expect(text).toContain('blank template');
     });
   });
 });

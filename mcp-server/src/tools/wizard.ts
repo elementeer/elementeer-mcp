@@ -315,4 +315,102 @@ export function registerWizardTools(
       return { content: [{ type: 'text', text: lines.join('\n') }] };
     },
   );
+
+  // ---------------------------------------------------------------- //
+  // wizard_theme_builder
+  // ---------------------------------------------------------------- //
+  server.tool(
+    'wizard_theme_builder',
+    'Create an Elementor Theme Builder template (header, footer, single post, archive, 404, etc.) with display conditions. You can supply content via source_template_id (copy from existing template), sections (compose from library like creator_mode), or leave empty to create a blank template to fill later. Conditions default to "all" (show everywhere).',
+    {
+      site_id:            z.string().optional(),
+      type:               z.enum(['header','footer','single','single-post','single-page','archive','search','error-404','popup'])
+                           .describe('Theme Builder template type'),
+      title:              z.string().describe('Template title, e.g. "Main Header", "Blog Footer"'),
+      conditions:         z.enum(['all','front_page','singular','archive','posts']).optional().default('all')
+                           .describe('Where this template is displayed'),
+      status:             z.enum(['publish','draft']).optional().default('publish'),
+      source_template_id: z.number().int().optional()
+                           .describe('Copy Elementor data from this existing library template'),
+      sections:           z.array(z.string()).optional()
+                           .describe('Compose content by matching these section types from library (like creator_mode)'),
+      dry_run:            z.boolean().optional().default(false),
+    },
+    async ({ site_id, type, title, conditions, status, source_template_id, sections, dry_run }) => {
+      const client = getClient(site_id);
+
+      const lines: string[] = [
+        `Theme Builder Wizard — ${type}: "${title}"`,
+        `Conditions: ${conditions ?? 'all'} · Status: ${status ?? 'publish'}`,
+        '',
+      ];
+
+      // Determine content source
+      let elementorData: unknown[] | undefined;
+      let contentSource = 'blank';
+
+      if (source_template_id) {
+        contentSource = `template ${source_template_id}`;
+        lines.push(`## Content Source: template ${source_template_id}`);
+        if (!dry_run) {
+          const tplData = await client.getTemplateData(source_template_id);
+          elementorData = tplData.elementor_data as unknown[];
+          lines.push(`  ${elementorData.length} element(s) loaded`);
+        } else {
+          lines.push('  (dry run — data not fetched)');
+        }
+      } else if (sections && sections.length > 0) {
+        contentSource = `composed from: ${sections.join(', ')}`;
+        lines.push(`## Content Source: compose [${sections.join(', ')}]`);
+
+        if (!dry_run) {
+          const libraryResult = await client.listTemplates({ status: 'publish', per_page: 100 });
+          const allTemplates: ElementifyTemplate[] = libraryResult.templates;
+          elementorData = [];
+
+          for (const sectionType of sections) {
+            const match = pickBestTemplate(allTemplates, sectionType);
+            if (match) {
+              const data = await client.getTemplateData(match.id);
+              const elements = data.elementor_data as unknown[];
+              elementorData.push(...elements);
+              lines.push(`  "${sectionType}" → [${match.id}] "${match.title}" (${elements.length} elements)`);
+            } else {
+              lines.push(`  "${sectionType}" → ⚠ no match`);
+            }
+          }
+        } else {
+          for (const s of sections) lines.push(`  "${s}" → (dry run — not matched)`);
+        }
+      } else {
+        lines.push('## Content: blank template (fill in Elementor editor)');
+      }
+
+      if (dry_run) {
+        lines.push('');
+        lines.push(`Dry run complete. Pass dry_run=false to create the "${type}" template.`);
+        return { content: [{ type: 'text', text: lines.join('\n') }] };
+      }
+
+      lines.push('');
+      lines.push('## Creating template...');
+
+      const created = await client.createThemeBuilderTemplate({
+        title,
+        type: type as string,
+        elementor_data: elementorData,
+        conditions: conditions ?? 'all',
+        status: status ?? 'publish',
+      });
+
+      lines.push(`✅ Template created — ID: ${created.id}`);
+      lines.push(`   Type: ${created.type} · Status: ${created.status}`);
+      lines.push(`   Conditions: ${JSON.stringify(created.conditions)}`);
+      lines.push(`   Content: ${contentSource}`);
+      lines.push('');
+      lines.push('Elementor CSS cache cleared. The template is now active.');
+
+      return { content: [{ type: 'text', text: lines.join('\n') }] };
+    },
+  );
 }
