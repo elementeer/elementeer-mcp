@@ -62,8 +62,8 @@ Einzelne Elementify-Module (Stock Images, AI Generation, Governance Pro, Multi-S
 | Logo Setter | ✅ set_site_logo |
 | Brand Setup Wizard | ✅ wizard_brand_setup (dry-run + execute) |
 | Creator Mode | ✅ creator_mode (keyword matching + composition) |
-| Theme Builder schreiben | ❌ nicht begonnen |
-| Stock Images Integration | ❌ nicht begonnen |
+| Theme Builder Wizard | ✅ wizard_theme_builder (conditions, sections, source template, dry-run) |
+| Stock Images Integration | ✅ search_stock_images (Pexels/Unsplash), sideload_stock_image |
 | AI Image Generation | ❌ nicht begonnen |
 | Change Review Queue | ❌ nicht begonnen |
 
