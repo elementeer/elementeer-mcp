@@ -11,6 +11,11 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
+// Load WordPress class/function stubs so tests run without a real WP install
+foreach ( glob( __DIR__ . '/Stubs/*.php' ) ?: [] as $stub ) {
+    require_once $stub;
+}
+
 // Define plugin constants that the source code depends on
 if ( ! defined( 'ELEMENTIFY_MCP_OPTION_KEYS' ) ) {
     define( 'ELEMENTIFY_MCP_OPTION_KEYS', 'elementify_mcp_api_keys' );
@@ -22,7 +27,7 @@ if ( ! defined( 'ELEMENTIFY_MCP_OPTION_MODE' ) ) {
     define( 'ELEMENTIFY_MCP_OPTION_MODE', 'elementify_mcp_activation_mode' );
 }
 if ( ! defined( 'ELEMENTIFY_MCP_VERSION' ) ) {
-    define( 'ELEMENTIFY_MCP_VERSION', '0.1.0' );
+    define( 'ELEMENTIFY_MCP_VERSION', '0.2.0' );
 }
 
 // Brain\Monkey setUp/tearDown is handled per-test in TestCase base
