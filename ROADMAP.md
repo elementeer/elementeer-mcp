@@ -64,8 +64,8 @@ Einzelne Elementify-Module (Stock Images, AI Generation, Governance Pro, Multi-S
 | Creator Mode | ✅ creator_mode (keyword matching + composition) |
 | Theme Builder Wizard | ✅ wizard_theme_builder (conditions, sections, source template, dry-run) |
 | Stock Images Integration | ✅ search_stock_images (Pexels/Unsplash), sideload_stock_image |
-| AI Image Generation | ❌ nicht begonnen |
-| Change Review Queue | ❌ nicht begonnen |
+| AI Image Generation | ✅ generate_ai_image (DALL-E 3 + Pollinations.ai free fallback) |
+| Change Review Queue | ✅ queue_change / list_change_queue / review_change / apply_change |
 
 ---
 
