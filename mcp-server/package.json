@@ -14,7 +14,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "lint": "eslint src/ --ext .ts",
+    "lint": "eslint src/",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -35,5 +35,5 @@
     "vitest": "^1.0.0"
   },
   "keywords": ["mcp", "elementor", "wordpress", "ai", "vamerli"],
-  "license": "MIT"
+  "license": "GPL-3.0-or-later"
 }

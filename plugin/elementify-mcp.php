@@ -6,8 +6,8 @@
  * Version:     0.2.0
  * Author:      Elementify
  * Author URI:  https://elementify.dev
- * License:     MIT
- * License URI: https://opensource.org/licenses/MIT
+ * License:     GPL-3.0-or-later
+ * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain: elementify-mcp
  * Domain Path: /languages
  * Requires at least: 6.0
