@@ -254,5 +254,47 @@ final class Router {
                 'permission_callback' => '__return_true',
             ],
         ] );
+
+        // Change review queue
+        $cq = new \Elementify\MCP\Api\ChangeQueue();
+        register_rest_route( self::NAMESPACE, '/changes/queue', [
+            [
+                'methods'             => 'GET',
+                'callback'            => [ $cq, 'list_changes' ],
+                'permission_callback' => '__return_true',
+                'args'                => [
+                    'status' => [
+                        'type'              => 'string',
+                        'enum'              => [ 'pending', 'approved', 'rejected', 'applied', 'all' ],
+                        'default'           => 'all',
+                        'sanitize_callback' => 'sanitize_text_field',
+                    ],
+                ],
+            ],
+            [
+                'methods'             => 'POST',
+                'callback'            => [ $cq, 'create_change' ],
+                'permission_callback' => '__return_true',
+            ],
+        ] );
+        register_rest_route( self::NAMESPACE, '/changes/(?P<id>[a-zA-Z0-9_]+)/status', [
+            [
+                'methods'             => 'PUT',
+                'callback'            => [ $cq, 'update_status' ],
+                'permission_callback' => '__return_true',
+            ],
+        ] );
+        register_rest_route( self::NAMESPACE, '/changes/(?P<id>[a-zA-Z0-9_]+)', [
+            [
+                'methods'             => 'GET',
+                'callback'            => [ $cq, 'get_change' ],
+                'permission_callback' => '__return_true',
+            ],
+            [
+                'methods'             => 'DELETE',
+                'callback'            => [ $cq, 'delete_change' ],
+                'permission_callback' => '__return_true',
+            ],
+        ] );
     }
 }

@@ -68,6 +68,41 @@ async function searchUnsplash(
   }));
 }
 
+// ------------------------------------------------------------------ //
+// AI Image Generation helpers
+// ------------------------------------------------------------------ //
+
+async function generateWithOpenAI(
+  prompt: string,
+  apiKey: string,
+  width: number,
+  height: number,
+): Promise<string> {
+  // DALL-E 3 only supports 1024×1024, 1792×1024, 1024×1792
+  let size = '1024x1024';
+  if (width > height) size = '1792x1024';
+  else if (height > width) size = '1024x1792';
+
+  const res = await axios.post(
+    'https://api.openai.com/v1/images/generations',
+    { model: 'dall-e-3', prompt, n: 1, size, response_format: 'url' },
+    {
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      timeout: 90_000,
+    },
+  );
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return ((res.data as any).data[0].url) as string;
+}
+
+function buildPollinationsUrl(prompt: string, width: number, height: number): string {
+  const seed = Math.floor(Math.random() * 1_000_000);
+  return (
+    `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}` +
+    `?width=${width}&height=${height}&nologo=true&seed=${seed}&model=flux`
+  );
+}
+
 export function registerStockImageTools(
   server: McpServer,
   getClient: (siteId?: string) => ElementifyClient,
@@ -139,6 +174,96 @@ export function registerStockImageTools(
       lines.push('Use sideload_stock_image with the Large URL to add to media library.');
 
       return { content: [{ type: 'text', text: lines.join('\n') }] };
+    },
+  );
+
+  // ---------------------------------------------------------------- //
+  // generate_ai_image
+  // ---------------------------------------------------------------- //
+  server.tool(
+    'generate_ai_image',
+    "Generate an AI image using DALL-E 3 (requires openai_api_key in config) or Pollinations.ai (free, no key needed). Optionally sideloads the result into the WordPress media library. Use for hero images, blog banners, product mockups, or any custom visual that isn't available as stock photography.",
+    {
+      prompt:   z.string().describe('Image description. Be specific: subject, style, mood, colors, composition.'),
+      style:    z.enum(['photorealistic', 'illustration', 'digital-art', 'sketch', 'watercolor'])
+                  .optional()
+                  .describe('Visual style appended to the prompt'),
+      width:    z.number().int().min(256).max(2048).optional().default(1024),
+      height:   z.number().int().min(256).max(2048).optional().default(1024),
+      model:    z.enum(['openai', 'pollinations', 'auto']).optional().default('auto')
+                  .describe('"auto" uses OpenAI if openai_api_key is configured, otherwise Pollinations (free)'),
+      sideload: z.boolean().optional().default(true)
+                  .describe('Save the generated image to the WordPress media library'),
+      title:    z.string().optional().describe('Media library title for the generated image'),
+      alt_text: z.string().optional().describe('Accessibility alt text'),
+      api_key:  z.string().optional().describe('Override the OpenAI API key from config'),
+      site_id:  z.string().optional(),
+    },
+    async ({ prompt, style, width, height, model, sideload, title, alt_text, api_key, site_id }) => {
+      const integrations = getIntegrations();
+      const openaiKey    = api_key ?? integrations.openai_api_key;
+
+      const w = width  ?? 1024;
+      const h = height ?? 1024;
+      const m = model  ?? 'auto';
+
+      const fullPrompt = style ? `${prompt}, ${style} style` : prompt;
+      const useOpenAI  = m === 'openai' || (m === 'auto' && !!openaiKey);
+
+      let imageUrl: string;
+      let provider: string;
+
+      if (useOpenAI && openaiKey) {
+        try {
+          imageUrl = await generateWithOpenAI(fullPrompt, openaiKey, w, h);
+          provider = 'DALL-E 3 (OpenAI)';
+        } catch (e) {
+          return {
+            content: [{
+              type: 'text' as const,
+              text: [
+                `OpenAI image generation failed: ${(e as Error).message}`,
+                '',
+                'Tip: set model="pollinations" to use the free fallback (no API key needed).',
+              ].join('\n'),
+            }],
+          };
+        }
+      } else {
+        // Free fallback — no API key required
+        imageUrl = buildPollinationsUrl(fullPrompt, w, h);
+        provider = 'Pollinations.ai (free)';
+      }
+
+      const lines: string[] = [
+        `🎨 AI Image Generated — ${provider}`,
+        `   Prompt: ${prompt}${style ? ` [${style}]` : ''}`,
+        `   Size: ${w}×${h}`,
+        `   URL: ${imageUrl}`,
+        '',
+      ];
+
+      if (sideload !== false) {
+        try {
+          const client     = getClient(site_id);
+          const attachment = await client.sideloadImage({
+            url:      imageUrl,
+            title:    title    ?? `AI: ${prompt.slice(0, 60)}`,
+            alt_text: alt_text ?? prompt.slice(0, 125),
+          });
+          lines.push(`✅ Saved to media library — ID: ${attachment.id}`);
+          if (attachment.url) lines.push(`   WordPress URL: ${attachment.url}`);
+          lines.push('');
+          lines.push('Use this ID with set_site_logo or in Elementor image widgets.');
+        } catch (e) {
+          lines.push(`⚠️  Generated but sideload failed: ${(e as Error).message}`);
+          lines.push('You can manually sideload with: sideload_stock_image({ url: "<above URL>" })');
+        }
+      } else {
+        lines.push('sideload=false — use sideload_stock_image with the URL above to save to WordPress.');
+      }
+
+      return { content: [{ type: 'text' as const, text: lines.join('\n') }] };
     },
   );
 

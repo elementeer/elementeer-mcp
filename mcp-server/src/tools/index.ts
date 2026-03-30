@@ -10,6 +10,7 @@ import { registerRecommendationTools } from './recommendations.js';
 import { registerGlobalStylesTools } from './global-styles.js';
 import { registerWizardTools } from './wizard.js';
 import { registerStockImageTools } from './stock-images.js';
+import { registerChangeQueueTools } from './change-queue.js';
 
 export function registerAllTools(
   server: McpServer,
@@ -25,4 +26,5 @@ export function registerAllTools(
   registerGlobalStylesTools(server, getClient);
   registerWizardTools(server, getClient);
   registerStockImageTools(server, getClient);
+  registerChangeQueueTools(server, getClient);
 }

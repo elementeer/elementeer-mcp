@@ -8,12 +8,15 @@ import type { ElementifyClient } from '../../client.js';
 // ------------------------------------------------------------------ //
 
 vi.mock('axios', () => {
-  const mockGet = vi.fn();
+  const mockGet  = vi.fn();
+  const mockPost = vi.fn();
   return {
     default: {
-      get: mockGet,
+      get:  mockGet,
+      post: mockPost,
     },
-    get: mockGet,
+    get:  mockGet,
+    post: mockPost,
   };
 });
 
@@ -23,6 +26,11 @@ vi.mock('../../config.js', () => ({
 
 import axios from 'axios';
 import { getIntegrations } from '../../config.js';
+
+// Helper: fake OpenAI image response
+function makeOpenAIResponse(url = 'https://oaidalleapiprodscus.blob.core.windows.net/image.png') {
+  return { data: { data: [{ url, revised_prompt: 'revised prompt' }] } };
+}
 
 // ------------------------------------------------------------------ //
 // Fixtures
@@ -102,6 +110,7 @@ describe('stock image tools', () => {
 
     vi.mocked(getIntegrations).mockReturnValue({});
     vi.mocked(axios.get).mockReset();
+    vi.mocked(axios.post).mockReset();
 
     registerStockImageTools(server, getClient);
   });
@@ -311,6 +320,151 @@ describe('stock image tools', () => {
       const text = result.content[0]!.text;
       // Should not have a blank URL line — filter(Boolean) handles this
       expect(text).not.toContain('URL: null');
+    });
+  });
+
+  // ---------------------------------------------------------------- //
+  // generate_ai_image
+  // ---------------------------------------------------------------- //
+  describe('generate_ai_image', () => {
+    it('uses Pollinations (free) when no API key is configured', async () => {
+      vi.mocked(getIntegrations).mockReturnValue({});
+
+      const result = await call('generate_ai_image', { prompt: 'modern office', sideload: false });
+      const text   = result.content[0]!.text;
+
+      expect(text).toContain('Pollinations.ai');
+      expect(text).toContain('image.pollinations.ai');
+      expect(text).not.toHaveBeenCalledWith;  // OpenAI post should NOT be called
+      expect(axios.post).not.toHaveBeenCalled();
+    });
+
+    it('uses DALL-E 3 when openai_api_key is configured', async () => {
+      vi.mocked(getIntegrations).mockReturnValue({ openai_api_key: 'sk-test-key' });
+      vi.mocked(axios.post).mockResolvedValueOnce(makeOpenAIResponse());
+      // sideload call
+      vi.mocked(client.sideloadImage).mockResolvedValueOnce({
+        id: 55, url: 'https://example.com/ai.png', mime_type: 'image/png', title: 'AI: modern office',
+      });
+
+      const result = await call('generate_ai_image', { prompt: 'modern office' });
+      const text   = result.content[0]!.text;
+
+      expect(axios.post).toHaveBeenCalledWith(
+        'https://api.openai.com/v1/images/generations',
+        expect.objectContaining({ model: 'dall-e-3', prompt: 'modern office' }),
+        expect.objectContaining({ headers: expect.objectContaining({ Authorization: 'Bearer sk-test-key' }) }),
+      );
+      expect(text).toContain('DALL-E 3');
+      expect(text).toContain('ID: 55');
+    });
+
+    it('uses api_key override over config key', async () => {
+      vi.mocked(getIntegrations).mockReturnValue({ openai_api_key: 'sk-from-config' });
+      vi.mocked(axios.post).mockResolvedValueOnce(makeOpenAIResponse());
+      vi.mocked(client.sideloadImage).mockResolvedValueOnce({
+        id: 60, url: null, mime_type: 'image/png', title: 'AI img',
+      });
+
+      await call('generate_ai_image', { prompt: 'test', model: 'openai', api_key: 'sk-override' });
+
+      expect(axios.post).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.any(Object),
+        expect.objectContaining({ headers: expect.objectContaining({ Authorization: 'Bearer sk-override' }) }),
+      );
+    });
+
+    it('appends style to the prompt', async () => {
+      vi.mocked(getIntegrations).mockReturnValue({ openai_api_key: 'sk-key' });
+      vi.mocked(axios.post).mockResolvedValueOnce(makeOpenAIResponse());
+      vi.mocked(client.sideloadImage).mockResolvedValueOnce({
+        id: 70, url: null, mime_type: 'image/png', title: 'AI img',
+      });
+
+      await call('generate_ai_image', { prompt: 'forest', style: 'watercolor', model: 'openai' });
+
+      expect(axios.post).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({ prompt: 'forest, watercolor style' }),
+        expect.any(Object),
+      );
+    });
+
+    it('uses pollinations when model=pollinations even with openai key', async () => {
+      vi.mocked(getIntegrations).mockReturnValue({ openai_api_key: 'sk-key' });
+
+      const result = await call('generate_ai_image', {
+        prompt: 'sunset',
+        model: 'pollinations',
+        sideload: false,
+      });
+      const text = result.content[0]!.text;
+
+      expect(axios.post).not.toHaveBeenCalled();
+      expect(text).toContain('Pollinations.ai');
+      expect(text).toContain('image.pollinations.ai');
+    });
+
+    it('sideloads the image by default and shows attachment ID', async () => {
+      vi.mocked(getIntegrations).mockReturnValue({});  // Pollinations path
+
+      vi.mocked(client.sideloadImage).mockResolvedValueOnce({
+        id: 88, url: 'https://example.com/wp-img.png', mime_type: 'image/png', title: 'AI: sunset',
+      });
+
+      const result = await call('generate_ai_image', { prompt: 'sunset' });
+      const text   = result.content[0]!.text;
+
+      expect(client.sideloadImage).toHaveBeenCalled();
+      expect(text).toContain('ID: 88');
+      expect(text).toContain('https://example.com/wp-img.png');
+    });
+
+    it('skips sideload when sideload=false', async () => {
+      vi.mocked(getIntegrations).mockReturnValue({});
+
+      const result = await call('generate_ai_image', { prompt: 'mountain', sideload: false });
+      const text   = result.content[0]!.text;
+
+      expect(client.sideloadImage).not.toHaveBeenCalled();
+      expect(text).toContain('sideload=false');
+    });
+
+    it('handles OpenAI API error gracefully', async () => {
+      vi.mocked(getIntegrations).mockReturnValue({ openai_api_key: 'sk-bad' });
+      vi.mocked(axios.post).mockRejectedValueOnce(new Error('Billing limit exceeded'));
+
+      const result = await call('generate_ai_image', { prompt: 'test', model: 'openai' });
+      const text   = result.content[0]!.text;
+
+      expect(text).toContain('OpenAI image generation failed');
+      expect(text).toContain('Billing limit exceeded');
+      expect(text).toContain('pollinations');
+    });
+
+    it('handles sideload failure gracefully and shows the generated URL', async () => {
+      vi.mocked(getIntegrations).mockReturnValue({});
+      vi.mocked(client.sideloadImage).mockRejectedValueOnce(new Error('Media upload error'));
+
+      const result = await call('generate_ai_image', { prompt: 'test' });
+      const text   = result.content[0]!.text;
+
+      expect(text).toContain('sideload failed');
+      expect(text).toContain('sideload_stock_image');
+    });
+
+    it('includes generated URL in output', async () => {
+      vi.mocked(getIntegrations).mockReturnValue({});
+      vi.mocked(client.sideloadImage).mockResolvedValueOnce({
+        id: 1, url: null, mime_type: 'image/png', title: 'test',
+      });
+
+      const result = await call('generate_ai_image', { prompt: 'city skyline' });
+      const text   = result.content[0]!.text;
+
+      expect(text).toContain('URL:');
+      expect(text).toContain('image.pollinations.ai');
     });
   });
 });

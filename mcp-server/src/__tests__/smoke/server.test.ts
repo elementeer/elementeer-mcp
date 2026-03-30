@@ -50,13 +50,19 @@ const EXPECTED_TOOLS = [
   'compose_page_from_templates',
   'save_page_section_as_template',
   'save_full_page_as_template',
-  // Stock Images
+  // Stock Images + AI Generation
   'search_stock_images',
   'sideload_stock_image',
+  'generate_ai_image',
   // Theme Builder Wizard
   'wizard_theme_builder',
   // Explain
   'explain_recommendation',
+  // Change Review Queue
+  'queue_change',
+  'list_change_queue',
+  'review_change',
+  'apply_change',
 ] as const;
 
 describe('MCP server smoke tests', () => {
@@ -107,6 +113,11 @@ describe('MCP server smoke tests', () => {
         updatePageData: async () => ({ id: 1, updated: true as const }),
         sideloadImage: async () => ({ id: 1, url: 'https://example.com/img.jpg', mime_type: 'image/jpeg', title: 'Test' }),
         createThemeBuilderTemplate: async () => ({ id: 1, title: '', type: 'header', status: 'publish', conditions: ['include/general'] }),
+        listChanges: async () => ({ changes: [], total: 0 }),
+        createChange: async () => ({ id: 'chg_1', created_at: '', status: 'pending' as const, operation: 'set_global_colors', params: {}, note: null, before_state: null, reviewed_at: null, review_note: null, applied_at: null }),
+        getChange: async () => ({ id: 'chg_1', created_at: '', status: 'approved' as const, operation: 'set_global_colors', params: {}, note: null, before_state: null, reviewed_at: null, review_note: null, applied_at: null }),
+        updateChangeStatus: async () => ({ id: 'chg_1', created_at: '', status: 'approved' as const, operation: 'set_global_colors', params: {}, note: null, before_state: null, reviewed_at: null, review_note: null, applied_at: null }),
+        deleteChange: async () => ({ deleted: true as const, id: 'chg_1' }),
       } as unknown as ElementifyClient;
     };
 

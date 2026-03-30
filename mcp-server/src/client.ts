@@ -149,6 +149,19 @@ export interface SiteAssessment {
   issues_count: { critical: number; warning: number; info: number };
 }
 
+export interface QueuedChange {
+  id: string;
+  created_at: string;
+  status: 'pending' | 'approved' | 'rejected' | 'applied';
+  operation: string;
+  params: Record<string, unknown>;
+  note: string | null;
+  before_state: Record<string, unknown> | null;
+  reviewed_at: string | null;
+  review_note: string | null;
+  applied_at: string | null;
+}
+
 export class ElementifyClient {
   private http: AxiosInstance;
 
@@ -419,6 +432,49 @@ export class ElementifyClient {
     caption?: string;
   }): Promise<{ id: number; url: string | null; mime_type: string | null; title: string }> {
     const res = await this.http.post('/media/sideload', params);
+    return res.data;
+  }
+
+  // ------------------------------------------------------------------ //
+  // Change Review Queue
+  // ------------------------------------------------------------------ //
+
+  async listChanges(
+    status?: string,
+  ): Promise<{ changes: QueuedChange[]; total: number }> {
+    const res = await this.http.get<{ changes: QueuedChange[]; total: number }>(
+      '/changes/queue',
+      status && status !== 'all' ? { params: { status } } : {},
+    );
+    return res.data;
+  }
+
+  async createChange(input: {
+    operation: string;
+    params: Record<string, unknown>;
+    note?: string;
+    before_state?: Record<string, unknown>;
+  }): Promise<QueuedChange> {
+    const res = await this.http.post<QueuedChange>('/changes/queue', input);
+    return res.data;
+  }
+
+  async getChange(id: string): Promise<QueuedChange> {
+    const res = await this.http.get<QueuedChange>(`/changes/${id}`);
+    return res.data;
+  }
+
+  async updateChangeStatus(
+    id: string,
+    status: 'approved' | 'rejected' | 'applied',
+    note?: string,
+  ): Promise<QueuedChange> {
+    const res = await this.http.put<QueuedChange>(`/changes/${id}/status`, { status, note });
+    return res.data;
+  }
+
+  async deleteChange(id: string): Promise<{ deleted: true; id: string }> {
+    const res = await this.http.delete<{ deleted: true; id: string }>(`/changes/${id}`);
     return res.data;
   }
 
