@@ -4,8 +4,6 @@ import type {
   ElementifyClient,
   SiteAssessment,
   SiteContext,
-  SiteContextRole,
-  SiteContextPurpose,
 } from '../client.js';
 
 // ------------------------------------------------------------------ //
@@ -43,8 +41,7 @@ export function buildRecommendations(
   context: SiteContext,
 ): Recommendation[] {
   const recs: Recommendation[] = [];
-  const purpose = context.site_purpose;
-  const role    = context.user_role;
+  const role = context.user_role;
 
   // Helper — only include if condition is true
   const add = (rec: Recommendation, condition: boolean) => {

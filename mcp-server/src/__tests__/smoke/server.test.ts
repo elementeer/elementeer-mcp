@@ -1,7 +1,7 @@
 /**
  * Smoke tests: MCP server initializes and registers all expected tools.
  */
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { registerAllTools } from '../../tools/index.js';
 import type { ElementifyClient } from '../../client.js';
@@ -75,10 +75,10 @@ describe('MCP server smoke tests', () => {
 
     // Spy on tool() to capture all registrations
     const originalTool = server.tool.bind(server);
-    // @ts-ignore — we're intentionally intercepting the call
+    // @ts-expect-error — intentionally replacing with a spy
     server.tool = (name: string, ...rest: unknown[]) => {
       registeredTools.push(name);
-      return (originalTool as Function)(name, ...rest);
+      return (originalTool as (...args: unknown[]) => unknown)(name, ...rest);
     };
 
     const mockGetClient = (): ElementifyClient => {

@@ -4,7 +4,6 @@ import type {
   ElementifyClient,
   GlobalColor,
   GlobalTypographyEntry,
-  SiteAssessment,
 } from '../client.js';
 import type { ElementifyTemplate } from '@elementify/shared';
 
