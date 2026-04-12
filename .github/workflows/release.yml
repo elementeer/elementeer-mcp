@@ -52,7 +52,7 @@ jobs:
           name: plugin-zip
           path: elementify-mcp-*.zip
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: elementify-mcp-*.zip
           generate_release_notes: true
