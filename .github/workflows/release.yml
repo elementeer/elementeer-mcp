@@ -47,7 +47,7 @@ jobs:
           zip -r elementify-mcp-${VERSION}.zip plugin/ \
             --exclude "plugin/vendor/*/test*" \
             --exclude "plugin/tests/*"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: plugin-zip
           path: elementify-mcp-*.zip
