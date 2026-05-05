@@ -1,5 +1,5 @@
 {
-  "name": "elementify-mcp",
+  "name": "elementeer-mcp",
   "private": true,
   "workspaces": ["mcp-server", "shared"],
   "scripts": {

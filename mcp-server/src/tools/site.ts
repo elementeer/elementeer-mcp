@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ElementifyClient } from '../client.js';
+import type { ElementeerClient } from '../client.js';
 import { listSites, setDefaultSite } from '../config.js';
 
 export function registerSiteTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   // ------------------------------------------------------------------ //
   // get_site_info
@@ -41,7 +41,7 @@ export function registerSiteTools(
   // ------------------------------------------------------------------ //
   server.tool(
     'list_sites',
-    'List all WordPress sites configured in ~/.elementify/config.json.',
+    'List all WordPress sites configured in ~/.elementeer/config.json.',
     {},
     async () => {
       const sites = listSites();
@@ -51,7 +51,7 @@ export function registerSiteTools(
           content: [
             {
               type: 'text',
-              text: 'No sites configured. Edit ~/.elementify/config.json to add a site.',
+              text: 'No sites configured. Edit ~/.elementeer/config.json to add a site.',
             },
           ],
         };
@@ -78,7 +78,7 @@ export function registerSiteTools(
   // ------------------------------------------------------------------ //
   server.tool(
     'switch_site',
-    'Set a different site as the default in ~/.elementify/config.json. All subsequent tool calls will use this site unless site_id is explicitly provided.',
+    'Set a different site as the default in ~/.elementeer/config.json. All subsequent tool calls will use this site unless site_id is explicitly provided.',
     {
       site_id: z.string().min(1).describe('Site ID to make the default'),
     },

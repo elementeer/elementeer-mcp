@@ -1,5 +1,5 @@
 # Project Knowledge Base
-## Elementify MCP - Enhanced Agents Memory
+## Elementeer MCP - Enhanced Agents Memory
 
 ### Architecture Patterns
 #### WordPress Integration
@@ -92,11 +92,11 @@
 #### Multi-Site Support
 - Single MCP server can manage multiple WordPress sites
 - Site switching requires re-authentication
-- Configuration stored in ~/.elementify/config.json
+- Configuration stored in ~/.elementeer/config.json
 
 ### Next Phase: PRD v4
 #### Plugin Ecosystem
-- Allow third-party developers to extend Elementify MCP
+- Allow third-party developers to extend Elementeer MCP
 - Plugin registry and discovery mechanism
 - Version compatibility checking
 

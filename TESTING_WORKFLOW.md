@@ -1,4 +1,4 @@
-# 🧪 Elementify MCP Plugin Testing Workflow
+# 🧪 Elementeer MCP Plugin Testing Workflow
 
 **Version**: 2.0.1  
 **Last Updated**: 2026-04-22  
@@ -7,7 +7,7 @@
 
 ## 📋 Overview
 
-This document outlines the complete testing workflow for the Elementify MCP WordPress plugin, covering installation, activation, and validation of all newly implemented features across five domains:
+This document outlines the complete testing workflow for the Elementeer MCP WordPress plugin, covering installation, activation, and validation of all newly implemented features across five domains:
 
 1. **Media Operations Enhancement** - AI alt-text generation, stock image search
 2. **Addon Ecosystem Expansion** - Addon-specific analysis, widget usage, overlap detection
@@ -36,13 +36,13 @@ This document outlines the complete testing workflow for the Elementify MCP Word
 ### Naming Convention (Non-Negotiable)
 All release ZIP files MUST follow the naming convention:
 ```
-elementify.X.Y.Z.zip
+elementeer.X.Y.Z.zip
 ```
 Where X.Y.Z is the semantic version (e.g., 2.0.1). This convention is enforced across all release workflows.
 
 ### Existing Test Plugins
-- `elementify.2.0.1.zip` - Latest plugin ZIP
-- `elementify/` - Currently installed version (if any)
+- `elementeer.2.0.1.zip` - Latest plugin ZIP
+- `elementeer/` - Currently installed version (if any)
 - `elementor/`, `elementor-pro/` - Required dependencies
 - `essential-addons-elementor/` - Test addon
 
@@ -62,14 +62,14 @@ docker-compose logs wordpress | tail -20
 ### 2. Prepare Plugin
 **Use existing plugin ZIPs from the plugin folder**:
 ```bash
-# List available Elementify plugin ZIPs
-ls -la plugins/Elementify\ v*.zip
+# List available Elementeer plugin ZIPs
+ls -la plugins/Elementeer\ v*.zip
 
 # Recommended: Use the latest version
-./scripts/install-plugin.sh plugins/Elementify\ v2.0.1.zip
+./scripts/install-plugin.sh plugins/Elementeer\ v2.0.1.zip
 
 # Or use specific version if needed
-./scripts/install-plugin.sh plugins/Elementify\ v2.0.0.zip
+./scripts/install-plugin.sh plugins/Elementeer\ v2.0.0.zip
 ```
 
 **Note**: The plugin folder already contains tested and working plugin ZIPs. Do not copy new ZIPs from development unless specifically testing new builds.
@@ -77,10 +77,10 @@ ls -la plugins/Elementify\ v*.zip
 ### 3. Verify Installation
 ```bash
 # Check plugin folder
-ls -la plugins/elementify/
+ls -la plugins/elementeer/
 
 # Check via WP-CLI
-docker-compose exec wordpress wp plugin list --name=elementify --fields=name,status,version
+docker-compose exec wordpress wp plugin list --name=elementeer --fields=name,status,version
 ```
 
 ### 4. Generate API Key
@@ -98,20 +98,20 @@ php generate-api-key-v2.php
 - [ ] Plugin ZIP can be uploaded via WordPress admin
 - [ ] Plugin activates without PHP errors
 - [ ] No conflicts with Elementor/other plugins
-- [ ] Admin menu appears (Elementify → Dashboard)
-- [ ] REST API endpoints are registered (check `wp-json/elementify/v2/`)
+- [ ] Admin menu appears (Elementeer → Dashboard)
+- [ ] REST API endpoints are registered (check `wp-json/elementeer/v2/`)
 
 ### Phase 2: Core API Validation
-- [ ] `GET /wp-json/elementify/v2/` - API root returns version info
-- [ ] `GET /wp-json/elementify/v2/site/info` - Site information
-- [ ] `GET /wp-json/elementify/v2/templates` - Template listing
+- [ ] `GET /wp-json/elementeer/v2/` - API root returns version info
+- [ ] `GET /wp-json/elementeer/v2/site/info` - Site information
+- [ ] `GET /wp-json/elementeer/v2/templates` - Template listing
 - [ ] Authentication works with API key header
 
 ### Phase 3: Media Operations Testing
 **Endpoints to test:**
-- [ ] `POST /wp-json/elementify/v2/media/generate-alt-text` - AI alt-text generation
-- [ ] `POST /wp-json/elementify/v2/media/batch-generate-alt-text` - Batch processing
-- [ ] `GET /wp-json/elementify/v2/media/stock-images` - Stock image search
+- [ ] `POST /wp-json/elementeer/v2/media/generate-alt-text` - AI alt-text generation
+- [ ] `POST /wp-json/elementeer/v2/media/batch-generate-alt-text` - Batch processing
+- [ ] `GET /wp-json/elementeer/v2/media/stock-images` - Stock image search
 
 **Test scenarios:**
 1. Upload test image via WordPress media library
@@ -122,11 +122,11 @@ php generate-api-key-v2.php
 
 ### Phase 4: Addon Ecosystem Testing
 **Endpoints to test:**
-- [ ] `GET /wp-json/elementify/v2/addons/essential-addons` - EA info & widgets
-- [ ] `GET /wp-json/elementify/v2/addons/ultimate-addons` - UAE info
-- [ ] `GET /wp-json/elementify/v2/addons/crocoblock` - JetEngine/plugins
-- [ ] `GET /wp-json/elementify/v2/addons/widget-usage` - Site-wide widget census
-- [ ] `GET /wp-json/elementify/v2/addons/overlap-analysis` - Redundant widget detection
+- [ ] `GET /wp-json/elementeer/v2/addons/essential-addons` - EA info & widgets
+- [ ] `GET /wp-json/elementeer/v2/addons/ultimate-addons` - UAE info
+- [ ] `GET /wp-json/elementeer/v2/addons/crocoblock` - JetEngine/plugins
+- [ ] `GET /wp-json/elementeer/v2/addons/widget-usage` - Site-wide widget census
+- [ ] `GET /wp-json/elementeer/v2/addons/overlap-analysis` - Redundant widget detection
 
 **Test scenarios:**
 1. Verify Essential Addons detection (installed in test env)
@@ -136,9 +136,9 @@ php generate-api-key-v2.php
 
 ### Phase 5: Performance Analysis Testing
 **Endpoints to test:**
-- [ ] `GET /wp-json/elementify/v2/performance/core-web-vitals` - Core Web Vitals
-- [ ] `POST /wp-json/elementify/v2/performance/generate-critical-css` - Critical CSS
-- [ ] `GET /wp-json/elementify/v2/performance/analyze` - Comprehensive analysis
+- [ ] `GET /wp-json/elementeer/v2/performance/core-web-vitals` - Core Web Vitals
+- [ ] `POST /wp-json/elementeer/v2/performance/generate-critical-css` - Critical CSS
+- [ ] `GET /wp-json/elementeer/v2/performance/analyze` - Comprehensive analysis
 
 **Test scenarios:**
 1. Get Core Web Vitals for homepage
@@ -148,8 +148,8 @@ php generate-api-key-v2.php
 
 ### Phase 6: Accessibility Testing
 **Endpoints to test:**
-- [ ] `POST /wp-json/elementify/v2/ally/wcag-scan` - WCAG compliance scan
-- [ ] `POST /wp-json/elementify/v2/ally/wcag-auto-fix` - Auto-fix accessibility issues
+- [ ] `POST /wp-json/elementeer/v2/ally/wcag-scan` - WCAG compliance scan
+- [ ] `POST /wp-json/elementeer/v2/ally/wcag-auto-fix` - Auto-fix accessibility issues
 
 **Test scenarios:**
 1. Create test page with accessibility issues (missing alt text, low contrast)
@@ -160,12 +160,12 @@ php generate-api-key-v2.php
 
 ### Phase 7: Snapshot & Versioning Testing
 **Endpoints to test:**
-- [ ] `POST /wp-json/elementify/v2/snapshots/create` - Create template snapshot
-- [ ] `GET /wp-json/elementify/v2/snapshots` - List snapshots
-- [ ] `GET /wp-json/elementify/v2/snapshots/{uuid}` - Get snapshot details
-- [ ] `POST /wp-json/elementify/v2/snapshots/restore` - Restore snapshot
-- [ ] `GET /wp-json/elementify/v2/snapshots/diff` - Compare snapshots
-- [ ] `GET /wp-json/elementify/v2/templates/{id}/versions` - Template version history
+- [ ] `POST /wp-json/elementeer/v2/snapshots/create` - Create template snapshot
+- [ ] `GET /wp-json/elementeer/v2/snapshots` - List snapshots
+- [ ] `GET /wp-json/elementeer/v2/snapshots/{uuid}` - Get snapshot details
+- [ ] `POST /wp-json/elementeer/v2/snapshots/restore` - Restore snapshot
+- [ ] `GET /wp-json/elementeer/v2/snapshots/diff` - Compare snapshots
+- [ ] `GET /wp-json/elementeer/v2/templates/{id}/versions` - Template version history
 
 **Test scenarios:**
 1. Create an Elementor template
@@ -256,8 +256,8 @@ docker-compose exec wordpress wp plugin install elementor-pro --activate --allow
 docker-compose exec wordpress tail -10 /var/www/html/wp-content/debug.log | grep -i elementor
 
 # Specific issue: "Access denied" in Elementor kit manager
-# This occurs when Elementify updates WordPress options that trigger Elementor hooks
-# Workaround: Ensure proper user permissions or handle the exception in Elementify
+# This occurs when Elementeer updates WordPress options that trigger Elementor hooks
+# Workaround: Ensure proper user permissions or handle the exception in Elementeer
 docker-compose exec wordpress wp user list --role=administrator --field=ID --allow-root | head -1
 docker-compose exec wordpress wp user set-role 1 administrator --allow-root
 ```
@@ -268,22 +268,22 @@ docker-compose exec wordpress wp user set-role 1 administrator --allow-root
 docker-compose exec wordpress tail -f /var/www/html/wp-content/debug.log
 
 # Check plugin status
-docker-compose exec wordpress wp plugin status elementify
+docker-compose exec wordpress wp plugin status elementeer
 
 # Check Elementor status and health
 docker-compose exec wordpress wp plugin status elementor
 docker-compose exec wordpress wp eval "echo did_action('elementor/loaded') ? 'Elementor loaded' : 'Elementor NOT loaded';" --allow-root
 
 # List registered REST routes
-docker-compose exec wordpress wp rest route list --namespace=elementify/v2
+docker-compose exec wordpress wp rest route list --namespace=elementeer/v2
 
 # Test API endpoint directly
-curl -H "X-Elementify-Key: YOUR_API_KEY" \
-  http://localhost:8082/wp-json/elementify/v2/
+curl -H "X-Elementeer-Key: YOUR_API_KEY" \
+  http://localhost:8082/wp-json/elementeer/v2/
 
 # Check API key validity
-curl -s -H "X-Elementify-Key: YOUR_API_KEY" \
-  http://localhost:8082/wp-json/elementify/v2/site/info | jq .
+curl -s -H "X-Elementeer-Key: YOUR_API_KEY" \
+  http://localhost:8082/wp-json/elementeer/v2/site/info | jq .
 ```
 
 ## 📝 Test Reporting
@@ -318,7 +318,7 @@ cd /Users/andrelange/Documents/repositories/github/wp-testing-env/
 ## 🔄 Continuous Testing & ReleaseChain Integration
 
 ### For SkillWeave ReleaseChain Integration
-This testing workflow is fully integrated with SkillWeave ReleaseChain for automated validation of Elementify plugin releases. The release validation PRD (`release-validation-2.0.1.json`) defines 8 validation tasks that ReleaseChain executes sequentially.
+This testing workflow is fully integrated with SkillWeave ReleaseChain for automated validation of Elementeer plugin releases. The release validation PRD (`release-validation-2.0.1.json`) defines 8 validation tasks that ReleaseChain executes sequentially.
 
 #### Release Validation Tasks:
 1. **RELEASE-VAL-001**: Plugin Installation & Activation Validation
@@ -335,24 +335,24 @@ The following scripts are available for ReleaseChain integration:
 
 1. **`test-plugin-release.sh`** - Main release test script
    ```bash
-   cd /Users/andrelange/Documents/repositories/github/elementify-mcp
+   cd /Users/andrelange/Documents/repositories/github/elementeer-mcp
    ./scripts/test-plugin-release.sh [--skip-install] [--skip-tests]
    ```
    
 2. **`validate-new-domains.sh`** - Five feature domains validation
    ```bash
-   cd /Users/andrelange/Documents/repositories/github/elementify-mcp
+   cd /Users/andrelange/Documents/repositories/github/elementeer-mcp
    ./scripts/validate-new-domains.sh
    ```
    
 3. **`create-plugin-zip.sh`** - Plugin ZIP creation
    ```bash
-   cd /Users/andrelange/Documents/repositories/github/elementify-mcp
+   cd /Users/andrelange/Documents/repositories/github/elementeer-mcp
    ./scripts/create-plugin-zip.sh
    ```
 
 #### ReleaseChain Workflow:
-1. **Detect changes** in the Elementify MCP repository
+1. **Detect changes** in the Elementeer MCP repository
 2. **Build plugin ZIP** with version 2.0.1 using `create-plugin-zip.sh`
 3. **Deploy to test environment** in `wp-testing-env/`
 4. **Execute validation tasks** 1-8 using the test scripts
@@ -362,13 +362,13 @@ The following scripts are available for ReleaseChain integration:
 
 #### Quick Test Command for ReleaseChain:
 ```bash
-cd /Users/andrelange/Documents/repositories/github/elementify-mcp
+cd /Users/andrelange/Documents/repositories/github/elementeer-mcp
 ./scripts/test-plugin-release.sh
 ```
 
 ## 📚 References
 
-- [Elementify MCP Repository](/Users/andrelange/Documents/repositories/github/elementify-mcp)
+- [Elementeer MCP Repository](/Users/andrelange/Documents/repositories/github/elementeer-mcp)
 - [WordPress Testing Environment](/Users/andrelange/Documents/repositories/github/wp-testing-env)
 - [Elementor Documentation](https://developers.elementor.com/)
 - [WCAG 2.1 Guidelines](https://www.w3.org/TR/WCAG21/)

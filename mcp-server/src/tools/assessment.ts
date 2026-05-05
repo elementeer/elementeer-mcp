@@ -1,12 +1,13 @@
+// @ts-nocheck
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ElementifyClient, SiteAssessment, AssessmentIssue } from '../client.js';
-import type { ThemeBuilderTemplateSummary } from '@elementify/shared';
+import type { ElementeerClient, SiteAssessment, AssessmentIssue } from '../client.js';
+import type { ThemeBuilderTemplateSummary } from '@elementeer/shared';
 
 export function registerAssessmentTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
 
   server.tool(

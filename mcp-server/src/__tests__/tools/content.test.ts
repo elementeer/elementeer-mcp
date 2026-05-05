@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { registerContentTools } from '../../tools/content.js';
-import type { ElementifyClient } from '../../client.js';
+import type { ElementeerClient } from '../../client.js';
 
-function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> = {}): ElementifyClient {
+function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> = {}): ElementeerClient {
   return {
     createChange:         vi.fn().mockResolvedValue({ id: 'chg_test', created_at: '2026-03-30T10:00:00+00:00', status: 'pending', operation: 'update_template_data', params: {}, note: '', before_state: null, reviewed_at: null, review_note: null, applied_at: null }),
     listChanges:          vi.fn().mockResolvedValue({ changes: [], total: 0 }),
@@ -23,13 +23,13 @@ function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> 
     updateTemplateData: vi.fn().mockResolvedValue({ id: 1, updated: true }),
     getSiteInfo: vi.fn(),
     ...overrides,
-  } as unknown as ElementifyClient;
+  } as unknown as ElementeerClient;
 }
 
 describe('Content tools', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let toolHandlers: Map<string, (args: Record<string, unknown>) => Promise<unknown>>;
 
   beforeEach(() => {

@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { registerOrganizationTools } from '../../tools/organization.js';
-import type { ElementifyClient } from '../../client.js';
-import type { ElementifyTemplate } from '@elementify/shared';
+import type { ElementeerClient } from '../../client.js';
+import type { ElementeerTemplate } from '@elementeer/shared';
 
-function makeTemplate(overrides: Partial<ElementifyTemplate> = {}): ElementifyTemplate {
+function makeTemplate(overrides: Partial<ElementeerTemplate> = {}): ElementeerTemplate {
   return {
     id: 1,
     title: 'My Template',
@@ -20,7 +20,7 @@ function makeTemplate(overrides: Partial<ElementifyTemplate> = {}): ElementifyTe
   };
 }
 
-function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> = {}): ElementifyClient {
+function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> = {}): ElementeerClient {
   return {
     listTemplates: vi.fn().mockResolvedValue({ templates: [], total: 0, total_pages: 1 }),
     getTemplate: vi.fn(),
@@ -32,13 +32,13 @@ function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> 
     updateTemplateData: vi.fn(),
     getSiteInfo: vi.fn(),
     ...overrides,
-  } as unknown as ElementifyClient;
+  } as unknown as ElementeerClient;
 }
 
 describe('Organization tools', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let toolHandlers: Map<string, (args: Record<string, unknown>) => Promise<unknown>>;
 
   beforeEach(() => {

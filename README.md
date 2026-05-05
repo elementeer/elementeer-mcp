@@ -1,19 +1,19 @@
-[![repo-safety](https://github.com/Vamerli/elementify-mcp/actions/workflows/repo-safety.yml/badge.svg)](https://github.com/Vamerli/elementify-mcp/actions/workflows/repo-safety.yml)
-[![CI](https://github.com/Vamerli/elementify-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/Vamerli/elementify-mcp/actions/workflows/ci.yml)
-[![CodeQL](https://github.com/Vamerli/elementify-mcp/actions/workflows/codeql.yml/badge.svg)](https://github.com/Vamerli/elementify-mcp/actions/workflows/codeql.yml)
-[![npm](https://img.shields.io/npm/v/@elementify/mcp?label=npm)](https://www.npmjs.com/package/@elementify/mcp)
+[![repo-safety](https://github.com/Vamerli/elementeer-mcp/actions/workflows/repo-safety.yml/badge.svg)](https://github.com/Vamerli/elementeer-mcp/actions/workflows/repo-safety.yml)
+[![CI](https://github.com/Vamerli/elementeer-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/Vamerli/elementeer-mcp/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/Vamerli/elementeer-mcp/actions/workflows/codeql.yml/badge.svg)](https://github.com/Vamerli/elementeer-mcp/actions/workflows/codeql.yml)
+[![npm](https://img.shields.io/npm/v/@elementeer/mcp?label=npm)](https://www.npmjs.com/package/@elementeer/mcp)
 [![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-green.svg)](./LICENSE)
 [![WordPress tested](https://img.shields.io/badge/WordPress-6.0%2B-21759b.svg?logo=wordpress)](./plugin/readme.txt)
 [![Elementor tested](https://img.shields.io/badge/Elementor-3.x-92003b.svg)](./plugin/readme.txt)
 [![Node.js](https://img.shields.io/badge/Node.js-20%2B-339933.svg?logo=node.js)](./mcp-server/package.json)
 [![MCP compatible](https://img.shields.io/badge/MCP-compatible-7c3aed.svg)](https://modelcontextprotocol.io)
-[![Vamerli Studio](https://img.shields.io/badge/Vamerli_Studio-embedded-1A56DB.svg)](https://elementify.studio)
+[![Vamerli Studio](https://img.shields.io/badge/Vamerli_Studio-embedded-1A56DB.svg)](https://elementeer.studio)
 
-# Elementify MCP
+# Elementeer MCP
 
 Elementor-native MCP bridge for the public Free surface. Exposes the full `elementor_library` post type over a typed REST API — no 401 surprises, no empty responses. Ships as a WordPress plugin + Node.js MCP server with fine-grained, governance-controlled API key permissions.
 
-With **111+ tools** and a granular governance model (L0‑L3), Elementify enables safe AI‑agent operation across brand setup, template composition, forms, translation, site health, LMS, charity, and accessibility workflows.
+With **111+ tools** and a granular governance model (L0‑L3), Elementeer enables safe AI‑agent operation across brand setup, template composition, forms, translation, site health, LMS, charity, and accessibility workflows.
 
 ---
 
@@ -23,7 +23,7 @@ With **111+ tools** and a granular governance model (L0‑L3), Elementify enable
 - `Advanced`: private in the Forgejo primary repository.
 - `Studio`: future seam for cloud, cross-site, and delivery orchestration.
 
-The WordPress plugin registers a REST API under `/wp-json/elementify/v1/` that queries `elementor_library` directly, bypassing the limitations in Elementor's own REST modifications. The MCP server bridges Claude, Cursor, or any MCP-compatible client to any WordPress site running the plugin, with support for multiple sites, capability-scoped API keys, and a site-level governance layer.
+The WordPress plugin registers a REST API under `/wp-json/elementeer/v1/` that queries `elementor_library` directly, bypassing the limitations in Elementor's own REST modifications. The MCP server bridges Claude, Cursor, or any MCP-compatible client to any WordPress site running the plugin, with support for multiple sites, capability-scoped API keys, and a site-level governance layer.
 
 ---
 
@@ -40,17 +40,17 @@ This is the canonical public quickstart for the mirror-safe Free surface:
 1. Download or clone this repo
 2. Zip the `/plugin` directory
 3. Upload via WordPress admin: Plugins → Add New → Upload Plugin
-4. Activate **Elementify MCP Plugin**
-5. Go to Settings → Elementify MCP → generate your first API key
+4. Activate **Elementeer MCP Plugin**
+5. Go to Settings → Elementeer MCP → generate your first API key
 
 ### 2. Install and configure the MCP server
 
 ```bash
-npm install -g @elementify/mcp
-elementify-mcp init   # creates ~/.elementify/config.json
+npm install -g @elementeer/mcp
+elementeer-mcp init   # creates ~/.elementeer/config.json
 ```
 
-Edit `~/.elementify/config.json`:
+Edit `~/.elementeer/config.json`:
 
 ```json
 {
@@ -71,8 +71,8 @@ Edit `~/.elementify/config.json`:
 ```json
 {
   "mcpServers": {
-    "elementify": {
-      "command": "elementify-mcp"
+    "elementeer": {
+      "command": "elementeer-mcp"
     }
   }
 }
@@ -126,7 +126,7 @@ For a compact public summary of what Free includes and excludes, see [docs/publi
 | `set_tags` | Assign tags to a template | `library-operations:write` |
 | `audit_library` | Full library audit: counts, drafts, stale, uncategorized | `library-operations:read` |
 | `get_site_info` | WP version, Elementor version, activation mode, capabilities | `site-audit:read` |
-| `list_sites` | List all configured sites in `~/.elementify/config.json` | — |
+| `list_sites` | List all configured sites in `~/.elementeer/config.json` | — |
 | `switch_site` | Change the default site | — |
 | `list_media` | List media attachments with pagination and filtering | `media-operations:read` |
 | `get_media` | Get details of a single media attachment | `media-operations:read` |
@@ -176,19 +176,19 @@ The public mirror keeps this surface aligned with the Free tier only. Advanced-o
 
 ## Permission Architecture
 
-Elementify uses a two-layer permission model.
+Elementeer uses a two-layer permission model.
 
-**Layer 1 — Key capabilities.** Each API key is created with an explicit list of domain capabilities (e.g., `site-audit:read`, `library-operations:read`, `library-operations:write`). A key with only `library-operations:read` cannot write. When a write endpoint is called with a read-only key, the plugin returns `elementify_insufficient_scope` — not `elementify_invalid_key`. This distinction is intentional and must be preserved by any client that consumes the API. Legacy resource-first scopes remain accepted as transitional aliases for older keys.
+**Layer 1 — Key capabilities.** Each API key is created with an explicit list of domain capabilities (e.g., `site-audit:read`, `library-operations:read`, `library-operations:write`). A key with only `library-operations:read` cannot write. When a write endpoint is called with a read-only key, the plugin returns `elementeer_insufficient_scope` — not `elementeer_invalid_key`. This distinction is intentional and must be preserved by any client that consumes the API. Legacy resource-first scopes remain accepted as transitional aliases for older keys.
 
-**Layer 2 — Governance settings.** Site administrators define an `allowed_capabilities` list in Settings → Elementify MCP. Even if a key has a capability, if governance disables it at the site level, the request returns `elementify_governance_blocked`. This enables a site owner to lock down operating domains such as `library-operations:write` or `governance:apply` without revoking keys.
+**Layer 2 — Governance settings.** Site administrators define an `allowed_capabilities` list in Settings → Elementeer MCP. Even if a key has a capability, if governance disables it at the site level, the request returns `elementeer_governance_blocked`. This enables a site owner to lock down operating domains such as `library-operations:write` or `governance:apply` without revoking keys.
 
-The MCP server maps these server-side error codes to typed `ElementifyErrorCode` values so AI clients receive actionable, precise error information.
+The MCP server maps these server-side error codes to typed `ElementeerErrorCode` values so AI clients receive actionable, precise error information.
 
 ---
 
 ## Governance Levels (L0-L3)
 
-Elementify introduces four governance levels for safe AI‑agent operation:
+Elementeer introduces four governance levels for safe AI‑agent operation:
 
 - **L0 (Read‑only)** – Inspection tools (list, get, assess) – no consent needed.
 - **L1 (Safe writes)** – Non‑destructive writes (create, update metadata) – auto‑executed.
@@ -197,9 +197,9 @@ Elementify introduces four governance levels for safe AI‑agent operation:
 
 L2 tools automatically queue changes via `queue_change`; L3 tools block execution until `consent: true` is provided. This layered model ensures AI agents can propose meaningful changes while keeping site owners in control.
 
-## What Makes Elementify Unique
+## What Makes Elementeer Unique
 
-Elementify is the **first and only MCP server purpose-built for Elementor** — not a generic WordPress tool. Its unique architecture enables AI agents to work safely and effectively with Elementor templates, layouts, and workflows:
+Elementeer is the **first and only MCP server purpose-built for Elementor** — not a generic WordPress tool. Its unique architecture enables AI agents to work safely and effectively with Elementor templates, layouts, and workflows:
 
 - **`elementor_library` native access**: Direct querying of Elementor's template library via `WP_Query`, bypassing Elementor's REST API limitations that cause 401 errors and empty responses for template requests.
 - **Granular capability system**: Clear distinction between authentication failures (`auth_invalid_key`) and permission issues (`auth_insufficient_scope`), allowing AI clients to provide specific guidance to users.
@@ -207,14 +207,14 @@ Elementify is the **first and only MCP server purpose-built for Elementor** — 
 - **Governance-controlled operations**: Four-tier governance model (L0-L3) ensures safe AI agent operation with appropriate human oversight.
 - **Multi-surface product strategy**: Clean separation between Free (public), Advanced (private), and Studio (future) features ensures sustainable open-source development.
 
-Unlike general-purpose WordPress MCP tools, Elementify understands Elementor's architecture, template lifecycle, and workflow patterns — enabling truly intelligent AI-assisted Elementor development.
+Unlike general-purpose WordPress MCP tools, Elementeer understands Elementor's architecture, template lifecycle, and workflow patterns — enabling truly intelligent AI-assisted Elementor development.
 
 ---
 
 ## Monorepo Structure
 
 ```
-elementify-mcp/
+elementeer-mcp/
 ├── .github/
 │   ├── workflows/
 │   │   ├── ci.yml              # Test matrix: Node 20/22, PHP 8.1/8.2/8.3
@@ -227,10 +227,10 @@ elementify-mcp/
 │   └── SECURITY.md
 │
 ├── plugin/                     # WordPress PHP plugin
-│   ├── elementify-mcp.php      # Plugin bootstrap
+│   ├── elementeer-mcp.php      # Plugin bootstrap
 │   ├── includes/
 │   │   ├── Plugin.php          # Singleton main class
-│   │   ├── Auth/Manager.php    # X-Elementify-Key auth + capability checks
+│   │   ├── Auth/Manager.php    # X-Elementeer-Key auth + capability checks
 │   │   ├── Api/Router.php      # REST route registration
 │   │   ├── Api/Templates.php   # Template CRUD controller
 │   │   ├── Api/Site.php        # Site info endpoint
@@ -251,9 +251,9 @@ elementify-mcp/
 ├── mcp-server/                 # Node.js/TypeScript MCP server
 │   ├── src/
 │   │   ├── index.ts            # MCP server entry
-│   │   ├── cli.ts              # elementify-mcp binary
-│   │   ├── client.ts           # ElementifyClient (axios + error mapping)
-│   │   ├── config.ts           # ~/.elementify/config.json
+│   │   ├── cli.ts              # elementeer-mcp binary
+│   │   ├── client.ts           # ElementeerClient (axios + error mapping)
+│   │   ├── config.ts           # ~/.elementeer/config.json
 │   │   └── tools/
 │   │       ├── index.ts
 │   │       ├── library.ts      # list/get/create/update/delete/rename/duplicate/bulk_rename

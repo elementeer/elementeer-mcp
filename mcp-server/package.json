@@ -1,11 +1,11 @@
 {
-  "name": "@elementify/mcp",
+  "name": "@elementeer/mcp",
   "version": "1.0.0",
   "description": "AI-native MCP server for Elementor — standalone and embedded in Vamerli Studio",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "elementify-mcp": "dist/cli.js"
+    "elementeer-mcp": "dist/cli.js"
   },
   "scripts": {
     "build": "node ../scripts/run-mcp-tsc.mjs build",
@@ -18,7 +18,7 @@
     "typecheck": "node ../scripts/run-mcp-tsc.mjs typecheck"
   },
   "dependencies": {
-    "@elementify/shared": "*",
+    "@elementeer/shared": "*",
     "@modelcontextprotocol/sdk": "^1.0.0",
     "axios": "^1.7.0",
     "zod": "^3.23.0"

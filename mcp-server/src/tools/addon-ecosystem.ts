@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ElementifyClient } from '../client.js';
+import type { ElementeerClient } from '../client.js';
 
 type AddonDetailed = {
   active: boolean;
@@ -97,7 +97,7 @@ function categorizeWidget(title: string, id: string): string {
 
 export function registerAddonEcosystemTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   // ------------------------------------------------------------------ //
   // analyze_addon_overlap (Advanced)

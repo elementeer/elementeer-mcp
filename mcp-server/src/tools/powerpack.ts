@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ElementifyClient } from '../client.js';
+import type { ElementeerClient } from '../client.js';
 
 type Addon = {
   active: boolean;
@@ -27,7 +27,7 @@ function findPowerPack(addons: Array<Addon>) {
 
 export function registerPowerPackFreeTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   // ------------------------------------------------------------------ //
   // detect_powerpack (Free)
@@ -156,7 +156,7 @@ export function registerPowerPackFreeTools(
 
 export function registerPowerPackAdvancedTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   // ------------------------------------------------------------------ //
   // analyze_powerpack_usage (Advanced)

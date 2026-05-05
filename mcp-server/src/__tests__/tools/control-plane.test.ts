@@ -5,7 +5,7 @@ import { buildSiteFingerprint } from '../../fingerprint.js';
 import { buildPipelinePathPlan } from '../../control-plane.js';
 import { buildRecommendationReport } from '../../recommendations.js';
 import { registerControlPlaneTools } from '../../tools/control-plane.js';
-import type { ElementifyClient, SiteAssessment, SiteContext } from '../../client.js';
+import type { ElementeerClient, SiteAssessment, SiteContext } from '../../client.js';
 
 function makeAssessment(overrides: Partial<SiteAssessment> = {}): SiteAssessment {
   return {
@@ -52,12 +52,12 @@ function makeReport(assessment: SiteAssessment, context: SiteContext) {
   return buildRecommendationReport({ assessment, context, fingerprint, capabilityMatrix });
 }
 
-function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> = {}): ElementifyClient {
+function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> = {}): ElementeerClient {
   return {
     assessSite: vi.fn().mockResolvedValue(makeAssessment()),
     getSiteContext: vi.fn().mockResolvedValue(makeContext()),
     ...overrides,
-  } as unknown as ElementifyClient;
+  } as unknown as ElementeerClient;
 }
 
 describe('buildPipelinePathPlan', () => {
@@ -73,8 +73,8 @@ describe('buildPipelinePathPlan', () => {
 
 describe('control-plane tool', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let handlers: Map<string, (args: Record<string, unknown>) => Promise<{ content: Array<{ text: string }> }>>;
 
   beforeEach(() => {

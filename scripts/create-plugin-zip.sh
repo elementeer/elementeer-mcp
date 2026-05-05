@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Create Elementify Plugin ZIP file for distribution
+# Create Elementeer Plugin ZIP file for distribution
 #
 # CONVENTIONS (non-negotiable — enforced by this script):
-#   • ZIP name:   elementify.X.Y.Z.zip
-#   • SHA256:     elementify.X.Y.Z.sha256
-#   • Version:    auto-extracted from plugin/elementify.php Version header
-#   • Release:    GitHub Release title must be "Elementify vX.Y.Z"
+#   • ZIP name:   elementeer.X.Y.Z.zip
+#   • SHA256:     elementeer.X.Y.Z.sha256
+#   • Version:    auto-extracted from plugin/elementeer.php Version header
+#   • Release:    GitHub Release title must be "Elementeer vX.Y.Z"
 #   • Tag:        vX.Y.Z  (semantic version, triggers .github/workflows/release.yml)
 
 set -e
@@ -17,13 +17,13 @@ PLUGIN_DIR="$REPO_DIR/plugin"
 OUTPUT_DIR="$REPO_DIR/releases"
 
 # Extract version from plugin header
-VERSION=$(grep -o "Version:[[:space:]]*[0-9]\.[0-9]\.[0-9]" "$PLUGIN_DIR/elementify.php" | awk '{print $2}')
+VERSION=$(grep -o "Version:[[:space:]]*[0-9]\.[0-9]\.[0-9]" "$PLUGIN_DIR/elementeer.php" | awk '{print $2}')
 if [ -z "$VERSION" ]; then
-    echo "Error: Could not extract version from $PLUGIN_DIR/elementify.php"
+    echo "Error: Could not extract version from $PLUGIN_DIR/elementeer.php"
     exit 1
 fi
 
-ZIP_NAME="elementify.$VERSION.zip"
+ZIP_NAME="elementeer.$VERSION.zip"
 RELEASE_DIR="$OUTPUT_DIR/$VERSION"
 
 # Colors
@@ -31,7 +31,7 @@ GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m'
 
-echo "Creating Elementify Plugin ZIP v$VERSION..."
+echo "Creating Elementeer Plugin ZIP v$VERSION..."
 echo "Output: $RELEASE_DIR/$ZIP_NAME"
 
 # Check plugin directory exists
@@ -42,7 +42,7 @@ fi
 
 # Check required files exist
 required_files=(
-    "$PLUGIN_DIR/elementify.php"
+    "$PLUGIN_DIR/elementeer.php"
     "$PLUGIN_DIR/includes/Plugin.php"
     "$PLUGIN_DIR/includes/Api/Router.php"
     "$PLUGIN_DIR/vendor/autoload.php"
@@ -61,8 +61,8 @@ echo "Using temporary directory: $TEMP_DIR"
 
 # Copy plugin files with correct folder structure
 echo "Copying plugin files..."
-mkdir -p "$TEMP_DIR/elementify"
-cp -r "$PLUGIN_DIR"/* "$TEMP_DIR/elementify/"
+mkdir -p "$TEMP_DIR/elementeer"
+cp -r "$PLUGIN_DIR"/* "$TEMP_DIR/elementeer/"
 
 # Remove any unnecessary files
 find "$TEMP_DIR" -name ".git*" -delete
@@ -80,7 +80,7 @@ fi
 # Create ZIP file
 echo "Creating ZIP file: $RELEASE_DIR/$ZIP_NAME"
 cd "$TEMP_DIR"
-zip -r "$RELEASE_DIR/$ZIP_NAME" elementify -q
+zip -r "$RELEASE_DIR/$ZIP_NAME" elementeer -q
 
 # Clean up
 rm -rf "$TEMP_DIR"
@@ -92,8 +92,8 @@ if [ -f "$RELEASE_DIR/$ZIP_NAME" ]; then
     
     # Create SHA256 checksum
     cd "$RELEASE_DIR"
-    sha256sum "$ZIP_NAME" > "elementify.$VERSION.sha256"
-    echo -e "${GREEN}Created checksum: elementify.$VERSION.sha256${NC}"
+    sha256sum "$ZIP_NAME" > "elementeer.$VERSION.sha256"
+    echo -e "${GREEN}Created checksum: elementeer.$VERSION.sha256${NC}"
     
     # List contents
     echo "ZIP contents:"

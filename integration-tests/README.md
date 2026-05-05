@@ -1,10 +1,10 @@
-# Elementify MCP Integration Tests
+# Elementeer MCP Integration Tests
 
-This directory contains integration test plans for the Elementify MCP server.
+This directory contains integration test plans for the Elementeer MCP server.
 
 ## Purpose
 
-Integration tests verify that the MCP server correctly communicates with a live WordPress site running the Elementify plugin. They simulate real tool calls and validate responses.
+Integration tests verify that the MCP server correctly communicates with a live WordPress site running the Elementeer plugin. They simulate real tool calls and validate responses.
 
 ## Test Strategy
 
@@ -16,7 +16,7 @@ Integration tests verify that the MCP server correctly communicates with a live 
 ## Test Environment
 
 - A dedicated WordPress test site (can be local Docker container).
-- Elementify plugin installed and activated.
+- Elementeer plugin installed and activated.
 - An API key with appropriate capabilities.
 - MCP server configured to connect to the test site.
 
@@ -66,7 +66,7 @@ See [test-plan.md](./test-plan.md) for detailed step‑by‑step test cases.
 
 ### Steps
 1. Start test WordPress site: `docker-compose up -d`
-2. Install Elementify plugin and configure API key.
+2. Install Elementeer plugin and configure API key.
 3. Run integration test script: `npm run integration-test`
    (Script to be written.)
 

@@ -1,12 +1,12 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { BrandAdaptationPlan, ElementifyClient } from '../client.js';
+import type { BrandAdaptationPlan, ElementeerClient } from '../client.js';
 import { buildBrandAdaptationPlan } from '../brand-adaptation.js';
 import { buildDesignTokenReport } from '../design-tokens.js';
 
 export function registerBrandAdaptationTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   server.tool(
     'plan_brand_adaptation',

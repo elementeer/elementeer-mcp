@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { registerPremiumLibraryTools } from '../../tools/premium-library.js';
-import type { ElementifyClient, SiteAssessment, SiteContext } from '../../client.js';
+import type { ElementeerClient, SiteAssessment, SiteContext } from '../../client.js';
 
 function makeAssessment(overrides: Partial<SiteAssessment> = {}): SiteAssessment {
   return {
@@ -70,7 +70,7 @@ function makeContext(overrides: Partial<SiteContext> = {}): SiteContext {
   };
 }
 
-function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> = {}): ElementifyClient {
+function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> = {}): ElementeerClient {
   return {
     assessSite: vi.fn().mockResolvedValue(makeAssessment()),
     getSiteContext: vi.fn().mockResolvedValue(makeContext()),
@@ -90,13 +90,13 @@ function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> 
       },
     }),
     ...overrides,
-  } as unknown as ElementifyClient;
+  } as unknown as ElementeerClient;
 }
 
 describe('plan_premium_library_usage tool', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let handlers: Map<string, (args: Record<string, unknown>) => Promise<{ content: Array<{ text: string }> }>>;
 
   beforeEach(() => {
@@ -134,8 +134,8 @@ describe('plan_premium_library_usage tool', () => {
 
 describe('list_premium_library_assets tool', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let handlers: Map<string, (args: Record<string, unknown>) => Promise<{ content: Array<{ text: string }> }>>;
 
   beforeEach(() => {
@@ -170,8 +170,8 @@ describe('list_premium_library_assets tool', () => {
 
 describe('inspect_premium_library_asset tool', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let handlers: Map<string, (args: Record<string, unknown>) => Promise<{ content: Array<{ text: string }> }>>;
 
   beforeEach(() => {
@@ -205,8 +205,8 @@ describe('inspect_premium_library_asset tool', () => {
 
 describe('import_premium_library_asset tool', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let handlers: Map<string, (args: Record<string, unknown>) => Promise<{ content: Array<{ text: string }> }>>;
 
   beforeEach(() => {

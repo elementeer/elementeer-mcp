@@ -4,7 +4,7 @@ import { getClient } from './config.js';
 import { registerAllTools } from './tools/index.js';
 
 const server = new McpServer({
-  name: 'elementify-mcp',
+  name: 'elementeer-mcp',
   version: '0.1.0',
 });
 

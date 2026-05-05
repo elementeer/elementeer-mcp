@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ElementifyClient, OutputCritique } from '../client.js';
+import type { ElementeerClient, OutputCritique } from '../client.js';
 import { getIntegrations } from '../config.js';
 import { buildCapabilityMatrix } from '../destination.js';
 import { resolveElementorSource } from '../elementor-source.js';
@@ -14,7 +14,7 @@ import { buildImportReport } from '../validation.js';
 
 export function registerOutputCritiqueTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   server.tool(
     'critique_elementor_output',

@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Validation script for new Elementify MCP domains
+# Validation script for new Elementeer MCP domains
 # Tests each of the five advanced feature domains
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-API_KEY_FILE="/Users/andrelange/Documents/repositories/github/wp-testing-env/.elementify-api-key"
+API_KEY_FILE="/Users/andrelange/Documents/repositories/github/wp-testing-env/.elementeer-api-key"
 
 if [ ! -f "$API_KEY_FILE" ]; then
     echo "ERROR: API key file not found at $API_KEY_FILE"
@@ -14,7 +14,7 @@ if [ ! -f "$API_KEY_FILE" ]; then
 fi
 
 API_KEY=$(cat "$API_KEY_FILE" | tr -d '\n')
-BASE_URL="http://localhost:8082/wp-json/elementify/v2"
+BASE_URL="http://localhost:8082/wp-json/elementeer/v2"
 
 # Colors
 GREEN='\033[0;32m'
@@ -50,7 +50,7 @@ test_endpoint() {
     fi
 }
 
-echo "=== Elementify New Domains Validation ==="
+echo "=== Elementeer New Domains Validation ==="
 echo
 
 log_info "1. Testing Media AI Operations..."

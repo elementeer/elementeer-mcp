@@ -2,9 +2,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { buildImportReport } from '../../validation.js';
 import { registerValidationTools } from '../../tools/validation.js';
-import type { ElementifyClient, ImportReport } from '../../client.js';
+import type { ElementeerClient, ImportReport } from '../../client.js';
 
-function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> = {}): ElementifyClient {
+function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> = {}): ElementeerClient {
   return {
     getTemplate: vi.fn().mockResolvedValue({
       id: 42,
@@ -32,7 +32,7 @@ function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> 
       ],
     }),
     ...overrides,
-  } as unknown as ElementifyClient;
+  } as unknown as ElementeerClient;
 }
 
 describe('buildImportReport', () => {
@@ -82,8 +82,8 @@ describe('buildImportReport', () => {
 
 describe('validate_elementor_write tool', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let handlers: Map<string, (args: Record<string, unknown>) => Promise<{ content: Array<{ text: string }>; isError?: boolean }>>;
 
   beforeEach(() => {

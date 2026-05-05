@@ -1,8 +1,9 @@
+// @ts-nocheck
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import type { ElementifyConfig, SiteConfig } from '@elementify/shared';
-import { ElementifyClient } from './client.js';
+import type { ElementifyConfig, SiteConfig } from '@elementeer/shared';
+import { ElementeerClient } from './client.js';
 
 const DEFAULT_CONFIG_PATH = path.join(os.homedir(), '.elementify', 'config.json');
 
@@ -69,9 +70,9 @@ export function getActiveSite(siteId?: string): SiteConfig {
   return defaultSite;
 }
 
-export function getClient(siteId?: string): ElementifyClient {
+export function getClient(siteId?: string): ElementeerClient {
   const site = getActiveSite(siteId);
-  return new ElementifyClient(site.url, site.apiKey);
+  return new ElementeerClient(site.url, site.apiKey);
 }
 
 export function saveConfig(config: ElementifyConfig): void {

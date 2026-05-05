@@ -12,7 +12,7 @@
 
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ElementifyClient } from '../client.js';
+import type { ElementeerClient } from '../client.js';
 import { withCapabilityCheck } from '../capability-middleware.js';
 
 const TemplateTypeSchema = z.enum([
@@ -61,7 +61,7 @@ export interface TemplateWithVersions {
  */
 export function registerTemplateManagementTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   // ------------------------------------------------------------------ //
   // list_templates_enhanced

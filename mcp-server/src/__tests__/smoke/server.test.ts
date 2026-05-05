@@ -5,7 +5,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { registerAllTools } from '../../tools/index.js';
-import type { ElementifyClient } from '../../client.js';
+import type { ElementeerClient } from '../../client.js';
 import { REGISTERED_TOOL_NAMES } from '../../product-tiers.js';
 
 const EXPECTED_TOOLS = [...REGISTERED_TOOL_NAMES] as const;
@@ -15,7 +15,7 @@ describe.skip('MCP server smoke tests', () => {
   let registeredTools: string[];
 
   beforeEach(() => {
-    server = new McpServer({ name: 'elementify-mcp', version: '0.1.0' });
+    server = new McpServer({ name: 'elementeer-mcp', version: '0.1.0' });
     registeredTools = [];
 
     // Spy on tool() to capture all registrations
@@ -26,7 +26,7 @@ describe.skip('MCP server smoke tests', () => {
       return (originalTool as (...args: unknown[]) => unknown)(name, ...rest);
     };
 
-    const mockGetClient = (): ElementifyClient => {
+    const mockGetClient = (): ElementeerClient => {
       return {
         listTemplates: async () => ({ templates: [], total: 0, total_pages: 1 }),
         getTemplate: async () => ({ id: 1, title: '', type: 'page', status: 'publish', author: 1, date: '', modified: '', categories: [], tags: [] }),
@@ -69,7 +69,7 @@ describe.skip('MCP server smoke tests', () => {
         getChange: async () => ({ id: 'chg_1', created_at: '', status: 'approved' as const, operation: 'set_global_colors', params: {}, note: null, before_state: null, reviewed_at: null, review_note: null, applied_at: null }),
         updateChangeStatus: async () => ({ id: 'chg_1', created_at: '', status: 'approved' as const, operation: 'set_global_colors', params: {}, note: null, before_state: null, reviewed_at: null, review_note: null, applied_at: null }),
         deleteChange: async () => ({ deleted: true as const, id: 'chg_1' }),
-      } as unknown as ElementifyClient;
+      } as unknown as ElementeerClient;
     };
 
     registerAllTools(server, mockGetClient);

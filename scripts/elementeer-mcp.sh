@@ -1,16 +1,16 @@
 #!/bin/bash
 
-# Elementify MCP Installer
-# Installs and manages the Elementify MCP server with configuration support
+# Elementeer MCP Installer
+# Installs and manages the Elementeer MCP server with configuration support
 # Compatible with Bash 3.x and later
 
 set +e
 
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-INSTALL_LOG="$HOME/.elementify/install.log"
-CONFIG_DIR="$HOME/.elementify"
+INSTALL_LOG="$HOME/.elementeer/install.log"
+CONFIG_DIR="$HOME/.elementeer"
 CONFIG_FILE="$CONFIG_DIR/config.json"
-NPM_PACKAGE="@elementify/mcp"
+NPM_PACKAGE="@elementeer/mcp"
 
 # UI colors (faigate style)
 RESET=$'\033[0m'
@@ -140,7 +140,7 @@ AI_AGENT_NAMES=(
     "antigravity"
     "openclaw"
     "qwen"
-    "elementify-installer"
+    "elementeer-installer"
 )
 
 AI_AGENT_PATHS=(
@@ -150,7 +150,7 @@ AI_AGENT_PATHS=(
     "$HOME/.gemini/antigravity/mcp_config.json"
     "$HOME/.config/openclaw/config.json"
     "$HOME/.qwen/settings.json"
-    "$HOME/.elementify/installer.json"
+    "$HOME/.elementeer/installer.json"
 )
 
 AI_AGENT_TYPES=(
@@ -160,7 +160,7 @@ AI_AGENT_TYPES=(
     "json"  # antigravity
     "json"  # openclaw
     "json"  # qwen
-    "json"  # elementify-installer
+    "json"  # elementeer-installer
 )
 
 AI_AGENT_ALT_PATHS=(
@@ -170,7 +170,7 @@ AI_AGENT_ALT_PATHS=(
     "$HOME/.antigravity/config.json"  # antigravity alt (legacy path)
     ""  # openclaw - no alt
     ""  # qwen - no alt
-    ""  # elementify-installer - no alt
+    ""  # elementeer-installer - no alt
 )
 
 log() {
@@ -252,19 +252,19 @@ get_node_path() {
 }
 
 get_wrapper_path() {
-    # Get absolute path to elementify-mcp wrapper
-    if command -v elementify-mcp &> /dev/null; then
-        local wrapper_path=$(command -v elementify-mcp)
+    # Get absolute path to elementeer-mcp wrapper
+    if command -v elementeer-mcp &> /dev/null; then
+        local wrapper_path=$(command -v elementeer-mcp)
         echo "$wrapper_path"
         return 0
     fi
     
     # Check common locations
     local common_paths=(
-        "/usr/local/bin/elementify-mcp"
-        "/usr/bin/elementify-mcp"
-        "$HOME/.local/bin/elementify-mcp"
-        "/opt/homebrew/bin/elementify-mcp"
+        "/usr/local/bin/elementeer-mcp"
+        "/usr/bin/elementeer-mcp"
+        "$HOME/.local/bin/elementeer-mcp"
+        "/opt/homebrew/bin/elementeer-mcp"
     )
     
     for path in "${common_paths[@]}"; do
@@ -274,8 +274,8 @@ get_wrapper_path() {
         fi
     done
     
-    echo "elementify-mcp"
-    log "WARNING: Could not find absolute wrapper path, using 'elementify-mcp'"
+    echo "elementeer-mcp"
+    log "WARNING: Could not find absolute wrapper path, using 'elementeer-mcp'"
     log "  AI agents may fail to find the executable"
     return 1
 }
@@ -285,8 +285,8 @@ repair_existing_wrapper() {
     local wrapper_path=""
     
     # Find existing wrapper
-    if command -v elementify-mcp &> /dev/null; then
-        wrapper_path=$(command -v elementify-mcp)
+    if command -v elementeer-mcp &> /dev/null; then
+        wrapper_path=$(command -v elementeer-mcp)
     else
         return 0  # No wrapper found, nothing to repair
     fi
@@ -315,7 +315,7 @@ repair_existing_wrapper() {
         # Replace the wrapper
         cat > "$wrapper_path" << EOF
 #!/bin/bash
-# Elementify MCP wrapper (repaired)
+# Elementeer MCP wrapper (repaired)
 # Node.js path: $node_path
 exec "$node_path" "$SOURCE_DIR/mcp-server/dist/cli.js" "\$@"
 EOF
@@ -384,14 +384,14 @@ check_mcp_client_config() {
         fi
     fi
     
-    # Check if elementify is already configured
+    # Check if elementeer is already configured
     if command -v python3 &> /dev/null; then
-        if python3 -c "import json; f=open('$config_path'); data=json.load(f); print('elementify_configured' if 'mcpServers' in data and 'elementify' in data.get('mcpServers', {}) else 'not_configured')" 2>/dev/null; then
+        if python3 -c "import json; f=open('$config_path'); data=json.load(f); print('elementeer_configured' if 'mcpServers' in data and 'elementeer' in data.get('mcpServers', {}) else 'not_configured')" 2>/dev/null; then
             return 0
         fi
     elif command -v jq &> /dev/null; then
-        if jq -e '.mcpServers.elementify' "$config_path" > /dev/null 2>&1; then
-            echo "elementify_configured"
+        if jq -e '.mcpServers.elementeer' "$config_path" > /dev/null 2>&1; then
+            echo "elementeer_configured"
         else
             echo "not_configured"
         fi
@@ -402,19 +402,19 @@ check_mcp_client_config() {
     return 0
 }
 
-add_elementify_to_config() {
+add_elementeer_to_config() {
     local client_name="$1"
     local config_path="$2"
     
-    log "  Adding Elementify to $client_name configuration..."
+    log "  Adding Elementeer to $client_name configuration..."
     
     # Get absolute wrapper path for consistent configuration
-    local wrapper_path="elementify-mcp"
-    if command -v elementify-mcp &> /dev/null; then
-        wrapper_path=$(command -v elementify-mcp)
+    local wrapper_path="elementeer-mcp"
+    if command -v elementeer-mcp &> /dev/null; then
+        wrapper_path=$(command -v elementeer-mcp)
         log "    Using wrapper path: $wrapper_path"
     else
-        log "    WARNING: Could not find elementify-mcp in PATH, using 'elementify-mcp'"
+        log "    WARNING: Could not find elementeer-mcp in PATH, using 'elementeer-mcp'"
         log "    MCP clients may fail to find the executable"
     fi
     
@@ -440,34 +440,34 @@ except:
 if 'mcpServers' not in config:
     config['mcpServers'] = {}
 
-config['mcpServers']['elementify'] = {'command': '$wrapper_path'}
+config['mcpServers']['elementeer'] = {'command': '$wrapper_path'}
 
 with open('$config_path', 'w') as f:
     json.dump(config, f, indent=2)
 " || return 1
         else
-            log "  Would add elementify to mcpServers in $config_path"
+            log "  Would add elementeer to mcpServers in $config_path"
         fi
     elif command -v jq &> /dev/null; then
         if [ -z "$DRY_RUN" ]; then
-            jq --arg wrapper "$wrapper_path" '.mcpServers.elementify = {"command": $wrapper}' "$config_path" > "${config_path}.tmp" && mv "${config_path}.tmp" "$config_path" || return 1
+            jq --arg wrapper "$wrapper_path" '.mcpServers.elementeer = {"command": $wrapper}' "$config_path" > "${config_path}.tmp" && mv "${config_path}.tmp" "$config_path" || return 1
         else
-            log "  Would add elementify to mcpServers in $config_path"
+            log "  Would add elementeer to mcpServers in $config_path"
         fi
     else
         error "  Neither python3 nor jq found. Cannot update JSON config."
         return 1
     fi
     
-    log "  ✓ Elementify added to $client_name configuration"
+    log "  ✓ Elementeer added to $client_name configuration"
     return 0
 }
 
-remove_elementify_from_config() {
+remove_elementeer_from_config() {
     local client_name="$1"
     local config_path="$2"
     
-    log "  Removing Elementify from $client_name configuration..."
+    log "  Removing Elementeer from $client_name configuration..."
     
     if [ ! -f "$config_path" ]; then
         log "  Config file not found: $config_path"
@@ -484,8 +484,8 @@ try:
 except:
     config = {}
 
-if 'mcpServers' in config and 'elementify' in config['mcpServers']:
-    del config['mcpServers']['elementify']
+if 'mcpServers' in config and 'elementeer' in config['mcpServers']:
+    del config['mcpServers']['elementeer']
     # Remove empty mcpServers object
     if not config['mcpServers']:
         del config['mcpServers']
@@ -494,20 +494,20 @@ with open('$config_path', 'w') as f:
     json.dump(config, f, indent=2)
 " || return 1
         else
-            log "  Would remove elementify from mcpServers in $config_path"
+            log "  Would remove elementeer from mcpServers in $config_path"
         fi
     elif command -v jq &> /dev/null; then
         if [ -z "$DRY_RUN" ]; then
-            jq 'del(.mcpServers.elementify) | if .mcpServers == {} then del(.mcpServers) else . end' "$config_path" > "${config_path}.tmp" && mv "${config_path}.tmp" "$config_path" || return 1
+            jq 'del(.mcpServers.elementeer) | if .mcpServers == {} then del(.mcpServers) else . end' "$config_path" > "${config_path}.tmp" && mv "${config_path}.tmp" "$config_path" || return 1
         else
-            log "  Would remove elementify from mcpServers in $config_path"
+            log "  Would remove elementeer from mcpServers in $config_path"
         fi
     else
         error "  Neither python3 nor jq found. Cannot update JSON config."
         return 1
     fi
     
-    log "  ✓ Elementify removed from $client_name configuration"
+    log "  ✓ Elementeer removed from $client_name configuration"
     return 0
 }
 
@@ -530,11 +530,11 @@ show_mcp_clients_status() {
             # Check config status
             local config_status=$(check_mcp_client_config "$client" "$config_path")
             case "$config_status" in
-                "elementify_configured")
-                    echo "      ✓ Elementify already configured"
+                "elementeer_configured")
+                    echo "      ✓ Elementeer already configured"
                     ;;
                 "not_configured")
-                    echo "      ○ Elementify not configured"
+                    echo "      ○ Elementeer not configured"
                     ;;
                 "invalid_json")
                     echo "      ⚠ Configuration file has invalid JSON"
@@ -560,7 +560,7 @@ show_mcp_clients_status() {
 }
 
 interactive_select_clients() {
-    echo "Elementify MCP Client Selection" >&2
+    echo "Elementeer MCP Client Selection" >&2
     echo "================================" >&2
     echo "" >&2
     echo "Available MCP clients:" >&2
@@ -579,9 +579,9 @@ interactive_select_clients() {
             clients+=("$client")
             client_paths+=("$config_path")
             
-            # Check if elementify is already configured
+            # Check if elementeer is already configured
             local config_status=$(check_mcp_client_config "$client" "$config_path")
-            if [ "$config_status" = "elementify_configured" ]; then
+            if [ "$config_status" = "elementeer_configured" ]; then
                 client_status+=("configured")
                 echo "  $index. ✓ $client: $config_path (already configured)" >&2
             else
@@ -716,11 +716,11 @@ configure_mcp_clients() {
         local config_path="${selected_paths[$i]}"
         
         if [ "$mode" = "add" ]; then
-            if add_elementify_to_config "$client" "$config_path"; then
+            if add_elementeer_to_config "$client" "$config_path"; then
                 ((success_count++))
             fi
         elif [ "$mode" = "remove" ]; then
-            if remove_elementify_from_config "$client" "$config_path"; then
+            if remove_elementeer_from_config "$client" "$config_path"; then
                 ((success_count++))
             fi
         fi
@@ -729,7 +729,7 @@ configure_mcp_clients() {
     echo ""
     if [ "$mode" = "add" ]; then
         echo "Client configuration complete: $success_count/$total_count clients configured"
-        echo "Restart your MCP client(s) to load Elementify."
+        echo "Restart your MCP client(s) to load Elementeer."
     elif [ "$mode" = "remove" ]; then
         echo "Client configuration removed: $success_count/$total_count clients updated"
     fi
@@ -795,7 +795,7 @@ check_ai_agent_config() {
         return 1
     fi
     
-    # Check if elementify is already configured
+    # Check if elementeer is already configured
     if [ "$agent_type" = "json" ]; then
         if command -v python3 &> /dev/null; then
             if python3 -c "
@@ -807,10 +807,10 @@ except:
     sys.exit(1)
 
 # Check different possible MCP configurations
-if 'mcpServers' in data and 'elementify' in data['mcpServers']:
-    print('elementify_configured')
-elif 'mcp' in data and 'elementify' in data['mcp']:
-    print('elementify_configured')
+if 'mcpServers' in data and 'elementeer' in data['mcpServers']:
+    print('elementeer_configured')
+elif 'mcp' in data and 'elementeer' in data['mcp']:
+    print('elementeer_configured')
 else:
     print('not_configured')
 " 2>/dev/null; then
@@ -820,10 +820,10 @@ else:
                 return 1
             fi
         elif command -v jq &> /dev/null; then
-            if jq -e '.mcpServers.elementify' "$config_path" > /dev/null 2>&1; then
-                echo "elementify_configured"
-            elif jq -e '.mcp.elementify' "$config_path" > /dev/null 2>&1; then
-                echo "elementify_configured"
+            if jq -e '.mcpServers.elementeer' "$config_path" > /dev/null 2>&1; then
+                echo "elementeer_configured"
+            elif jq -e '.mcp.elementeer' "$config_path" > /dev/null 2>&1; then
+                echo "elementeer_configured"
             else
                 echo "not_configured"
             fi
@@ -853,8 +853,8 @@ except:
     sys.exit(1)
 
 # Check for mcp_servers in TOML
-if 'mcp_servers' in data and 'elementify' in data['mcp_servers']:
-    print('elementify_configured')
+if 'mcp_servers' in data and 'elementeer' in data['mcp_servers']:
+    print('elementeer_configured')
 else:
     print('not_configured')
 " 2>/dev/null; then
@@ -873,7 +873,7 @@ else:
     return 0
 }
 
-add_elementify_to_ai_agent() {
+add_elementeer_to_ai_agent() {
     local agent_name="$1"
     local config_path="$2"
     local agent_type=""
@@ -891,15 +891,15 @@ add_elementify_to_ai_agent() {
         return 1
     fi
     
-    log "  Adding Elementify to $agent_name configuration..."
+    log "  Adding Elementeer to $agent_name configuration..."
     
     # Get absolute wrapper path for AI agents (they often have restricted PATH)
-    local wrapper_path="elementify-mcp"
-    if command -v elementify-mcp &> /dev/null; then
-        wrapper_path=$(command -v elementify-mcp)
+    local wrapper_path="elementeer-mcp"
+    if command -v elementeer-mcp &> /dev/null; then
+        wrapper_path=$(command -v elementeer-mcp)
         log "    Using wrapper path: $wrapper_path"
     else
-        log "    WARNING: Could not find elementify-mcp in PATH, using 'elementify-mcp'"
+        log "    WARNING: Could not find elementeer-mcp in PATH, using 'elementeer-mcp'"
         log "    AI agents may fail to find the executable"
     fi
     
@@ -932,7 +932,7 @@ if '$agent_name' == 'opencode':
     if 'mcp' not in config:
         config['mcp'] = {}
     # opencode requires type and enabled fields
-    config['mcp']['elementify'] = {
+    config['mcp']['elementeer'] = {
         'type': 'local',
         'enabled': True,
         'command': ['$wrapper_path']
@@ -941,23 +941,23 @@ else:
     # Default to mcpServers structure (gemini, etc.)
     if 'mcpServers' not in config:
         config['mcpServers'] = {}
-    config['mcpServers']['elementify'] = {'command': '$wrapper_path'}
+    config['mcpServers']['elementeer'] = {'command': '$wrapper_path'}
 
 with open('$config_path', 'w') as f:
     json.dump(config, f, indent=2)
 " || return 1
             else
-                log "  Would add elementify to $config_path"
+                log "  Would add elementeer to $config_path"
             fi
         elif command -v jq &> /dev/null; then
             if [ -z "$DRY_RUN" ]; then
                 if [ "$agent_name" = "opencode" ]; then
-                    jq --arg wrapper "$wrapper_path" '.mcp.elementify = {"type": "local", "enabled": true, "command": [$wrapper]}' "$config_path" > "${config_path}.tmp" && mv "${config_path}.tmp" "$config_path" || return 1
+                    jq --arg wrapper "$wrapper_path" '.mcp.elementeer = {"type": "local", "enabled": true, "command": [$wrapper]}' "$config_path" > "${config_path}.tmp" && mv "${config_path}.tmp" "$config_path" || return 1
                 else
-                    jq --arg wrapper "$wrapper_path" '.mcpServers.elementify = {"command": $wrapper}' "$config_path" > "${config_path}.tmp" && mv "${config_path}.tmp" "$config_path" || return 1
+                    jq --arg wrapper "$wrapper_path" '.mcpServers.elementeer = {"command": $wrapper}' "$config_path" > "${config_path}.tmp" && mv "${config_path}.tmp" "$config_path" || return 1
                 fi
             else
-                log "  Would add elementify to $config_path"
+                log "  Would add elementeer to $config_path"
             fi
         else
             error "  Neither python3 nor jq found. Cannot update JSON config."
@@ -986,10 +986,10 @@ except FileNotFoundError:
 except:
     config = {}
 
-# Add elementify to mcp_servers
+# Add elementeer to mcp_servers
 if 'mcp_servers' not in config:
     config['mcp_servers'] = {}
-config['mcp_servers']['elementify'] = {'command': '$wrapper_path'}
+config['mcp_servers']['elementeer'] = {'command': '$wrapper_path'}
 
 # Write back as TOML (need tomli-w for writing)
 try:
@@ -999,11 +999,11 @@ try:
 except ImportError:
     # Fallback: write as INI-like TOML (simplified)
     with open('$config_path', 'a') as f:
-        f.write('\n[mcp_servers.elementify]\n')
+        f.write('\n[mcp_servers.elementeer]\n')
         f.write('command = \"$wrapper_path\"\n')
 " || return 1
             else
-                log "  Would add elementify to $config_path (TOML)"
+                log "  Would add elementeer to $config_path (TOML)"
             fi
         else
             error "  Python3 required for TOML configuration. Cannot update TOML config."
@@ -1011,11 +1011,11 @@ except ImportError:
         fi
     fi
     
-    log "  ✓ Elementify added to $agent_name configuration"
+    log "  ✓ Elementeer added to $agent_name configuration"
     return 0
 }
 
-remove_elementify_from_ai_agent() {
+remove_elementeer_from_ai_agent() {
     local agent_name="$1"
     local config_path="$2"
     local agent_type=""
@@ -1033,7 +1033,7 @@ remove_elementify_from_ai_agent() {
         return 1
     fi
     
-    log "  Removing Elementify from $agent_name configuration..."
+    log "  Removing Elementeer from $agent_name configuration..."
     
     if [ ! -f "$config_path" ]; then
         log "  Config file not found: $config_path"
@@ -1052,13 +1052,13 @@ except:
     config = {}
 
 # Remove from both possible structures
-if 'mcpServers' in config and 'elementify' in config['mcpServers']:
-    del config['mcpServers']['elementify']
+if 'mcpServers' in config and 'elementeer' in config['mcpServers']:
+    del config['mcpServers']['elementeer']
     if not config['mcpServers']:
         del config['mcpServers']
 
-if 'mcp' in config and 'elementify' in config['mcp']:
-    del config['mcp']['elementify']
+if 'mcp' in config and 'elementeer' in config['mcp']:
+    del config['mcp']['elementeer']
     if not config['mcp']:
         del config['mcp']
 
@@ -1066,14 +1066,14 @@ with open('$config_path', 'w') as f:
     json.dump(config, f, indent=2)
 " || return 1
             else
-                log "  Would remove elementify from $config_path"
+                log "  Would remove elementeer from $config_path"
             fi
         elif command -v jq &> /dev/null; then
             if [ -z "$DRY_RUN" ]; then
                 # Try both structures
-                jq 'del(.mcpServers.elementify) | del(.mcp.elementify) | if .mcpServers == {} then del(.mcpServers) else . end | if .mcp == {} then del(.mcp) else . end' "$config_path" > "${config_path}.tmp" && mv "${config_path}.tmp" "$config_path" || return 1
+                jq 'del(.mcpServers.elementeer) | del(.mcp.elementeer) | if .mcpServers == {} then del(.mcpServers) else . end | if .mcp == {} then del(.mcp) else . end' "$config_path" > "${config_path}.tmp" && mv "${config_path}.tmp" "$config_path" || return 1
             else
-                log "  Would remove elementify from $config_path"
+                log "  Would remove elementeer from $config_path"
             fi
         else
             error "  Neither python3 nor jq found. Cannot update JSON config."
@@ -1098,9 +1098,9 @@ except ImportError:
 except:
     sys.exit(0)
 
-# Remove elementify from mcp_servers
-if 'mcp_servers' in config and 'elementify' in config['mcp_servers']:
-    del config['mcp_servers']['elementify']
+# Remove elementeer from mcp_servers
+if 'mcp_servers' in config and 'elementeer' in config['mcp_servers']:
+    del config['mcp_servers']['elementeer']
     if not config['mcp_servers']:
         del config['mcp_servers']
 
@@ -1114,7 +1114,7 @@ except ImportError:
     pass
 " || return 1
             else
-                log "  Would remove elementify from $config_path (TOML)"
+                log "  Would remove elementeer from $config_path (TOML)"
             fi
         else
             error "  Python3 required for TOML configuration. Cannot update TOML config."
@@ -1122,7 +1122,7 @@ except ImportError:
         fi
     fi
     
-    log "  ✓ Elementify removed from $agent_name configuration"
+    log "  ✓ Elementeer removed from $agent_name configuration"
     return 0
 }
 
@@ -1147,11 +1147,11 @@ show_all_clients_status() {
             
             local config_status=$(check_mcp_client_config "$client" "$config_path")
             case "$config_status" in
-                "elementify_configured")
-                    echo "      ✓ Elementify already configured"
+                "elementeer_configured")
+                    echo "      ✓ Elementeer already configured"
                     ;;
                 "not_configured")
-                    echo "      ○ Elementify not configured"
+                    echo "      ○ Elementeer not configured"
                     ;;
                 "invalid_json")
                     echo "      ⚠ Configuration file has invalid JSON"
@@ -1179,11 +1179,11 @@ show_all_clients_status() {
             
             local config_status=$(check_ai_agent_config "$agent" "$config_path")
             case "$config_status" in
-                "elementify_configured")
-                    echo "      ✓ Elementify already configured"
+                "elementeer_configured")
+                    echo "      ✓ Elementeer already configured"
                     ;;
                 "not_configured")
-                    echo "      ○ Elementify not configured"
+                    echo "      ○ Elementeer not configured"
                     ;;
                 "invalid_json"|"invalid_toml")
                     echo "      ⚠ Configuration file has invalid format"
@@ -1235,7 +1235,7 @@ interactive_select_all() {
             all_types+=("mcp")
             
             local config_status=$(check_mcp_client_config "$client" "$config_path")
-            if [ "$config_status" = "elementify_configured" ]; then
+            if [ "$config_status" = "elementeer_configured" ]; then
                 all_status+=("configured")
             else
                 all_status+=("not_configured")
@@ -1256,7 +1256,7 @@ interactive_select_all() {
             all_types+=("ai")
             
             local config_status=$(check_ai_agent_config "$agent" "$config_path")
-            if [ "$config_status" = "elementify_configured" ]; then
+            if [ "$config_status" = "elementeer_configured" ]; then
                 all_status+=("configured")
             else
                 all_status+=("not_configured")
@@ -1271,7 +1271,7 @@ interactive_select_all() {
         return 1
     fi
     
-    echo "Elementify MCP Configuration" >&2
+    echo "Elementeer MCP Configuration" >&2
     echo "=============================" >&2
     echo "" >&2
     echo "Detected ${#all_items[@]} agent(s)" >&2
@@ -1368,11 +1368,11 @@ configure_all_noninteractive() {
         if [ $? -eq 0 ]; then
             ((total_count++))
             if [ "$mode" = "add" ]; then
-                if add_elementify_to_config "$client" "$config_path"; then
+                if add_elementeer_to_config "$client" "$config_path"; then
                     ((success_count++))
                 fi
             elif [ "$mode" = "remove" ]; then
-                if remove_elementify_from_config "$client" "$config_path"; then
+                if remove_elementeer_from_config "$client" "$config_path"; then
                     ((success_count++))
                 fi
             fi
@@ -1388,11 +1388,11 @@ configure_all_noninteractive() {
         if [ $? -eq 0 ]; then
             ((total_count++))
             if [ "$mode" = "add" ]; then
-                if add_elementify_to_ai_agent "$agent" "$config_path"; then
+                if add_elementeer_to_ai_agent "$agent" "$config_path"; then
                     ((success_count++))
                 fi
             elif [ "$mode" = "remove" ]; then
-                if remove_elementify_from_ai_agent "$agent" "$config_path"; then
+                if remove_elementeer_from_ai_agent "$agent" "$config_path"; then
                     ((success_count++))
                 fi
             fi
@@ -1475,21 +1475,21 @@ configure_all_clients() {
         
         if [ "$mode" = "add" ]; then
             if [ "$type" = "mcp" ]; then
-                if add_elementify_to_config "$name" "$config_path"; then
+                if add_elementeer_to_config "$name" "$config_path"; then
                     ((success_count++))
                 fi
             elif [ "$type" = "ai" ]; then
-                if add_elementify_to_ai_agent "$name" "$config_path"; then
+                if add_elementeer_to_ai_agent "$name" "$config_path"; then
                     ((success_count++))
                 fi
             fi
         elif [ "$mode" = "remove" ]; then
             if [ "$type" = "mcp" ]; then
-                if remove_elementify_from_config "$name" "$config_path"; then
+                if remove_elementeer_from_config "$name" "$config_path"; then
                     ((success_count++))
                 fi
             elif [ "$type" = "ai" ]; then
-                if remove_elementify_from_ai_agent "$name" "$config_path"; then
+                if remove_elementeer_from_ai_agent "$name" "$config_path"; then
                     ((success_count++))
                 fi
             fi
@@ -1499,7 +1499,7 @@ configure_all_clients() {
     echo ""
     if [ "$mode" = "add" ]; then
         echo "Configuration complete: $success_count/$total_count items configured"
-        echo "Restart your client(s) to load Elementify."
+        echo "Restart your client(s) to load Elementeer."
     elif [ "$mode" = "remove" ]; then
         echo "Configuration removed: $success_count/$total_count items updated"
     fi
@@ -1508,8 +1508,8 @@ configure_all_clients() {
 }
 
 check_installed_version() {
-    if command -v elementify-mcp &> /dev/null; then
-        INSTALLED_VERSION=$(elementify-mcp --version 2>/dev/null || echo "unknown")
+    if command -v elementeer-mcp &> /dev/null; then
+        INSTALLED_VERSION=$(elementeer-mcp --version 2>/dev/null || echo "unknown")
         echo "$INSTALLED_VERSION"
         return 0
     else
@@ -1532,16 +1532,16 @@ check_latest_version() {
 
 install_mcp_server() {
     # Check if already installed
-    if command -v elementify-mcp &> /dev/null; then
-        local version=$(elementify-mcp --version 2>/dev/null || echo "unknown")
-        log "✓ Elementify MCP already installed: $version"
+    if command -v elementeer-mcp &> /dev/null; then
+        local version=$(elementeer-mcp --version 2>/dev/null || echo "unknown")
+        log "✓ Elementeer MCP already installed: $version"
         
         # Try to repair existing wrapper if needed
         repair_existing_wrapper
         return 0
     fi
     
-    log "Installing Elementify MCP..."
+    log "Installing Elementeer MCP..."
     log "Trying npm installation from registry..."
     
     if [ -z "$DRY_RUN" ]; then
@@ -1554,7 +1554,7 @@ install_mcp_server() {
         # npm installation failed, try local installation
         log "npm installation failed. Trying local installation from repository..."
         
-        # Check if we're in the elementify-mcp repository
+        # Check if we're in the elementeer-mcp repository
         if [ -d "$SOURCE_DIR/mcp-server" ]; then
             log "  Found local repository at: $SOURCE_DIR"
             
@@ -1577,11 +1577,11 @@ install_mcp_server() {
                 fi
                 
                 # Create wrapper script
-                local wrapper="$target_dir/elementify-mcp"
+                local wrapper="$target_dir/elementeer-mcp"
                 local node_path=$(get_node_path)
                 cat > "$wrapper" << EOF
 #!/bin/bash
-# Elementify MCP wrapper
+# Elementeer MCP wrapper
 # Node.js path: $node_path
 exec "$node_path" "$SOURCE_DIR/mcp-server/dist/cli.js" "\$@"
 EOF
@@ -1604,11 +1604,11 @@ EOF
                         mkdir -p "$target_dir"
                     fi
                     
-                    local wrapper="$target_dir/elementify-mcp"
+                    local wrapper="$target_dir/elementeer-mcp"
                     local node_path=$(get_node_path)
                     cat > "$wrapper" << EOF
 #!/bin/bash
-# Elementify MCP wrapper
+# Elementeer MCP wrapper
 # Node.js path: $node_path
 exec "$node_path" "$SOURCE_DIR/mcp-server/dist/cli.js" "\$@"
 EOF
@@ -1624,7 +1624,7 @@ EOF
             fi
         else
             error "Failed to install via npm and no local repository found"
-            error "Package @elementify/mcp is not published to npm registry"
+            error "Package @elementeer/mcp is not published to npm registry"
             error "You can:"
             error "  1. Build from source: cd $SOURCE_DIR && npm run build"
             error "  2. Manually create symlink to mcp-server/dist/cli.js"
@@ -1639,7 +1639,7 @@ EOF
 }
 
 init_config() {
-    log "Initializing Elementify configuration..."
+    log "Initializing Elementeer configuration..."
     
     if [ ! -d "$CONFIG_DIR" ]; then
         if [ -z "$DRY_RUN" ]; then
@@ -1653,8 +1653,8 @@ init_config() {
     if [ ! -f "$CONFIG_FILE" ]; then
         log "  Creating initial configuration..."
         if [ -z "$DRY_RUN" ]; then
-            if command -v elementify-mcp &> /dev/null; then
-                elementify-mcp init
+            if command -v elementeer-mcp &> /dev/null; then
+                elementeer-mcp init
             else
                 # Create basic config manually
                 cat > "$CONFIG_FILE" << EOF
@@ -1741,7 +1741,7 @@ show_status_json() {
     "installed": $npm_ok,
     "version": "$npm_version"
   },
-  "elementify_mcp": {
+  "elementeer_mcp": {
     "installed": $mcp_installed,
     "version": "$installed_version",
     "latest_version": "$latest_version",
@@ -1761,7 +1761,7 @@ show_agent_usage() {
     echo "Agent Native Usage"
     echo "=================="
     echo ""
-    echo "The Elementify MCP Installer supports full non-interactive operation for AI agents."
+    echo "The Elementeer MCP Installer supports full non-interactive operation for AI agents."
     echo ""
     echo "Environment variables for non-interactive setup:"
     echo "  ELEMENTIFY_SITE_ID      Site identifier (e.g., 'my-site')"
@@ -1770,7 +1770,7 @@ show_agent_usage() {
     echo "  ELEMENTIFY_API_KEY      API key starting with 'ek_'"
     echo ""
     echo "Examples for agents:"
-    echo "  1. Install Elementify MCP:"
+    echo "  1. Install Elementeer MCP:"
     echo "     $0 install --quiet"
     echo ""
     echo "  2. Setup with environment variables:"
@@ -1786,7 +1786,7 @@ show_agent_usage() {
     echo "  4. Get machine-readable status:"
     echo "     $0 status --json"
     echo ""
-    echo "  5. Update Elementify MCP:"
+    echo "  5. Update Elementeer MCP:"
     echo "     $0 update --quiet"
     echo ""
     echo "All commands support --quiet for minimal output and --dry-run for simulation."
@@ -1824,7 +1824,7 @@ show_supported_clients() {
 
 show_config_help() {
     echo ""
-    echo "Elementify Configuration"
+    echo "Elementeer Configuration"
     echo "========================"
     echo ""
     echo "Config file location: $CONFIG_FILE"
@@ -1841,8 +1841,8 @@ show_config_help() {
     fi
     
     echo "Next steps:"
-    echo "  1. Install the Elementify MCP Plugin on your WordPress site"
-    echo "  2. Generate an API key in Settings → Elementify MCP"
+    echo "  1. Install the Elementeer MCP Plugin on your WordPress site"
+    echo "  2. Generate an API key in Settings → Elementeer MCP"
     echo "  3. Edit $CONFIG_FILE with your site URL and API key"
     echo "  4. Add to your MCP client config:"
     echo ""
@@ -1854,13 +1854,13 @@ show_config_help() {
     echo "     Add this to the JSON configuration:"
     echo "       {"
     echo "         \"mcpServers\": {"
-    echo "           \"elementify\": {"
-    echo "             \"command\": \"elementify-mcp\""
+    echo "           \"elementeer\": {"
+    echo "             \"command\": \"elementeer-mcp\""
     echo "           }"
     echo "         }"
     echo "       }"
     echo ""
-    echo "  5. Restart your MCP client to load Elementify"
+    echo "  5. Restart your MCP client to load Elementeer"
     echo ""
 }
 
@@ -1871,7 +1871,7 @@ update_mcp_server() {
     LATEST_VERSION=$(check_latest_version)
     
     if [ "$INSTALLED_VERSION" = "not_installed" ]; then
-        error "Elementify MCP is not installed. Use --install first."
+        error "Elementeer MCP is not installed. Use --install first."
         return 1
     fi
     
@@ -1898,7 +1898,7 @@ update_mcp_server() {
 }
 
 uninstall_mcp_server() {
-    log "Uninstalling Elementify MCP..."
+    log "Uninstalling Elementeer MCP..."
     
     # Check installation method
     local installed_via_npm=0
@@ -1911,8 +1911,8 @@ uninstall_mcp_server() {
     fi
     
     # Check for local wrapper
-    if command -v elementify-mcp &> /dev/null; then
-        local cmd_path=$(which elementify-mcp)
+    if command -v elementeer-mcp &> /dev/null; then
+        local cmd_path=$(which elementeer-mcp)
         # Check if it's our wrapper script (contains our source path)
         if [ -f "$cmd_path" ] && head -n5 "$cmd_path" 2>/dev/null | grep -q "$SOURCE_DIR/mcp-server/dist/cli.js"; then
             installed_locally=1
@@ -1950,7 +1950,7 @@ uninstall_mcp_server() {
     fi
     
     if [ $installed_via_npm -eq 0 ] && [ $installed_locally -eq 0 ]; then
-        log "  No Elementify MCP installation found"
+        log "  No Elementeer MCP installation found"
     else
         log "✓ MCP server uninstalled"
     fi
@@ -1971,7 +1971,7 @@ uninstall_mcp_server() {
 }
 
 show_status() {
-    echo "Elementify MCP Status"
+    echo "Elementeer MCP Status"
     echo "====================="
     echo ""
     
@@ -1992,7 +1992,7 @@ show_status() {
     # Check MCP server
     INSTALLED_VERSION=$(check_installed_version)
     if [ "$INSTALLED_VERSION" != "not_installed" ]; then
-        echo "✓ Elementify MCP: $INSTALLED_VERSION"
+        echo "✓ Elementeer MCP: $INSTALLED_VERSION"
         
         # Check latest version
         LATEST_VERSION=$(check_latest_version)
@@ -2000,7 +2000,7 @@ show_status() {
             echo "  Update available: $LATEST_VERSION (run with --update)"
         fi
     else
-        echo "✗ Elementify MCP: Not installed"
+        echo "✗ Elementeer MCP: Not installed"
     fi
     
     # Check config
@@ -2020,7 +2020,7 @@ show_status() {
     
     echo ""
     
-    # Show client and agent detection if Elementify is installed
+    # Show client and agent detection if Elementeer is installed
     if [ "$INSTALLED_VERSION" != "not_installed" ]; then
         show_all_clients_status
         echo ""
@@ -2029,17 +2029,17 @@ show_status() {
 
 show_usage() {
     cat << EOF
-Elementify MCP Interactive Control Center
+Elementeer MCP Interactive Control Center
 =========================================
 
 Usage: $0 [COMMAND] [OPTIONS]
 
 Commands:
-  install           Install Elementify MCP server
+  install           Install Elementeer MCP server
   update            Update to latest version  
   setup             Setup configuration (interactive)
   status            Show installation status
-  uninstall         Remove Elementify MCP
+  uninstall         Remove Elementeer MCP
   config            Configure MCP clients
   docs              Show configuration documentation
   repair            Repair existing installation (node path, wrapper)
@@ -2053,7 +2053,7 @@ Options:
   --yes             Automatic yes to all prompts (non-interactive)
 
 Examples:
-  $0 install        # Install Elementify MCP
+  $0 install        # Install Elementeer MCP
   $0 setup          # Interactive setup with token input
   $0 status         # Check installation
   $0 update         # Update to latest version
@@ -2064,13 +2064,13 @@ EOF
 }
 
 setup_config() {
-    echo "Elementify MCP Setup"
+    echo "Elementeer MCP Setup"
     echo "===================="
     echo ""
     
-    # Check if elementify-mcp is installed
-    if ! command -v elementify-mcp &> /dev/null; then
-        echo "Elementify MCP is not installed."
+    # Check if elementeer-mcp is installed
+    if ! command -v elementeer-mcp &> /dev/null; then
+        echo "Elementeer MCP is not installed."
         echo "Please run '$0 install' first."
         echo ""
         return 1
@@ -2183,7 +2183,7 @@ setup_config() {
                 echo "API key cannot be empty."
             elif [[ ! "$api_key" =~ ^ek_ ]]; then
                 echo "API key should start with 'ek_'."
-                echo "Generate one in WordPress: Settings → Elementify MCP"
+                echo "Generate one in WordPress: Settings → Elementeer MCP"
                 api_key=""
             fi
         done
@@ -2254,7 +2254,7 @@ with open('$CONFIG_FILE', 'w') as f:
         echo ""
         echo "Next steps:"
         echo "  1. Restart your MCP client to load changes"
-        echo "  2. Test connection: elementify-mcp sites"
+        echo "  2. Test connection: elementeer-mcp sites"
         return 0
     else
         echo "✗ Failed to update configuration."
@@ -2264,10 +2264,10 @@ with open('$CONFIG_FILE', 'w') as f:
 
 show_simple_status() {
     local script_name="$1"
-    # Check if elementify-mcp is installed
-    if command -v elementify-mcp &> /dev/null; then
-        local version=$(elementify-mcp --version 2>/dev/null || echo "unknown")
-        echo "✓ Elementify MCP: $version"
+    # Check if elementeer-mcp is installed
+    if command -v elementeer-mcp &> /dev/null; then
+        local version=$(elementeer-mcp --version 2>/dev/null || echo "unknown")
+        echo "✓ Elementeer MCP: $version"
         
         # Check config
         if [ -f "$CONFIG_FILE" ]; then
@@ -2284,7 +2284,7 @@ show_simple_status() {
             echo "✗ Config: Not found (run '$script_name setup')"
         fi
     else
-        echo "✗ Elementify MCP: Not installed"
+        echo "✗ Elementeer MCP: Not installed"
         echo "  Run '$script_name install' to install"
     fi
 }
@@ -2292,14 +2292,14 @@ show_simple_status() {
 # Menu functions
 show_interactive_menu() {
     clear_screen
-    print_header "Elementify MCP" "Interactive Control Center"
+    print_header "Elementeer MCP" "Interactive Control Center"
     
     # Show quick status
-    if command -v elementify-mcp &> /dev/null; then
-        local version=$(elementify-mcp --version 2>/dev/null || echo "unknown")
-        print_success "Elementify MCP: $version"
+    if command -v elementeer-mcp &> /dev/null; then
+        local version=$(elementeer-mcp --version 2>/dev/null || echo "unknown")
+        print_success "Elementeer MCP: $version"
     else
-        print_warning "Elementify MCP: Not installed"
+        print_warning "Elementeer MCP: Not installed"
     fi
     
     if [ -f "$CONFIG_FILE" ]; then
@@ -2311,12 +2311,12 @@ show_interactive_menu() {
     echo ""
     echo "${BOLD}Available actions:${RESET}"
     echo ""
-    echo "  1)  Install           Install/update Elementify MCP server"
+    echo "  1)  Install           Install/update Elementeer MCP server"
     echo "  2)  Setup             Configure WordPress site (interactive)"
     echo "  3)  Status            Detailed installation status"
     echo "  4)  Config            Configure MCP clients and AI agents"
     echo "  5)  Update            Check for and install updates"
-    echo "  6)  Uninstall         Remove Elementify MCP"
+    echo "  6)  Uninstall         Remove Elementeer MCP"
     echo ""
     echo "  7)  Quick Setup       Guided installation and configuration"
 echo "  8)  Client Status     Show detected MCP clients and agents"
@@ -2332,7 +2332,7 @@ echo "  h)  Help              Show usage information"
     case "$choice" in
         1)
             echo ""
-            echo "Installing Elementify MCP..."
+            echo "Installing Elementeer MCP..."
             exec "$0" install
             ;;
         2)
@@ -2398,7 +2398,7 @@ run_quick_setup() {
     echo "This will guide you through the complete setup process:"
     echo ""
     echo "  1) Check system requirements"
-    echo "  2) Install Elementify MCP"
+    echo "  2) Install Elementeer MCP"
     echo "  3) Configure WordPress site"
     echo ""
     echo "Start quick setup? (y/N)"
@@ -2436,10 +2436,10 @@ run_quick_setup() {
     pause
     
     # Step 2: Install
-    print_header "Step 2: Installation" "Installing Elementify MCP"
+    print_header "Step 2: Installation" "Installing Elementeer MCP"
     
-    if command -v elementify-mcp &> /dev/null; then
-        print_info "Elementify MCP is already installed."
+    if command -v elementeer-mcp &> /dev/null; then
+        print_info "Elementeer MCP is already installed."
         echo ""
         echo "Continue with setup? (y/N)"
         print_prompt
@@ -2468,7 +2468,7 @@ run_quick_setup() {
     fi
     
     # Completion
-    print_header "Quick Setup Complete" "Elementify MCP is ready to use"
+    print_header "Quick Setup Complete" "Elementeer MCP is ready to use"
     
     print_success "Setup complete!"
     echo ""
@@ -2506,7 +2506,7 @@ main() {
     # Create log directory
     mkdir -p "$(dirname "$INSTALL_LOG")"
     
-    log "Starting Elementify MCP"
+    log "Starting Elementeer MCP"
     [ -n "$DRY_RUN" ] && log "DRY RUN MODE - simulating actions only"
     
     # Check for command
@@ -2552,7 +2552,7 @@ main() {
     
     case "$command" in
         install)
-            echo "Installing Elementify MCP..."
+            echo "Installing Elementeer MCP..."
             if ! check_node || ! check_npm; then
                 exit 1
             fi
@@ -2574,7 +2574,7 @@ main() {
             ;;
             
         update)
-            echo "Updating Elementify MCP..."
+            echo "Updating Elementeer MCP..."
             if ! check_node || ! check_npm; then
                 exit 1
             fi
@@ -2605,7 +2605,7 @@ main() {
             ;;
             
         uninstall)
-            echo "Uninstalling Elementify MCP..."
+            echo "Uninstalling Elementeer MCP..."
             uninstall_mcp_server
             
             if [ -n "$REMOVE_CONFIG" ]; then
@@ -2631,7 +2631,7 @@ main() {
             ;;
             
         repair)
-            echo "Repairing Elementify MCP installation..."
+            echo "Repairing Elementeer MCP installation..."
             if ! check_node || ! check_npm; then
                 exit 1
             fi
@@ -2662,7 +2662,7 @@ main() {
             ;;
     esac
     
-    log "Elementify MCP finished"
+    log "Elementeer MCP finished"
 }
 
 main "$@"

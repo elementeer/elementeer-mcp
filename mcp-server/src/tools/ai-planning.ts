@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ElementifyClient, RebuildStrategy } from '../client.js';
+import type { ElementeerClient, RebuildStrategy } from '../client.js';
 import { getIntegrations } from '../config.js';
 import { buildCapabilityMatrix } from '../destination.js';
 import { buildSiteFingerprint } from '../fingerprint.js';
@@ -12,7 +12,7 @@ import {
   rebuildStrategySchema,
 } from '../ai-planning.js';
 
-async function buildPlanningContext(client: ElementifyClient) {
+async function buildPlanningContext(client: ElementeerClient) {
   const [assessment, context] = await Promise.all([
     client.assessSite(),
     client.getSiteContext(),
@@ -31,7 +31,7 @@ async function buildPlanningContext(client: ElementifyClient) {
 
 export function registerAiPlanningTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   server.tool(
     'plan_rebuild_strategy',

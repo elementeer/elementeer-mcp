@@ -3,7 +3,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { buildBrandAdaptationPlan } from '../../brand-adaptation.js';
 import { buildDesignTokenReport } from '../../design-tokens.js';
 import { registerBrandAdaptationTools } from '../../tools/brand-adaptation.js';
-import type { ElementifyClient, GlobalStylesData, SiteAssessment, SiteContext } from '../../client.js';
+import type { ElementeerClient, GlobalStylesData, SiteAssessment, SiteContext } from '../../client.js';
 
 function makeStylesData(overrides: Partial<GlobalStylesData> = {}): GlobalStylesData {
   return {
@@ -62,13 +62,13 @@ function makeContext(overrides: Partial<SiteContext> = {}): SiteContext {
   };
 }
 
-function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> = {}): ElementifyClient {
+function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> = {}): ElementeerClient {
   return {
     getGlobalStyles: vi.fn().mockResolvedValue(makeStylesData()),
     assessSite: vi.fn().mockResolvedValue(makeAssessment()),
     getSiteContext: vi.fn().mockResolvedValue(makeContext()),
     ...overrides,
-  } as unknown as ElementifyClient;
+  } as unknown as ElementeerClient;
 }
 
 describe('buildBrandAdaptationPlan', () => {
@@ -88,8 +88,8 @@ describe('buildBrandAdaptationPlan', () => {
 
 describe('plan_brand_adaptation tool', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let handlers: Map<string, (args: Record<string, unknown>) => Promise<{ content: Array<{ text: string }> }>>;
 
   beforeEach(() => {

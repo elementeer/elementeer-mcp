@@ -9,7 +9,7 @@ import { buildCapabilityMatrix } from '../../destination.js';
 import { buildSiteFingerprint } from '../../fingerprint.js';
 import { buildRecommendationReport } from '../../recommendations.js';
 import { registerAiPlanningTools } from '../../tools/ai-planning.js';
-import type { ElementifyClient, RebuildStrategy, SiteAssessment, SiteContext } from '../../client.js';
+import type { ElementeerClient, RebuildStrategy, SiteAssessment, SiteContext } from '../../client.js';
 
 vi.mock('axios', () => {
   const mockPost = vi.fn();
@@ -70,12 +70,12 @@ function makeReport(assessment: SiteAssessment, context: SiteContext) {
   return buildRecommendationReport({ assessment, context, fingerprint, capabilityMatrix });
 }
 
-function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> = {}): ElementifyClient {
+function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> = {}): ElementeerClient {
   return {
     assessSite: vi.fn().mockResolvedValue(makeAssessment()),
     getSiteContext: vi.fn().mockResolvedValue(makeContext()),
     ...overrides,
-  } as unknown as ElementifyClient;
+  } as unknown as ElementeerClient;
 }
 
 describe('deterministic AI planning fallback', () => {
@@ -129,8 +129,8 @@ describe('deterministic AI planning fallback', () => {
 
 describe('AI planning tools', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let handlers: Map<string, (args: Record<string, unknown>) => Promise<{ content: Array<{ text: string }>; isError?: boolean }>>;
 
   beforeEach(() => {

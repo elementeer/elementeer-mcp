@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ElementifyClient } from '../client.js';
+import type { ElementeerClient } from '../client.js';
 import { GOVERNANCE_LEVELS } from '../product-tiers.js';
 
 /**
@@ -491,7 +491,7 @@ function parseGravityFormsJson(gravityData: any): { fields: Array<z.infer<typeof
 
 export function registerFormTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
 
   // ------------------------------------------------------------------ //
@@ -966,7 +966,7 @@ export function registerFormTools(
 
 export function registerFormFreeTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
 
   // ------------------------------------------------------------------ //
@@ -1081,7 +1081,7 @@ export function registerFormFreeTools(
 
 export function registerFormAdvancedTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
 
   // ------------------------------------------------------------------ //

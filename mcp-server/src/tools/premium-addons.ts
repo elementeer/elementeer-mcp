@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ElementifyClient } from '../client.js';
+import type { ElementeerClient } from '../client.js';
 
 type Addon = {
   active: boolean;
@@ -27,7 +27,7 @@ function findPremiumAddons(addons: Array<Addon>) {
 
 export function registerPremiumAddonsFreeTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   // ------------------------------------------------------------------ //
   // detect_premium_addons (Free)
@@ -156,7 +156,7 @@ export function registerPremiumAddonsFreeTools(
 
 export function registerPremiumAddonsAdvancedTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   // ------------------------------------------------------------------ //
   // analyze_premium_addons_usage (Advanced)

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { registerVoxelTools } from '../../tools/voxel.js';
-import type { ElementifyClient, VoxelStatus, VoxelPostTypeList, VoxelPostTypeDetail, VoxelTaxonomyList, VoxelProductTypeList, VoxelSettings, VoxelHealth } from '../../client.js';
+import type { ElementeerClient, VoxelStatus, VoxelPostTypeList, VoxelPostTypeDetail, VoxelTaxonomyList, VoxelProductTypeList, VoxelSettings, VoxelHealth } from '../../client.js';
 
 function makeVoxelStatus(overrides: Partial<VoxelStatus> = {}): VoxelStatus {
   return {
@@ -83,7 +83,7 @@ function makeVoxelHealth(overrides: Partial<VoxelHealth> = {}): VoxelHealth {
   };
 }
 
-function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> = {}): ElementifyClient {
+function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> = {}): ElementeerClient {
   return {
     getVoxelStatus: vi.fn().mockResolvedValue(makeVoxelStatus()),
     listVoxelPostTypes: vi.fn().mockResolvedValue(makeVoxelPostTypeList()),
@@ -97,13 +97,13 @@ function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> 
     getSiteContext: vi.fn(),
     listTemplates: vi.fn(),
     ...overrides,
-  } as unknown as ElementifyClient;
+  } as unknown as ElementeerClient;
 }
 
 describe('Voxel tools', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let toolHandlers: Map<string, (args: Record<string, unknown>) => Promise<unknown>>;
 
   beforeEach(() => {

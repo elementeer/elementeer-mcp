@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Elementify Plugin Release Test Script
-# Runs basic smoke tests on the Elementify WordPress plugin
+# Elementeer Plugin Release Test Script
+# Runs basic smoke tests on the Elementeer WordPress plugin
 # Designed to be called by SkillWeave ReleaseChain
 
 set -e
@@ -12,16 +12,16 @@ TEST_ENV_DIR="/Users/andrelange/Documents/repositories/github/wp-testing-env"
 
 # Extract version from plugin header to construct ZIP name
 PLUGIN_DIR="$REPO_DIR/plugin"
-VERSION=$(grep -o "Version:[[:space:]]*[0-9]\.[0-9]\.[0-9]" "$PLUGIN_DIR/elementify.php" 2>/dev/null | awk '{print $2}')
+VERSION=$(grep -o "Version:[[:space:]]*[0-9]\.[0-9]\.[0-9]" "$PLUGIN_DIR/elementeer.php" 2>/dev/null | awk '{print $2}')
 if [ -z "$VERSION" ]; then
-    echo "Warning: Could not extract version from $PLUGIN_DIR/elementify.php, defaulting to 2.0.1"
+    echo "Warning: Could not extract version from $PLUGIN_DIR/elementeer.php, defaulting to 2.0.1"
     VERSION="2.0.1"
 fi
 
 # Use existing plugin ZIP from test environment plugin folder
-# Naming Convention: elementify.X.Y.Z.zip
-PLUGIN_ZIP="$TEST_ENV_DIR/plugins/elementify.$VERSION.zip"
-API_KEY_FILE="$TEST_ENV_DIR/.elementify-api-key"
+# Naming Convention: elementeer.X.Y.Z.zip
+PLUGIN_ZIP="$TEST_ENV_DIR/plugins/elementeer.$VERSION.zip"
+API_KEY_FILE="$TEST_ENV_DIR/.elementeer-api-key"
 
 # Colors for output
 RED='\033[0;31m'
@@ -64,18 +64,18 @@ check_dependencies() {
     # Check plugin ZIP exists in test environment
     if [ ! -f "$PLUGIN_ZIP" ]; then
         log_error "Plugin ZIP not found at: $PLUGIN_ZIP"
-        log_info "Checking for available Elementify plugin ZIPs in test environment..."
+        log_info "Checking for available Elementeer plugin ZIPs in test environment..."
         
-        # List available Elementify plugin ZIPs
+        # List available Elementeer plugin ZIPs
         local available_zips
-        available_zips=$(find "$TEST_ENV_DIR/plugins/" -name "*elementify*.zip" 2>/dev/null | head -5)
+        available_zips=$(find "$TEST_ENV_DIR/plugins/" -name "*elementeer*.zip" 2>/dev/null | head -5)
         
         if [ -n "$available_zips" ]; then
-            log_info "Available Elementify plugin ZIPs:"
+            log_info "Available Elementeer plugin ZIPs:"
             echo "$available_zips"
             log_info "Please update PLUGIN_ZIP variable to use one of the available ZIPs"
         else
-            log_error "No Elementify plugin ZIPs found in $TEST_ENV_DIR/plugins/"
+            log_error "No Elementeer plugin ZIPs found in $TEST_ENV_DIR/plugins/"
         fi
         exit 1
     fi
@@ -126,8 +126,8 @@ install_plugin() {
     # Check if plugin ZIP exists in test environment
     if [ ! -f "$PLUGIN_ZIP" ]; then
         log_error "Plugin ZIP not found at: $PLUGIN_ZIP"
-        log_info "Available Elementify plugin ZIPs in $TEST_ENV_DIR/plugins/:"
-        ls -la "$TEST_ENV_DIR/plugins/elementify.*.zip" 2>/dev/null || true
+        log_info "Available Elementeer plugin ZIPs in $TEST_ENV_DIR/plugins/:"
+        ls -la "$TEST_ENV_DIR/plugins/elementeer.*.zip" 2>/dev/null || true
         exit 1
     fi
     
@@ -136,7 +136,7 @@ install_plugin() {
     
     # Use install script with the existing ZIP
     if [ -f "./scripts/install-plugin.sh" ]; then
-        ./scripts/install-plugin.sh --name elementify "plugins/$PLUGIN_FILENAME"
+        ./scripts/install-plugin.sh --name elementeer "plugins/$PLUGIN_FILENAME"
     else
         log_warn "install-plugin.sh not found, attempting manual installation..."
         # Fallback to WP-CLI
@@ -186,7 +186,7 @@ test_api_endpoint() {
     response_code=$(curl -s -o /dev/null -w "%{http_code}" \
         -H "Authorization: Bearer $API_KEY" \
         -H "Content-Type: application/json" \
-        "http://localhost:8082/wp-json/elementify/v1$endpoint")
+        "http://localhost:8082/wp-json/elementeer/v1$endpoint")
     
     if [ "$response_code" -eq "$expected_code" ]; then
         log_success "$description returned $response_code"
@@ -274,7 +274,7 @@ check_debug_log() {
 }
 
 main() {
-    log_info "Starting Elementify Plugin Release Test"
+    log_info "Starting Elementeer Plugin Release Test"
     log_info "========================================"
     
     # Parse arguments
@@ -320,7 +320,7 @@ main() {
     check_debug_log
     
     log_info "Test completed. See TESTING_WORKFLOW.md for detailed testing instructions."
-    log_success "Elementify Plugin Release Test finished"
+    log_success "Elementeer Plugin Release Test finished"
 }
 
 # Run main function

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { registerCharityTools } from '../../tools/charity.js';
-import type { ElementifyClient, CharityStatus, CharityFormList, CharityDonationStats } from '../../client.js';
+import type { ElementeerClient, CharityStatus, CharityFormList, CharityDonationStats } from '../../client.js';
 
 function makeCharityStatus(overrides: Partial<CharityStatus> = {}): CharityStatus {
   return {
@@ -55,7 +55,7 @@ function makeCharityDonationStats(overrides: Partial<CharityDonationStats> = {})
   };
 }
 
-function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> = {}): ElementifyClient {
+function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> = {}): ElementeerClient {
   return {
     getCharityStatus: vi.fn().mockResolvedValue(makeCharityStatus()),
     listCharityForms: vi.fn().mockResolvedValue(makeCharityFormList()),
@@ -66,13 +66,13 @@ function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> 
     getSiteContext: vi.fn(),
     listTemplates: vi.fn(),
     ...overrides,
-  } as unknown as ElementifyClient;
+  } as unknown as ElementeerClient;
 }
 
 describe('Charity tools', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let toolHandlers: Map<string, (args: Record<string, unknown>) => Promise<unknown>>;
 
   beforeEach(() => {

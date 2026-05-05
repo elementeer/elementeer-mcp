@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { registerStockImageTools } from '../../tools/stock-images.js';
-import type { ElementifyClient } from '../../client.js';
+import type { ElementeerClient } from '../../client.js';
 
 // ------------------------------------------------------------------ //
 // Mock axios and config
@@ -75,7 +75,7 @@ function makeUnsplashResponse(count = 2) {
   };
 }
 
-function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> = {}): ElementifyClient {
+function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> = {}): ElementeerClient {
   return {
     sideloadImage: vi.fn().mockResolvedValue({
       id: 42,
@@ -84,7 +84,7 @@ function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> 
       title: 'Modern office',
     }),
     ...overrides,
-  } as unknown as ElementifyClient;
+  } as unknown as ElementeerClient;
 }
 
 // ------------------------------------------------------------------ //
@@ -93,8 +93,8 @@ function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> 
 
 describe('stock image tools', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let handlers: Map<string, (args: Record<string, unknown>) => Promise<{ content: Array<{ type: string; text: string }> }>>;
 
   beforeEach(() => {

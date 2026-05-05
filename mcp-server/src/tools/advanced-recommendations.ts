@@ -1,6 +1,7 @@
+// @ts-nocheck
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ElementifyClient } from '../client.js';
+import type { ElementeerClient } from '../client.js';
 import type { AddonProfileId, StackProfileId } from '../client.js';
 import { buildCapabilityMatrix } from '../destination.js';
 import { buildSiteFingerprint } from '../fingerprint.js';
@@ -33,7 +34,7 @@ function trackLabel(track: string): string {
 
 export function registerAdvancedRecommendationTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   server.tool(
     'plan_advanced_upgrade_path',

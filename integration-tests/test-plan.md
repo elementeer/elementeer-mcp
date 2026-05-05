@@ -1,4 +1,4 @@
-# Elementify MCP Integration Test Plan
+# Elementeer MCP Integration Test Plan
 
 ## Overview
 
@@ -13,7 +13,7 @@ This document outlines concrete test cases for each MCP tool. Each test case inc
 
 ## Test Setup
 
-1. Start a fresh WordPress installation with Elementor and Elementify plugin.
+1. Start a fresh WordPress installation with Elementor and Elementeer plugin.
 2. Create an API key with full capabilities.
 3. Configure MCP server to use the test site.
 4. Run each test in isolation; clean up after write tests.

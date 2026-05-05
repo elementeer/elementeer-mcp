@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ElementifyClient, IntentWizardInput, IntentWizardRoute, StackReadinessSignals } from '../client.js';
+import type { ElementeerClient, IntentWizardInput, IntentWizardRoute, StackReadinessSignals } from '../client.js';
 import { deriveStackReadinessSignals, routeIntentWizard } from '../intent-wizard.js';
 
 function normalizeList(values?: string[]): string[] {
@@ -40,7 +40,7 @@ function buildRouteText(route: IntentWizardRoute): string {
 }
 
 async function buildRuntimeInput(
-  client: ElementifyClient | null,
+  client: ElementeerClient | null,
   raw: {
     origin: IntentWizardInput['origin'];
     intent: IntentWizardInput['intent'];
@@ -68,7 +68,7 @@ async function buildRuntimeInput(
 
 export function registerIntentWizardTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   server.tool(
     'route_intent_wizard',

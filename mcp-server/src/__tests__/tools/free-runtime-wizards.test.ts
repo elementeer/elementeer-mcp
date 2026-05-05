@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { registerFreeRuntimeWizardTools } from '../../tools/free-runtime-wizards.js';
-import type { ElementifyClient, SiteAssessment, SiteContext, SiteInfo } from '../../client.js';
-import type { ElementifyTemplate } from '@elementify/shared';
+import type { ElementeerClient, SiteAssessment, SiteContext, SiteInfo } from '../../client.js';
+import type { ElementeerTemplate } from '@elementeer/shared';
 
 function makeAssessment(overrides: Partial<SiteAssessment> = {}): SiteAssessment {
   return {
@@ -67,8 +67,8 @@ function makeSiteInfo(overrides: Partial<SiteInfo> = {}): SiteInfo {
   };
 }
 
-function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> = {}): ElementifyClient {
-  const templates: ElementifyTemplate[] = [
+function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> = {}): ElementeerClient {
+  const templates: ElementeerTemplate[] = [
     {
       id: 11,
       title: 'SECTION Hero',
@@ -180,13 +180,13 @@ function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> 
       changes: [],
     }),
     ...overrides,
-  } as unknown as ElementifyClient;
+  } as unknown as ElementeerClient;
 }
 
 describe('free runtime wizard tools', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let handlers: Map<string, (args: Record<string, unknown>) => Promise<{ content: Array<{ text: string }> }>>;
 
   beforeEach(() => {

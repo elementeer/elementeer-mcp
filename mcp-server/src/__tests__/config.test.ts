@@ -145,7 +145,7 @@ describe('getActiveSite', () => {
 });
 
 describe('getClient', () => {
-  it('returns an ElementifyClient configured for the active site', async () => {
+  it('returns an ElementeerClient configured for the active site', async () => {
     writeConfig(sampleConfig);
     const { getClient } = await importConfig();
     const client = getClient();

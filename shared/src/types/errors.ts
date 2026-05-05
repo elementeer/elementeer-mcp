@@ -1,4 +1,4 @@
-export type ElementifyErrorCode =
+export type ElementeerErrorCode =
   | 'auth_invalid_key'
   | 'auth_key_inactive'
   | 'auth_insufficient_scope' // key valid but lacks capability — NOT "invalid key"!
@@ -8,8 +8,8 @@ export type ElementifyErrorCode =
   | 'template_type_unsupported'
   | 'rate_limited';
 
-export interface ElementifyError {
-  code: ElementifyErrorCode;
+export interface ElementeerError {
+  code: ElementeerErrorCode;
   message: string;
   status: number;
 }

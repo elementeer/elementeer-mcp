@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { registerAllyTools } from '../../tools/ally.js';
-import type { ElementifyClient, AllyStatus, AllyScanResults, AllyTriggerScanResponse, AllyApplyFixResponse } from '../../client.js';
+import type { ElementeerClient, AllyStatus, AllyScanResults, AllyTriggerScanResponse, AllyApplyFixResponse } from '../../client.js';
 
 function makeAllyStatus(overrides: Partial<AllyStatus> = {}): AllyStatus {
   return {
@@ -75,7 +75,7 @@ function makeAllyApplyFixResponse(overrides: Partial<AllyApplyFixResponse> = {})
   };
 }
 
-function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> = {}): ElementifyClient {
+function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> = {}): ElementeerClient {
   return {
     getAllyStatus: vi.fn().mockResolvedValue(makeAllyStatus()),
     getAllyScanResults: vi.fn().mockResolvedValue(makeAllyScanResults()),
@@ -87,13 +87,13 @@ function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> 
     getSiteContext: vi.fn(),
     listTemplates: vi.fn(),
     ...overrides,
-  } as unknown as ElementifyClient;
+  } as unknown as ElementeerClient;
 }
 
 describe('Ally tools', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let toolHandlers: Map<string, (args: Record<string, unknown>) => Promise<unknown>>;
 
   beforeEach(() => {

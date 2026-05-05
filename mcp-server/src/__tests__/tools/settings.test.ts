@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { registerSettingsTools } from '../../tools/settings.js';
-import type { ElementifyClient } from '../../client.js';
+import type { ElementeerClient } from '../../client.js';
 
-function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> = {}): ElementifyClient {
+function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> = {}): ElementeerClient {
   return {
     getSiteSettings: vi.fn().mockResolvedValue({
       blogname: 'Test Site',
@@ -37,13 +37,13 @@ function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> 
     getChange: vi.fn().mockResolvedValue({ id: 'chg_settings_test', status: 'approved' }),
     updateChangeStatus: vi.fn().mockResolvedValue({ id: 'chg_settings_test', status: 'approved' }),
     ...overrides,
-  } as unknown as ElementifyClient;
+  } as unknown as ElementeerClient;
 }
 
 describe('settings tools', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let toolHandlers: Map<string, (args: Record<string, unknown>) => Promise<unknown>>;
 
   beforeEach(() => {

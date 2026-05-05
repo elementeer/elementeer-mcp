@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import type { ElementifyClient } from './client.js';
+import type { ElementeerClient } from './client.js';
 import { GOVERNANCE_LEVELS } from './product-tiers.js';
 
 /**
@@ -47,8 +47,8 @@ export interface GovernanceExecuteResult {
  * @returns GovernanceExecuteResult
  */
 export async function executeWithGovernance(
-  client: ElementifyClient,
-  executor: (client: ElementifyClient, params: Record<string, unknown>) => Promise<unknown>,
+  client: ElementeerClient,
+  executor: (client: ElementeerClient, params: Record<string, unknown>) => Promise<unknown>,
   options: GovernanceExecuteOptions,
 ): Promise<GovernanceExecuteResult> {
   const { toolName, siteId, params, note, writeMode, consent } = options;
@@ -113,7 +113,7 @@ export async function executeWithGovernance(
  * ```
  */
 export function createGovernedHandler(
-  executor: (client: ElementifyClient, params: Record<string, unknown>) => Promise<unknown>,
+  executor: (client: ElementeerClient, params: Record<string, unknown>) => Promise<unknown>,
   toolName: string,
 ) {
   return async (args: Record<string, unknown> & { site_id?: string; note?: string; consent?: boolean }) => {

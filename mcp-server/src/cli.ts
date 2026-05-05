@@ -5,7 +5,7 @@
  *
  * Usage:
  *   elementify-mcp          — starts the MCP server (stdio transport)
- *   elementify-mcp init     — creates ~/.elementify/config.json with an example
+ *   elementify-mcp init     — creates ~/.elementeer/config.json with an example
  *   elementify-mcp sites    — lists configured sites
  *   elementify-mcp version  — prints version
  */
@@ -60,7 +60,7 @@ switch (command) {
     console.log('  2. Generate an API key in Settings → Elementify MCP');
     console.log(`  3. Edit ${configPath} with your site URL and API key`);
     console.log('  4. Add to your MCP client config:');
-    console.log('     { "mcpServers": { "elementify": { "command": "elementify-mcp" } } }');
+    console.log('     { "mcpServers": { "elementify": { "command": "elementeer-mcp" } } }');
     process.exit(0);
     break;
   }

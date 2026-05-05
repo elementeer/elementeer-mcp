@@ -3,7 +3,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { buildSiteFingerprint } from '../../fingerprint.js';
 import { registerFingerprintTools } from '../../tools/fingerprint.js';
 import type {
-  ElementifyClient,
+  ElementeerClient,
   SiteAssessment,
   SiteFingerprintSignal,
 } from '../../client.js';
@@ -73,11 +73,11 @@ function makeAssessment(overrides: Partial<SiteAssessment> = {}): SiteAssessment
   };
 }
 
-function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> = {}): ElementifyClient {
+function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> = {}): ElementeerClient {
   return {
     assessSite: vi.fn().mockResolvedValue(makeAssessment()),
     ...overrides,
-  } as unknown as ElementifyClient;
+  } as unknown as ElementeerClient;
 }
 
 describe('buildSiteFingerprint', () => {
@@ -139,8 +139,8 @@ describe('buildSiteFingerprint', () => {
 
 describe('get_site_fingerprint tool', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let handlers: Map<string, (args: Record<string, unknown>) => Promise<{ content: Array<{ text: string }> }>>;
 
   beforeEach(() => {

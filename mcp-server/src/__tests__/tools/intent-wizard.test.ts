@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ElementifyClient, SiteAssessment, SiteInfo } from '../../client.js';
+import type { ElementeerClient, SiteAssessment, SiteInfo } from '../../client.js';
 import { registerIntentWizardTools } from '../../tools/intent-wizard.js';
 
 function makeSiteInfo(overrides: Partial<SiteInfo> = {}): SiteInfo {
@@ -79,7 +79,7 @@ function makeAssessment(overrides: Partial<SiteAssessment> = {}): SiteAssessment
 describe('intent wizard tools', () => {
   let server: McpServer;
   let toolHandlers: Map<string, (args: Record<string, unknown>) => Promise<unknown>>;
-  let client: ElementifyClient;
+  let client: ElementeerClient;
 
   beforeEach(() => {
     server = new McpServer({ name: 'test', version: '0.0.0' });
@@ -95,7 +95,7 @@ describe('intent wizard tools', () => {
     client = {
       getSiteInfo: vi.fn().mockResolvedValue(makeSiteInfo()),
       assessSite: vi.fn().mockResolvedValue(makeAssessment()),
-    } as unknown as ElementifyClient;
+    } as unknown as ElementeerClient;
 
     registerIntentWizardTools(server, () => client);
   });

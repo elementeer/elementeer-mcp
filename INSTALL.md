@@ -1,6 +1,6 @@
-# Elementify Install
+# Elementeer Install
 
-This is the shortest practical install guide for the current Elementify setup.
+This is the shortest practical install guide for the current Elementeer setup.
 
 It focuses on the public `Free` surface. `Advanced` is built from the private Forgejo primary and is not part of the public GitHub mirror.
 
@@ -9,27 +9,27 @@ It focuses on the public `Free` surface. `Advanced` is built from the private Fo
 ### 1. Install the WordPress plugin
 
 1. Clone or download the repository.
-2. Use `scripts/create-plugin-zip.sh` to create a properly named ZIP archive (following "elementify.X.Y.Z.zip" convention).
+2. Use `scripts/create-plugin-zip.sh` to create a properly named ZIP archive (following "elementeer.X.Y.Z.zip" convention).
 3. In WordPress admin, go to `Plugins -> Add New -> Upload Plugin`.
-4. Upload the ZIP (e.g., `elementify.2.0.1.zip`) and activate `Elementify MCP Plugin`.
-5. Open `Settings -> Elementify MCP` and generate an API key.
+4. Upload the ZIP (e.g., `elementeer.2.0.1.zip`) and activate `Elementeer MCP Plugin`.
+5. Open `Settings -> Elementeer MCP` and generate an API key.
 
 ### 2. Install the MCP server
 
 ```bash
-npm install -g @elementify/mcp
-elementify-mcp init
+npm install -g @elementeer/mcp
+elementeer-mcp init
 ```
 
 This creates:
 
 ```text
-~/.elementify/config.json
+~/.elementeer/config.json
 ```
 
 ### 3. Configure your site
 
-Edit `~/.elementify/config.json`:
+Edit `~/.elementeer/config.json`:
 
 ```json
 {
@@ -45,13 +45,13 @@ Edit `~/.elementify/config.json`:
 }
 ```
 
-### 4. Add Elementify to your MCP client
+### 4. Add Elementeer to your MCP client
 
 ```json
 {
   "mcpServers": {
-    "elementify": {
-      "command": "elementify-mcp"
+    "elementeer": {
+      "command": "elementeer-mcp"
     }
   }
 }
@@ -119,7 +119,7 @@ Today that means:
 
 ## Canonical References
 
-- [Public quickstart](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/quickstart/free.md)
-- [Free product surface](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-product-surface.md)
-- [Free mirror export rules](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/architecture/free-mirror-export.md)
-- [Forgejo to GitHub Free mirror runbook](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/release/forgejo-github-free-mirror-runbook.md)
+- [Public quickstart](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/quickstart/free.md)
+- [Free product surface](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-product-surface.md)
+- [Free mirror export rules](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/architecture/free-mirror-export.md)
+- [Forgejo to GitHub Free mirror runbook](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/release/forgejo-github-free-mirror-runbook.md)

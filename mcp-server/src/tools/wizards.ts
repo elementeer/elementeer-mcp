@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ElementifyClient } from '../client.js';
+import type { ElementeerClient } from '../client.js';
 
 /**
  * Shared registration pattern for module wizards.
@@ -60,7 +60,7 @@ export interface WizardResult {
  */
 export function registerModuleWizard(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
   options: WizardRegistrationOptions,
 ): void {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -121,7 +121,7 @@ export function registerModuleWizard(
  */
 export function registerModuleWizards(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   // These will be populated in Phase 3.3
   const wizardDefinitions: WizardRegistrationOptions[] = [

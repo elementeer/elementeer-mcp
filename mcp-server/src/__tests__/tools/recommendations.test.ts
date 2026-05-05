@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { buildRecommendations, registerRecommendationTools } from '../../tools/recommendations.js';
-import type { ElementifyClient, SiteAssessment, SiteContext } from '../../client.js';
+import type { ElementeerClient, SiteAssessment, SiteContext } from '../../client.js';
 
 // ------------------------------------------------------------------ //
 // Fixtures
@@ -235,7 +235,7 @@ describe('buildRecommendations — rule engine', () => {
 // MCP tool tests
 // ------------------------------------------------------------------ //
 
-function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> = {}): ElementifyClient {
+function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> = {}): ElementeerClient {
   return {
     listTemplates: vi.fn(),
     getTemplate: vi.fn(),
@@ -253,13 +253,13 @@ function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> 
     getPageData: vi.fn(),
     updatePageData: vi.fn(),
     ...overrides,
-  } as unknown as ElementifyClient;
+  } as unknown as ElementeerClient;
 }
 
 describe('recommendation MCP tools', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let handlers: Map<string, (args: Record<string, unknown>) => Promise<{ content: Array<{ text: string }> }>>;
 
   beforeEach(() => {

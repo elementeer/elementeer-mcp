@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ElementifyClient } from '../client.js';
+import type { ElementeerClient } from '../client.js';
 import { GOVERNANCE_LEVELS } from '../product-tiers.js';
 
 export function registerPerformanceFreeTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   // ------------------------------------------------------------------ //
   // flush_elementor_cache
@@ -211,7 +211,7 @@ export function registerPerformanceFreeTools(
 
 export function registerPerformanceAdvancedTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   // ------------------------------------------------------------------ //
   // optimize_elementor_assets
@@ -506,7 +506,7 @@ export function registerPerformanceAdvancedTools(
 // Backwards compatibility: keep original registrar that registers all tools.
 export function registerPerformanceTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   registerPerformanceFreeTools(server, getClient);
   registerPerformanceAdvancedTools(server, getClient);

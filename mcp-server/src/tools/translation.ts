@@ -1,12 +1,12 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ElementifyClient, StringTranslationRequest, MediaTranslationRequest } from '../client.js';
+import type { ElementeerClient, StringTranslationRequest, MediaTranslationRequest } from '../client.js';
 import { getIntegrations } from '../config.js';
 import { createOpenAiTranslationProvider } from '../translation-provider.js';
 
 export function registerTranslationFreeTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   // ------------------------------------------------------------------ //
   // analyze_translation_coverage
@@ -111,7 +111,7 @@ export function registerTranslationFreeTools(
 
 export function registerTranslationAdvancedTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   // ------------------------------------------------------------------ //
   // batch_translate_strings (LANG-004)
@@ -338,7 +338,7 @@ export function registerTranslationAdvancedTools(
 
 export function registerTranslationTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   registerTranslationFreeTools(server, getClient);
   registerTranslationAdvancedTools(server, getClient);

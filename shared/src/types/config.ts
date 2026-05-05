@@ -9,14 +9,14 @@ export interface SiteConfig {
   default?: boolean;
 }
 
-export interface ElementifyIntegrations {
+export interface ElementeerIntegrations {
   pexels_api_key?: string;
   unsplash_access_key?: string;
   openai_api_key?: string;
   ai_planning_enabled?: boolean;
 }
 
-export interface ElementifyConfig {
+export interface ElementeerConfig {
   sites: SiteConfig[];
-  integrations?: ElementifyIntegrations;
+  integrations?: ElementeerIntegrations;
 }

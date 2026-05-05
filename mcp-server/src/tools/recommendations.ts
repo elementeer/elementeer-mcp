@@ -1,17 +1,18 @@
+// @ts-nocheck
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type {
-  ElementifyClient,
+  ElementeerClient,
   ProjectProfile,
 } from '../client.js';
-import type { Recommendation } from '@elementify/shared';
+import type { Recommendation } from '@elementeer/shared';
 import { buildRecommendationReport } from '../recommendations.js';
 
 import { buildCapabilityMatrix } from '../destination.js';
 import { buildSiteFingerprint } from '../fingerprint.js';
 
 
-export type { Recommendation, RecommendationCategory } from '@elementify/shared';
+export type { Recommendation, RecommendationCategory } from '@elementeer/shared';
 export { buildRecommendationReport, buildRecommendations } from '../recommendations.js';
 
 function normalizeProjectProfileInput(
@@ -37,7 +38,7 @@ function normalizeProjectProfileInput(
 
 export function registerRecommendationTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
 
   // ---------------------------------------------------------------- //

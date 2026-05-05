@@ -1,8 +1,8 @@
 /**
- * Elementify MCP Integration Test Runner (Proof of Concept)
+ * Elementeer MCP Integration Test Runner (Proof of Concept)
  * 
  * This runner demonstrates how to simulate MCP tool calls against a live
- * WordPress site with Elementify plugin.
+ * WordPress site with Elementeer plugin.
  * 
  * Usage: tsx runner.ts (or compile to JS and run with node)
  */
@@ -21,7 +21,7 @@ interface TestResult {
   data?: any;
 }
 
-class ElementifyTestRunner {
+class ElementeerTestRunner {
   private config: TestConfig;
 
   constructor(config: TestConfig) {
@@ -29,7 +29,7 @@ class ElementifyTestRunner {
   }
 
   async makeRequest(endpoint: string, method: string = 'GET', body?: any): Promise<any> {
-    const url = `${this.config.siteUrl}/wp-json/elementify/v1/${endpoint}`;
+    const url = `${this.config.siteUrl}/wp-json/elementeer/v1/${endpoint}`;
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       'X-API-Key': this.config.apiKey,
@@ -138,7 +138,7 @@ class ElementifyTestRunner {
   }
 
   async runAll(): Promise<TestResult[]> {
-    console.log('🚀 Elementify Integration Test Runner');
+    console.log('🚀 Elementeer Integration Test Runner');
     console.log(`🔗 Site: ${this.config.siteUrl}`);
     console.log('---');
 
@@ -182,11 +182,11 @@ const config: TestConfig = {
 
 // If this file is run directly
 if (require.main === module) {
-  const runner = new ElementifyTestRunner(config);
+  const runner = new ElementeerTestRunner(config);
   runner.runAll().catch(error => {
     console.error('Fatal error:', error);
     process.exit(1);
   });
 }
 
-export { ElementifyTestRunner, TestConfig, TestResult };
+export { ElementeerTestRunner, TestConfig, TestResult };

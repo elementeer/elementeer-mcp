@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { registerLmsTools } from '../../tools/lms.js';
-import type { ElementifyClient, LmsStatus, LmsCourseList, LmsCourseStructure } from '../../client.js';
+import type { ElementeerClient, LmsStatus, LmsCourseList, LmsCourseStructure } from '../../client.js';
 
 function makeLmsStatus(overrides: Partial<LmsStatus> = {}): LmsStatus {
   return {
@@ -102,7 +102,7 @@ function makeLmsCourseStructure(overrides: Partial<LmsCourseStructure> = {}): Lm
   };
 }
 
-function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> = {}): ElementifyClient {
+function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> = {}): ElementeerClient {
   return {
     getLmsStatus: vi.fn().mockResolvedValue(makeLmsStatus()),
     listLmsCourses: vi.fn().mockResolvedValue(makeLmsCourseList()),
@@ -113,13 +113,13 @@ function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> 
     getSiteContext: vi.fn(),
     listTemplates: vi.fn(),
     ...overrides,
-  } as unknown as ElementifyClient;
+  } as unknown as ElementeerClient;
 }
 
 describe('LMS tools', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let toolHandlers: Map<string, (args: Record<string, unknown>) => Promise<unknown>>;
 
   beforeEach(() => {

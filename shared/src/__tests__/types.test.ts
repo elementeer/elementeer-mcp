@@ -15,12 +15,12 @@ import type {
   GlobalColor,
   GlobalStylesData,
   GlobalTypographyEntry,
-  ElementifyErrorCode,
-  ElementifyError,
+  ElementeerErrorCode,
+  ElementeerError,
   ActivationMode,
   GovernanceSettings,
-  ElementifyTemplate,
-  ElementifyTemplateList,
+  ElementeerTemplate,
+  ElementeerTemplateList,
   CapabilityMatrix,
   DesignTokenReport,
   DestinationProfile,
@@ -44,7 +44,7 @@ import type {
   RecommendationEngineInput,
   RecommendationEngineReport,
   SiteConfig,
-  ElementifyConfig,
+  ElementeerConfig,
   SiteAssessment,
   SiteContext,
   SiteInfo,
@@ -113,7 +113,7 @@ const RISK_RESOLUTION_MODES: RiskResolutionMode[] = [
   'preserve-copy-first',
 ];
 
-const ERROR_CODES: ElementifyErrorCode[] = [
+const ERROR_CODES: ElementeerErrorCode[] = [
   'auth_invalid_key',
   'auth_key_inactive',
   'auth_insufficient_scope',
@@ -270,7 +270,7 @@ describe('Project profile and sensorik contracts', () => {
   });
 });
 
-describe('ElementifyErrorCode', () => {
+describe('ElementeerErrorCode', () => {
   it('all error codes are non-empty strings', () => {
     for (const code of ERROR_CODES) {
       expect(typeof code).toBe('string');
@@ -316,9 +316,9 @@ describe('GovernanceSettings runtime shape', () => {
   });
 });
 
-describe('ElementifyTemplate runtime shape', () => {
+describe('ElementeerTemplate runtime shape', () => {
   it('can construct a valid template object', () => {
-    const template: ElementifyTemplate = {
+    const template: ElementeerTemplate = {
       id: 1,
       title: 'Hero Section',
       status: 'publish',
@@ -336,7 +336,7 @@ describe('ElementifyTemplate runtime shape', () => {
   });
 
   it('template list total and total_pages are numeric', () => {
-    const list: ElementifyTemplateList = {
+    const list: ElementeerTemplateList = {
       templates: [],
       total: 0,
       total_pages: 1,
@@ -347,9 +347,9 @@ describe('ElementifyTemplate runtime shape', () => {
   });
 });
 
-describe('ElementifyError runtime shape', () => {
+describe('ElementeerError runtime shape', () => {
   it('can construct a valid error object', () => {
-    const error: ElementifyError = {
+    const error: ElementeerError = {
       code: 'auth_insufficient_scope',
       message: 'Key lacks required capability.',
       status: 403,
@@ -360,9 +360,9 @@ describe('ElementifyError runtime shape', () => {
   });
 });
 
-describe('SiteConfig and ElementifyConfig', () => {
+describe('SiteConfig and ElementeerConfig', () => {
   it('can construct a valid single-site config', () => {
-    const config: ElementifyConfig = {
+    const config: ElementeerConfig = {
       sites: [
         {
           id: 'my-site',
@@ -859,7 +859,7 @@ describe('shared intelligence contracts', () => {
       providers: [
         localProvider,
         {
-          kind: 'elementify-premium',
+          kind: 'elementeer-premium',
           label: 'Elementify Premium Library',
           scope: 'catalog',
           availability: 'active',
@@ -875,7 +875,7 @@ describe('shared intelligence contracts', () => {
     };
 
     expect(report.defaultProvider).toBe('local-elementor');
-    expect(report.providers[1]!.kind).toBe('elementify-premium');
+    expect(report.providers[1]!.kind).toBe('elementeer-premium');
   });
 
   it('can construct premium library catalog and inspection contracts', () => {
@@ -900,14 +900,14 @@ describe('shared intelligence contracts', () => {
       guardrails: ['Do not imply cross-site reuse.'],
     };
     const catalog: PremiumLibraryCatalogReport = {
-      provider: 'elementify-premium',
+      provider: 'elementeer-premium',
       availability: 'active',
       assetCount: 1,
       assets: [summary],
       notes: ['Catalog stays local-site operational.'],
     };
     const inspection: PremiumLibraryInspectionReport = {
-      provider: 'elementify-premium',
+      provider: 'elementeer-premium',
       availability: 'active',
       asset: detail,
       importMode: 'manual-import',

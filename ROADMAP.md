@@ -1,4 +1,4 @@
-# Elementify MCP — Roadmap
+# Elementeer MCP — Roadmap
 
 ---
 
@@ -28,7 +28,7 @@ Plugin version bumped to 1.0.0, MCP Server version bumped to 1.0.0.
 - **WordPress Core Settings**: `get_site_settings` / `update_site_settings` — read and modify blog name, tagline, homepage, posts page, permalink structure, timezone, date/time formats.
 - **SEO Management**: `get_seo_meta` / `update_seo_meta` — auto‑detects Yoast SEO, Rank Math, SEOPress, All‑In‑One SEO; reads and writes SEO title, description, focus keyword.
 - **Performance & Cache**: `flush_elementor_cache`, `get_performance_report`, `optimize_elementor_assets` — Elementor CSS cache flushing, performance analysis, and asset optimization (Advanced tier).
-- **Assessment enhancements**: Added `capabilities` section reporting SEO plugin presence and Elementify plugin capabilities.
+- **Assessment enhancements**: Added `capabilities` section reporting SEO plugin presence and Elementeer plugin capabilities.
 
 Plugin version bumped to 0.5.0, MCP Server version bumped to 0.5.0.
 
@@ -36,18 +36,18 @@ Plugin version bumped to 0.5.0, MCP Server version bumped to 0.5.0.
 
 ## Produkt-Positionierung & Freemium-Strategie
 
-Elementify konkurriert nicht mit Elementor — es **multipliziert** Elementor. Die Pricing-Logik ist:
+Elementeer konkurriert nicht mit Elementor — es **multipliziert** Elementor. Die Pricing-Logik ist:
 
 | Kombination | übertrifft |
 |---|---|
-| Elementify Free + Elementor Free | Elementor Essential (paid) |
-| Elementify Basic + Elementor Free | Elementor Advanced |
-| Elementify Basic + Elementor Advanced | Elementor Expert |
-| Elementify One + Elementor One | unschlagbar — volle agentic Kontrolle |
+| Elementeer Free + Elementor Free | Elementor Essential (paid) |
+| Elementeer Basic + Elementor Free | Elementor Advanced |
+| Elementeer Basic + Elementor Advanced | Elementor Expert |
+| Elementeer One + Elementor One | unschlagbar — volle agentic Kontrolle |
 
-Einzelne Elementify-Module (Stock Images, AI Generation, Governance Pro, Multi-Site) sind granular zubuchbar — kein Alles-oder-Nichts-Upgrade.
+Einzelne Elementeer-Module (Stock Images, AI Generation, Governance Pro, Multi-Site) sind granular zubuchbar — kein Alles-oder-Nichts-Upgrade.
 
-### Was Elementify Free bereits bietet, das Elementor Essential nicht hat
+### Was Elementeer Free bereits bietet, das Elementor Essential nicht hat
 - `assess_site` — vollständiger Site-Health-Report (Elementor: nicht vorhanden)
 - `get_recommendations` — kontextbezogener Aktionsplan (Elementor: nicht vorhanden)
 - `set_global_colors` / `set_global_typography` — automatisiert, nicht nur manuell
@@ -56,14 +56,14 @@ Einzelne Elementify-Module (Stock Images, AI Generation, Governance Pro, Multi-S
 - Multi-Site-Support (Elementor verlangt separate Lizenzen)
 - `compose_page_from_templates` — Layout-Assembly ohne Editor
 
-### Was Elementify Basic zusätzlich bietet
+### Was Elementeer Basic zusätzlich bietet
 - Vollständige Creator Mode AI-Integration (automatische Section-Generierung)
 - Theme Builder Wizard (Header/Footer automatisch aus Library bauen)
 - Stock Images Integration (Pexels/Unsplash API)
 - Governance-Profiles für Agencies
 - Change-Review-Queue (AI schlägt vor, Mensch approves)
 
-### Was Elementify One zusätzlich bietet
+### Was Elementeer One zusätzlich bietet
 - AI Image Generation (integriert, kein separater Service nötig)
 - Vollständige agentic Site-Verwaltung (inkl. Posts, Media, Users)
 - White-Label-fähig für Agencies
@@ -189,13 +189,13 @@ ACF, Forms, Comments, Multilingual, Plugin Stack, Export, Health, Ally, LMS, Cha
 
 ## Phase 4 — Elementor Feature Parität + Differenzierung (abgeschlossen)
 
-| Elementor Feature | Elementify‑Ergänzung |
+| Elementor Feature | Elementeer‑Ergänzung |
 |---|---|
-| Site Planner (paid) | AI‑generierter Siteplan aus Brief (free in Elementify) |
+| Site Planner (paid) | AI‑generierter Siteplan aus Brief (free in Elementeer) |
 | Template Library (eigene) | AI‑kuratierte Auswahl aus eigener Library |
 | Global Styles (manuell) | `suggest_palette_from_content` — AI analysiert Content |
 | Theme Builder (visuell) | `create_theme_template` via MCP für agentic workflows |
-| Accessibility (paid) | Basis‑Accessibility‑Scan (free in Elementify) |
+| Accessibility (paid) | Basis‑Accessibility‑Scan (free in Elementeer) |
 
 **Bewusste Nicht‑Überschneidungen**
 - Kein visueller Editor → Elementor bleibt der Editor

@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { registerWizardTools } from '../../tools/wizard.js';
-import type { ElementifyClient, SiteAssessment, GlobalStylesData } from '../../client.js';
-import type { ElementifyTemplate, ElementifyTemplateList } from '@elementify/shared';
+import type { ElementeerClient, SiteAssessment, GlobalStylesData } from '../../client.js';
+import type { ElementeerTemplate, ElementeerTemplateList } from '@elementeer/shared';
 
 // ------------------------------------------------------------------ //
 // Fixtures
@@ -38,17 +38,17 @@ function makeStyles(overrides: Partial<GlobalStylesData> = {}): GlobalStylesData
   };
 }
 
-function makeTemplate(id: number, title: string, tags: string[] = [], categories: string[] = []): ElementifyTemplate {
+function makeTemplate(id: number, title: string, tags: string[] = [], categories: string[] = []): ElementeerTemplate {
   return { id, title, type: 'container', status: 'publish', author: 1, date: '', modified: '', tags, categories };
 }
 
-function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> = {}): ElementifyClient {
+function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> = {}): ElementeerClient {
   return {
     createChange:         vi.fn().mockResolvedValue({ id: 'chg_test', created_at: '2026-03-30T10:00:00+00:00', status: 'pending', operation: 'set_site_logo', params: {}, note: '', before_state: null, reviewed_at: null, review_note: null, applied_at: null }),
     listChanges:          vi.fn().mockResolvedValue({ changes: [], total: 0 }),
     getChange:            vi.fn().mockResolvedValue({ id: 'chg_test', status: 'approved' }),
     updateChangeStatus:   vi.fn().mockResolvedValue({ id: 'chg_test', status: 'approved' }),
-    listTemplates: vi.fn().mockResolvedValue({ templates: [], total: 0, total_pages: 1 } as ElementifyTemplateList),
+    listTemplates: vi.fn().mockResolvedValue({ templates: [], total: 0, total_pages: 1 } as ElementeerTemplateList),
     getTemplate: vi.fn(),
     createTemplate: vi.fn().mockResolvedValue(makeTemplate(99, 'New')),
     updateTemplate: vi.fn(),
@@ -113,13 +113,13 @@ function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> 
       changes: [],
     }),
     ...overrides,
-  } as unknown as ElementifyClient;
+  } as unknown as ElementeerClient;
 }
 
 describe('wizard tools', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let handlers: Map<string, (args: Record<string, unknown>) => Promise<{ content: Array<{ text: string }>; isError?: boolean }>>;
 
   beforeEach(() => {

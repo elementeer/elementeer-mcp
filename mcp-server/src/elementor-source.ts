@@ -1,4 +1,4 @@
-import type { ElementifyClient, ImportReport } from './client.js';
+import type { ElementeerClient, ImportReport } from './client.js';
 
 export interface ElementorSourcePayload {
   sourceType: ImportReport['sourceType'];
@@ -8,7 +8,7 @@ export interface ElementorSourcePayload {
 }
 
 export async function resolveElementorSource(params: {
-  client: ElementifyClient;
+  client: ElementeerClient;
   sourceType: ImportReport['sourceType'];
   sourceId?: number;
   elementorData?: string;

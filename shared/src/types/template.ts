@@ -7,7 +7,7 @@ export type ElementorTemplateType =
   | 'kit'
   | 'global-widget';
 
-export interface ElementifyTemplate {
+export interface ElementeerTemplate {
   id: number;
   title: string;
   status: 'publish' | 'draft' | 'private' | 'trash';
@@ -21,8 +21,8 @@ export interface ElementifyTemplate {
   shortcode?: string;
 }
 
-export interface ElementifyTemplateList {
-  templates: ElementifyTemplate[];
+export interface ElementeerTemplateList {
+  templates: ElementeerTemplate[];
   total: number;
   total_pages: number;
 }

@@ -82,7 +82,7 @@ function main() {
   ensureContains(readme, 'Advanced', 'README.md');
   ensureContains(readme, 'Studio', 'README.md');
 
-  ensureContains(quickstart, '# Elementify Free Quickstart', 'docs/quickstart/free.md');
+  ensureContains(quickstart, '# Elementeer Free Quickstart', 'docs/quickstart/free.md');
   ensureContains(quickstart, 'mirror-safe Free surface', 'docs/quickstart/free.md');
   ensureContains(quickstart, 'scenario-first front door and intent routing', 'docs/quickstart/free.md');
   ensureContains(quickstart, 'new-site-lite', 'docs/quickstart/free.md');
@@ -91,13 +91,13 @@ function main() {
   ensureContains(quickstart, 'Free includes/excludes summary', 'docs/quickstart/free.md');
 
   const freeIncludesExcludes = readText('docs/public/free-includes-excludes.md');
-  ensureContains(freeIncludesExcludes, '# Elementify Free Includes / Excludes', 'docs/public/free-includes-excludes.md');
+  ensureContains(freeIncludesExcludes, '# Elementeer Free Includes / Excludes', 'docs/public/free-includes-excludes.md');
   ensureContains(freeIncludesExcludes, 'Free includes', 'docs/public/free-includes-excludes.md');
   ensureContains(freeIncludesExcludes, 'Free excludes', 'docs/public/free-includes-excludes.md');
   ensureContains(freeIncludesExcludes, 'scenario-first front door and intent routing', 'docs/public/free-includes-excludes.md');
   ensureContains(freeIncludesExcludes, '360-degree starting point', 'docs/public/free-includes-excludes.md');
 
-  ensureContains(releaseChecklist, '# Elementify Free Public Release Checklist', 'docs/release/free-public-release-checklist.md');
+  ensureContains(releaseChecklist, '# Elementeer Free Public Release Checklist', 'docs/release/free-public-release-checklist.md');
   ensureContains(releaseChecklist, 'release:free-mirror:gate', 'docs/release/free-public-release-checklist.md');
   ensureContains(releaseChecklist, 'forgejo-github-free-mirror-runbook.md', 'docs/release/free-public-release-checklist.md');
 
@@ -126,7 +126,7 @@ function main() {
     ...manifest.publicDocumentation,
   ].filter((value, index, values) => values.indexOf(value) === index));
 
-  ensureContains(stagedReadme, 'Elementify Free Public Mirror Staging', 'staged README.md');
+  ensureContains(stagedReadme, 'Elementeer Free Public Mirror Staging', 'staged README.md');
   ensureContains(stagedReadme, 'docs/quickstart/free.md', 'staged README.md');
   ensureContains(stagedReadme, 'docs/release/free-public-release-checklist.md', 'staged README.md');
 

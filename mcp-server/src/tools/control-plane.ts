@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ControlIntent, ElementifyClient, PipelinePathPlan } from '../client.js';
+import type { ControlIntent, ElementeerClient, PipelinePathPlan } from '../client.js';
 import { buildPipelinePathPlan } from '../control-plane.js';
 import { buildCapabilityMatrix } from '../destination.js';
 import { buildSiteFingerprint } from '../fingerprint.js';
@@ -8,7 +8,7 @@ import { buildRecommendationReport } from '../recommendations.js';
 
 export function registerControlPlaneTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   server.tool(
     'suggest_pipeline_path',

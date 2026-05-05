@@ -6,7 +6,7 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
 import { setupServer } from 'msw/node';
 import { http, HttpResponse } from 'msw';
-import { ElementifyClient, ElementifyApiError } from '../../client.js';
+import { ElementeerClient, ElementifyApiError } from '../../client.js';
 
 const BASE = 'https://test.example.com/wp-json/elementify/v1';
 const API_KEY = 'ek_integration_test_key';
@@ -17,8 +17,8 @@ beforeAll(() => mswServer.listen({ onUnhandledRequest: 'error' }));
 afterEach(() => mswServer.resetHandlers());
 afterAll(() => mswServer.close());
 
-function makeClient(): ElementifyClient {
-  return new ElementifyClient('https://test.example.com', API_KEY);
+function makeClient(): ElementeerClient {
+  return new ElementeerClient('https://test.example.com', API_KEY);
 }
 
 function templateFixture(overrides: Record<string, unknown> = {}) {
@@ -37,7 +37,7 @@ function templateFixture(overrides: Record<string, unknown> = {}) {
   };
 }
 
-describe('ElementifyClient integration — happy paths', () => {
+describe('ElementeerClient integration — happy paths', () => {
   it('listTemplates hits GET /templates with correct headers', async () => {
     let receivedHeaders: Headers | undefined;
 
@@ -223,7 +223,7 @@ describe('ElementifyClient integration — happy paths', () => {
   });
 });
 
-describe('ElementifyClient integration — error mapping', () => {
+describe('ElementeerClient integration — error mapping', () => {
   // The core Respira bug fix: scope errors must not surface as auth_invalid_key
 
   it('401 + elementify_insufficient_scope → auth_insufficient_scope (NOT auth_invalid_key)', async () => {

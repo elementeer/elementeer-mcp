@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { buildDesignTokenReport } from '../../design-tokens.js';
 import { registerDesignTokenTools } from '../../tools/design-tokens.js';
-import type { ElementifyClient, GlobalStylesData, SiteAssessment } from '../../client.js';
+import type { ElementeerClient, GlobalStylesData, SiteAssessment } from '../../client.js';
 
 function makeStylesData(overrides: Partial<GlobalStylesData> = {}): GlobalStylesData {
   return {
@@ -56,12 +56,12 @@ function makeAssessment(overrides: Partial<SiteAssessment> = {}): SiteAssessment
   };
 }
 
-function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> = {}): ElementifyClient {
+function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> = {}): ElementeerClient {
   return {
     getGlobalStyles: vi.fn().mockResolvedValue(makeStylesData()),
     assessSite: vi.fn().mockResolvedValue(makeAssessment()),
     ...overrides,
-  } as unknown as ElementifyClient;
+  } as unknown as ElementeerClient;
 }
 
 describe('buildDesignTokenReport', () => {
@@ -86,8 +86,8 @@ describe('buildDesignTokenReport', () => {
 
 describe('extract_design_tokens tool', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let handlers: Map<string, (args: Record<string, unknown>) => Promise<{ content: Array<{ text: string }> }>>;
 
   beforeEach(() => {

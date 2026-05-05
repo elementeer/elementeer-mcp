@@ -99,7 +99,7 @@ async function main() {
   fs.writeFileSync(
     path.join(outputRoot, 'README.md'),
     [
-      '# Elementify Free Public Mirror Staging',
+      '# Elementeer Free Public Mirror Staging',
       '',
       'This directory is a generated staging artifact for the public Free mirror.',
       'The dry-run output is deterministic and starts from a clean staging directory.',

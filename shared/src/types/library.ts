@@ -1,7 +1,7 @@
 export type LibraryProviderKind =
   | 'local-elementor'
-  | 'elementify-premium'
-  | 'elementify-cloud';
+  | 'elementeer-premium'
+  | 'elementeer-cloud';
 
 export type LibraryProviderScope =
   | 'site'
@@ -85,7 +85,7 @@ export interface PremiumLibraryAssetDetail extends PremiumLibraryAssetSummary {
 }
 
 export interface PremiumLibraryCatalogReport {
-  provider: 'elementify-premium';
+  provider: 'elementeer-premium';
   availability: LibraryProviderAvailability;
   assetCount: number;
   assets: PremiumLibraryAssetSummary[];
@@ -93,7 +93,7 @@ export interface PremiumLibraryCatalogReport {
 }
 
 export interface PremiumLibraryInspectionReport {
-  provider: 'elementify-premium';
+  provider: 'elementeer-premium';
   availability: LibraryProviderAvailability;
   asset: PremiumLibraryAssetDetail;
   importMode: 'manual-import';

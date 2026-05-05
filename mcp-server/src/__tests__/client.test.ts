@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import axios from 'axios';
-import { ElementifyClient, ElementifyApiError } from '../client.js';
+import { ElementeerClient, ElementifyApiError } from '../client.js';
 import type { AxiosError } from 'axios';
 
 vi.mock('axios');
@@ -27,8 +27,8 @@ function makeNetworkError(message: string): AxiosError {
   return err;
 }
 
-describe('ElementifyClient', () => {
-  let client: ElementifyClient;
+describe('ElementeerClient', () => {
+  let client: ElementeerClient;
   let mockHttp: {
     get: ReturnType<typeof vi.fn>;
     post: ReturnType<typeof vi.fn>;
@@ -62,7 +62,7 @@ describe('ElementifyClient', () => {
 
     mockedAxios.create = vi.fn().mockReturnValue(mockHttp);
 
-    client = new ElementifyClient('https://example.com', 'ek_test_key');
+    client = new ElementeerClient('https://example.com', 'ek_test_key');
 
     // Wire up the interceptor so errors pass through handleError
     const originalGet = mockHttp.get;
@@ -78,7 +78,7 @@ describe('ElementifyClient', () => {
 
   describe('constructor', () => {
     it('constructs base URL by stripping trailing slash and appending /wp-json/elementify/v1', () => {
-      new ElementifyClient('https://example.com/', 'ek_abc');
+      new ElementeerClient('https://example.com/', 'ek_abc');
       expect(mockedAxios.create).toHaveBeenCalledWith(
         expect.objectContaining({
           baseURL: 'https://example.com/wp-json/elementify/v1',
@@ -87,7 +87,7 @@ describe('ElementifyClient', () => {
     });
 
     it('sets X-Elementify-Key header', () => {
-      new ElementifyClient('https://example.com', 'ek_my_secret_key');
+      new ElementeerClient('https://example.com', 'ek_my_secret_key');
       expect(mockedAxios.create).toHaveBeenCalledWith(
         expect.objectContaining({
           headers: expect.objectContaining({
@@ -98,7 +98,7 @@ describe('ElementifyClient', () => {
     });
 
     it('sets Bearer Authorization fallback header', () => {
-      new ElementifyClient('https://example.com', 'ek_my_secret_key');
+      new ElementeerClient('https://example.com', 'ek_my_secret_key');
       expect(mockedAxios.create).toHaveBeenCalledWith(
         expect.objectContaining({
           headers: expect.objectContaining({
@@ -109,7 +109,7 @@ describe('ElementifyClient', () => {
     });
 
     it('sets 30s timeout', () => {
-      new ElementifyClient('https://example.com', 'ek_key');
+      new ElementeerClient('https://example.com', 'ek_key');
       expect(mockedAxios.create).toHaveBeenCalledWith(
         expect.objectContaining({ timeout: 30_000 }),
       );

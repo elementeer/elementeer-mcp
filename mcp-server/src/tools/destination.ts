@@ -1,13 +1,13 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ElementifyClient } from '../client.js';
+import type { ElementeerClient } from '../client.js';
 import { buildSiteFingerprint } from '../fingerprint.js';
 import { buildCapabilityMatrix } from '../destination.js';
 import { buildResearchResolutionPreview } from '../research/integration.js';
 
 export function registerDestinationTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   server.tool(
     'get_destination_capabilities',

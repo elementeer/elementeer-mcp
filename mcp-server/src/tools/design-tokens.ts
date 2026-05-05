@@ -6,13 +6,13 @@ import type {
   DesignTokenReport,
   DesignTypographyToken,
   DesignValueHint,
-  ElementifyClient,
+  ElementeerClient,
 } from '../client.js';
 import { buildDesignTokenReport } from '../design-tokens.js';
 
 export function registerDesignTokenTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   server.tool(
     'extract_design_tokens',

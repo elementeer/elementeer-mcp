@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { registerTranslationFreeTools, registerTranslationAdvancedTools } from '../../tools/translation.js';
-import type { ElementifyClient, TranslationCoverageAnalysis, UntranslatedStringsResponse, UntranslatedMediaResponse } from '../../client.js';
+import type { ElementeerClient, TranslationCoverageAnalysis, UntranslatedStringsResponse, UntranslatedMediaResponse } from '../../client.js';
 
 function makeTranslationCoverage(overrides: Partial<TranslationCoverageAnalysis> = {}): TranslationCoverageAnalysis {
   return {
@@ -62,7 +62,7 @@ function makeUntranslatedMedia(overrides: Partial<UntranslatedMediaResponse> = {
   };
 }
 
-function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> = {}): ElementifyClient {
+function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> = {}): ElementeerClient {
   return {
     getTranslationCoverage: vi.fn().mockResolvedValue(makeTranslationCoverage()),
     getUntranslatedStrings: vi.fn().mockResolvedValue(makeUntranslatedStrings()),
@@ -74,13 +74,13 @@ function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> 
     listTemplates: vi.fn(),
     createChange: vi.fn().mockResolvedValue({ id: 'change_123' }),
     ...overrides,
-  } as unknown as ElementifyClient;
+  } as unknown as ElementeerClient;
 }
 
 describe('Translation tools (Free)', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let toolHandlers: Map<string, (args: Record<string, unknown>) => Promise<unknown>>;
 
   beforeEach(() => {
@@ -135,8 +135,8 @@ describe('Translation tools (Free)', () => {
 
 describe('Translation tools (Advanced)', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let toolHandlers: Map<string, (args: Record<string, unknown>) => Promise<unknown>>;
 
   beforeEach(() => {

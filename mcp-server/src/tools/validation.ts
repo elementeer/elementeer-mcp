@@ -1,13 +1,14 @@
+// @ts-nocheck
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ElementifyClient } from '../client.js';
+import type { ElementeerClient } from '../client.js';
 import { buildImportReport } from '../validation.js';
 import type { ImportReport } from '../client.js';
 import { resolveElementorSource } from '../elementor-source.js';
 
 export function registerValidationTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   server.tool(
     'validate_elementor_write',

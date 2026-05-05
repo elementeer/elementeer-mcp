@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { registerChangeQueueTools } from '../../tools/change-queue.js';
-import type { ElementifyClient, QueuedChange } from '../../client.js';
+import type { ElementeerClient, QueuedChange } from '../../client.js';
 
 // ------------------------------------------------------------------ //
 // Fixtures
@@ -23,7 +23,7 @@ function makeChange(overrides: Partial<QueuedChange> = {}): QueuedChange {
   };
 }
 
-function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> = {}): ElementifyClient {
+function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> = {}): ElementeerClient {
   return {
     createChange:         vi.fn().mockResolvedValue(makeChange()),
     listChanges:          vi.fn().mockResolvedValue({ changes: [makeChange()], total: 1 }),
@@ -37,7 +37,7 @@ function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> 
     setLogo:              vi.fn().mockResolvedValue({ logo_id: 1, logo_url: null, updated: true }),
     setSiteContext:       vi.fn().mockResolvedValue({ user_role: 'site-owner', site_purpose: null, brand_notes: null, target_audience: null, primary_language: null, set_at: '' }),
     ...overrides,
-  } as unknown as ElementifyClient;
+  } as unknown as ElementeerClient;
 }
 
 // ------------------------------------------------------------------ //
@@ -46,8 +46,8 @@ function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> 
 
 describe.skip('change queue tools', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let handlers: Map<string, (args: Record<string, unknown>) => Promise<{ content: Array<{ type: string; text: string }> }>>;
 
   beforeEach(() => {

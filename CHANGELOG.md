@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Elementify MCP will be documented in this file.
+All notable changes to Elementeer MCP will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Version Consistency**: Updated ELEMENTIFY_MCP_VERSION constant to 2.0.1
 - **Plugin Header**: Version updated to 2.0.1 in plugin main file
 - **Build Scripts**: Enhanced create-plugin-zip.sh for proper folder structure
-- **Release Naming Convention**: All release ZIP files now follow "elementify.X.Y.Z.zip" format (non-negotiable)
+- **Release Naming Convention**: All release ZIP files now follow "elementeer.X.Y.Z.zip" format (non-negotiable)
 
 ### Fixed
 - **Authentication**: Wildcard capability support and Elementor permission error elimination
@@ -74,7 +74,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Technical Details
 - **PHP**: Added `AddonAdapterInterface`, `BaseAddonAdapter`, `AddonRegistry`
-- **REST API**: New endpoints `/elementify/v1/addons`, `/addons/{slug}/widgets`, `/addons/{slug}/usage`
+- **REST API**: New endpoints `/elementeer/v1/addons`, `/addons/{slug}/widgets`, `/addons/{slug}/usage`
 - **TypeScript**: 45+ new tool implementations for addon ecosystem
 - **Tests**: 100% test coverage for new features, 657+ passing tests
 
@@ -114,6 +114,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[1.0.0]: https://github.com/elementify/elementify-mcp/releases/tag/v1.0.0
-[0.5.1]: https://github.com/elementify/elementify-mcp/releases/tag/v0.5.1
-[0.5.0]: https://github.com/elementify/elementify-mcp/releases/tag/v0.5.0
+[1.0.0]: https://github.com/elementeer/elementeer-mcp/releases/tag/v1.0.0
+[0.5.1]: https://github.com/elementeer/elementeer-mcp/releases/tag/v0.5.1
+[0.5.0]: https://github.com/elementeer/elementeer-mcp/releases/tag/v0.5.0

@@ -7,7 +7,7 @@ import { buildSiteFingerprint } from '../../fingerprint.js';
 import { buildRecommendationReport } from '../../recommendations.js';
 import { buildImportReport } from '../../validation.js';
 import { registerOutputCritiqueTools } from '../../tools/output-critique.js';
-import type { ElementifyClient, SiteAssessment, SiteContext } from '../../client.js';
+import type { ElementeerClient, SiteAssessment, SiteContext } from '../../client.js';
 
 vi.mock('axios', () => {
   const mockPost = vi.fn();
@@ -62,7 +62,7 @@ function makeContext(overrides: Partial<SiteContext> = {}): SiteContext {
   };
 }
 
-function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> = {}): ElementifyClient {
+function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> = {}): ElementeerClient {
   return {
     assessSite: vi.fn().mockResolvedValue(makeAssessment()),
     getSiteContext: vi.fn().mockResolvedValue(makeContext()),
@@ -82,7 +82,7 @@ function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> 
       elementor_data: [{ id: 'root', elType: 'container', elements: [] }],
     }),
     ...overrides,
-  } as unknown as ElementifyClient;
+  } as unknown as ElementeerClient;
 }
 
 describe('buildDeterministicOutputCritique', () => {
@@ -112,8 +112,8 @@ describe('buildDeterministicOutputCritique', () => {
 
 describe('critique_elementor_output tool', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let handlers: Map<string, (args: Record<string, unknown>) => Promise<{ content: Array<{ text: string }>; isError?: boolean }>>;
 
   beforeEach(() => {

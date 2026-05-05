@@ -1,5 +1,5 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ElementifyClient } from '../client.js';
+import type { ElementeerClient } from '../client.js';
 import { registerLibraryTools } from './library.js';
 import { registerTemplateManagementTools } from './template-management.js';
 import { registerWorkflowStagingTools } from './workflow-staging.js';
@@ -143,10 +143,10 @@ const STUDIO_FUTURE_TOOL_REGISTRARS = [
 
 function registerToolSet(
   registrars: ReadonlyArray<
-    (server: McpServer, getClient: (siteId?: string) => ElementifyClient) => void
+    (server: McpServer, getClient: (siteId?: string) => ElementeerClient) => void
   >,
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   for (const registerTools of registrars) {
     registerTools(server, getClient);
@@ -155,28 +155,28 @@ function registerToolSet(
 
 export function registerFreeTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   registerToolSet(FREE_TOOL_REGISTRARS, server, getClient);
 }
 
 export function registerAdvancedTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   registerToolSet(ADVANCED_TOOL_REGISTRARS, server, getClient);
 }
 
 export function registerStudioFutureTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   registerToolSet(STUDIO_FUTURE_TOOL_REGISTRARS, server, getClient);
 }
 
 export function registerAllTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
   options: ToolRegistrationOptions = {},
 ): void {
   registerFreeTools(server, getClient);

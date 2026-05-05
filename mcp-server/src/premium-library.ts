@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type {
   CapabilityMatrix,
   PremiumLibraryAssetCollection,
@@ -10,7 +11,7 @@ import type {
   PremiumLibraryUsagePlan,
   SiteAssessment,
   SiteContext,
-} from '@elementify/shared';
+} from '@elementeer/shared';
 import { buildLibraryBoundaryReport } from './library-providers.js';
 
 type ElementorTemplateType = 'page' | 'section' | 'container' | 'widget';

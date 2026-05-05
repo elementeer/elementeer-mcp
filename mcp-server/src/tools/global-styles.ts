@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ElementifyClient, GlobalColor, GlobalTypographyEntry } from '../client.js';
+import type { ElementeerClient, GlobalColor, GlobalTypographyEntry } from '../client.js';
 import { GOVERNANCE_LEVELS } from '../product-tiers.js';
 
 const colorSchema = z.object({
@@ -22,7 +22,7 @@ const typographySchema = z.object({
 
 export function registerGlobalStylesTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
 
   // ------------------------------------------------------------------ //

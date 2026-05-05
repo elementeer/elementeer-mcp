@@ -8,7 +8,7 @@ import {
 import { registerDestinationTools } from '../../tools/destination.js';
 import type {
   Capability,
-  ElementifyClient,
+  ElementeerClient,
   SiteAssessment,
 } from '../../client.js';
 
@@ -77,11 +77,11 @@ function makeAssessment(overrides: Partial<SiteAssessment> = {}): SiteAssessment
   };
 }
 
-function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> = {}): ElementifyClient {
+function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> = {}): ElementeerClient {
   return {
     assessSite: vi.fn().mockResolvedValue(makeAssessment()),
     ...overrides,
-  } as unknown as ElementifyClient;
+  } as unknown as ElementeerClient;
 }
 
 describe('destination profile and capability matrix', () => {
@@ -143,8 +143,8 @@ describe('destination profile and capability matrix', () => {
 
 describe('get_destination_capabilities tool', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let handlers: Map<string, (args: Record<string, unknown>) => Promise<{ content: Array<{ text: string }> }>>;
 
   beforeEach(() => {

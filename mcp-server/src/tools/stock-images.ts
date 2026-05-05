@@ -2,7 +2,7 @@
 import { z } from 'zod';
 import axios from 'axios';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ElementifyClient } from '../client.js';
+import type { ElementeerClient } from '../client.js';
 import { getIntegrations } from '../config.js';
 
 export interface StockImage {
@@ -106,7 +106,7 @@ function buildPollinationsUrl(prompt: string, width: number, height: number): st
 
 export function registerStockImageTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
 
   // ---------------------------------------------------------------- //
@@ -114,7 +114,7 @@ export function registerStockImageTools(
   // ---------------------------------------------------------------- //
   server.tool(
     'search_stock_images',
-    'Search for free stock photos from Pexels or Unsplash. Returns image URLs, photographer attribution, and a download URL suitable for sideload_stock_image. Requires a Pexels or Unsplash API key in ~/.elementify/config.json under integrations.pexels_api_key or integrations.unsplash_access_key.',
+    'Search for free stock photos from Pexels or Unsplash. Returns image URLs, photographer attribution, and a download URL suitable for sideload_stock_image. Requires a Pexels or Unsplash API key in ~/.elementeer/config.json under integrations.pexels_api_key or integrations.unsplash_access_key.',
     {
       query:       z.string().describe('Search query, e.g. "modern office interior", "blue abstract background"'),
       per_page:    z.number().int().min(1).max(20).optional().default(10),
@@ -152,7 +152,7 @@ export function registerStockImageTools(
 
       if (images.length === 0) {
         const hint = !pexelsKey && !unsplashKey
-          ? '\n\nNo API key configured. Add integrations.pexels_api_key to ~/.elementify/config.json'
+          ? '\n\nNo API key configured. Add integrations.pexels_api_key to ~/.elementeer/config.json'
           : error ? `\n\nError: ${error}` : '\n\nNo results found for this query.';
         return {
           content: [{ type: 'text', text: `No stock images found for "${query}".${hint}` }],

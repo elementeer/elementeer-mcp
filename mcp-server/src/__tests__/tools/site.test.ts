@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { registerSiteTools } from '../../tools/site.js';
-import type { ElementifyClient } from '../../client.js';
+import type { ElementeerClient } from '../../client.js';
 import type { SiteInfo } from '../../client.js';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -23,7 +23,7 @@ function makeSiteInfo(overrides: Partial<SiteInfo> = {}): SiteInfo {
   };
 }
 
-function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> = {}): ElementifyClient {
+function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> = {}): ElementeerClient {
   return {
     listTemplates: vi.fn(),
     getTemplate: vi.fn(),
@@ -35,13 +35,13 @@ function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> 
     updateTemplateData: vi.fn(),
     getSiteInfo: vi.fn().mockResolvedValue(makeSiteInfo()),
     ...overrides,
-  } as unknown as ElementifyClient;
+  } as unknown as ElementeerClient;
 }
 
 describe('Site tools', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let toolHandlers: Map<string, (args: Record<string, unknown>) => Promise<unknown>>;
 
   beforeEach(() => {

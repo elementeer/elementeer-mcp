@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ElementifyClient } from '../../client.js';
+import type { ElementeerClient } from '../../client.js';
 import { FREE_PRODUCT_SURFACE } from '../../product-surfaces.js';
 import {
   registerAdvancedTools,
@@ -9,13 +9,13 @@ import {
   registerStudioFutureTools,
 } from '../../tools/index.js';
 
-function makeClient(): ElementifyClient {
-  return {} as ElementifyClient;
+function makeClient(): ElementeerClient {
+  return {} as ElementeerClient;
 }
 
 describe.skip('tiered tool registration', () => {
   let server: McpServer;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let registered: string[];
 
   beforeEach(() => {

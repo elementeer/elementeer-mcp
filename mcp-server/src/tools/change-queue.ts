@@ -2,7 +2,7 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type {
-  ElementifyClient,
+  ElementeerClient,
   QueuedChange,
   GlobalColor,
   GlobalTypographyEntry,
@@ -16,7 +16,7 @@ import { QueueV2 } from '../queue-v2.js';
 // Operation executor map
 // Maps operation names to client method calls using the stored params.
 // ------------------------------------------------------------------ //
-type Executor = (client: ElementifyClient, params: Record<string, unknown>) => Promise<unknown>;
+type Executor = (client: ElementeerClient, params: Record<string, unknown>) => Promise<unknown>;
 
 const OPERATION_EXECUTORS: Record<string, Executor> = {
   set_global_colors: (c, p) =>
@@ -189,7 +189,7 @@ function formatChange(c: QueuedChange): string[] {
 // ------------------------------------------------------------------ //
 export function registerChangeQueueTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
 
   // ---------------------------------------------------------------- //
