@@ -6,10 +6,10 @@ This document defines how the private Forgejo primary repository can be mirrored
 
 It complements:
 
-- [free-product-surface.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-product-surface.md)
-- [advanced-product-surface.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/advanced-product-surface.md)
-- [tier-capability-map.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/tier-capability-map.md)
-- [free-mirror.manifest.json](/Users/andrelange/Documents/repositories/github/elementify-mcp/mirror/free-mirror.manifest.json)
+- [free-product-surface.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-product-surface.md)
+- [advanced-product-surface.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/advanced-product-surface.md)
+- [tier-capability-map.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/tier-capability-map.md)
+- [free-mirror.manifest.json](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mirror/free-mirror.manifest.json)
 
 ## Mirror Model
 
@@ -28,7 +28,7 @@ It complements:
 
 ### Rule 1: Public tool surface must equal `registerFreeTools`
 
-The public mirror tool surface is defined by [index.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/index.ts) through `registerFreeTools`.
+The public mirror tool surface is defined by [index.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/index.ts) through `registerFreeTools`.
 
 Implication:
 
@@ -53,7 +53,7 @@ Implication:
 
 The mirror may only ship Free-facing documentation.
 
-Tracked in [free-mirror.manifest.json](/Users/andrelange/Documents/repositories/github/elementify-mcp/mirror/free-mirror.manifest.json):
+Tracked in [free-mirror.manifest.json](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mirror/free-mirror.manifest.json):
 
 - `publicDocumentation`
 - `privateDocumentation`
@@ -80,8 +80,8 @@ Future orchestration and cloud-library seams may exist in the primary repo, but 
 
 The repository now includes a machine-verifiable mirror check:
 
-- [verify-free-mirror.mjs](/Users/andrelange/Documents/repositories/github/elementify-mcp/scripts/verify-free-mirror.mjs)
-- [prepare-free-mirror.mjs](/Users/andrelange/Documents/repositories/github/elementify-mcp/scripts/prepare-free-mirror.mjs)
+- [verify-free-mirror.mjs](/Users/andrelange/Documents/repositories/github/elementeer-mcp/scripts/verify-free-mirror.mjs)
+- [prepare-free-mirror.mjs](/Users/andrelange/Documents/repositories/github/elementeer-mcp/scripts/prepare-free-mirror.mjs)
 
 ### Command outputs
 
@@ -127,8 +127,8 @@ It can also prepare a staging artifact for the public mirror:
 
 Public-facing Free docs now also include:
 
-- [docs/quickstart/free.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/quickstart/free.md)
-- [docs/release/free-public-release-checklist.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/release/free-public-release-checklist.md)
+- [docs/quickstart/free.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/quickstart/free.md)
+- [docs/release/free-public-release-checklist.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/release/free-public-release-checklist.md)
 
 ## Expected Release Flow
 
@@ -154,7 +154,7 @@ npm run release:free-mirror:gate
 
 The private operational runbook lives in:
 
-- [docs/release/forgejo-github-free-mirror-runbook.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/release/forgejo-github-free-mirror-runbook.md)
+- [docs/release/forgejo-github-free-mirror-runbook.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/release/forgejo-github-free-mirror-runbook.md)
 
 ## Guardrail
 
