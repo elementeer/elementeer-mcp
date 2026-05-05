@@ -1,0 +1,28 @@
+kind: mcp-server
+name: elementeer-mcp
+version: 1.0.0
+owner: elementeer
+description: AI-native MCP server for Elementor — the agent-native Elementor growth layer. Enhanced API, intelligent composition, workflow staging, governance systems.
+author: elementeer
+license: GPL-3.0-or-later
+homepage: https://elementeer.xyz
+repository: https://github.com/elementeer/elementeer-mcp
+keywords:
+  - mcp
+  - elementor
+  - wordpress
+  - ai
+  - page-builder
+frameworks:
+  - opencode
+  - claude-desktop
+  - codex
+mcp:
+  transport: stdio
+  command: node
+  args:
+    - dist/index.js
+  supported_clients:
+    - opencode
+    - claude-desktop
+    - codex
