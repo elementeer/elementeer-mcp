@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **ReleaseChain Integration**: Automated release validation workflow with Ralph Loop execution
 
 ### Changed
-- **Version Consistency**: Updated ELEMENTIFY_MCP_VERSION constant to 2.0.1
+- **Version Consistency**: Updated ELEMENTEER_VERSION constant to 2.0.1
 - **Plugin Header**: Version updated to 2.0.1 in plugin main file
 - **Build Scripts**: Enhanced create-plugin-zip.sh for proper folder structure
 - **Release Naming Convention**: All release ZIP files now follow "elementeer.X.Y.Z.zip" format (non-negotiable)

@@ -7,7 +7,7 @@
 [![Elementor tested](https://img.shields.io/badge/Elementor-3.x-92003b.svg)](./plugin/readme.txt)
 [![Node.js](https://img.shields.io/badge/Node.js-20%2B-339933.svg?logo=node.js)](./mcp-server/package.json)
 [![MCP compatible](https://img.shields.io/badge/MCP-compatible-7c3aed.svg)](https://modelcontextprotocol.io)
-[![Vamerli Studio](https://img.shields.io/badge/Vamerli_Studio-embedded-1A56DB.svg)](https://elementeer.studio)
+[![Elementeer Studio](https://img.shields.io/badge/Elementeer_Studio-embedded-1A56DB.svg)](https://elementeer.studio)
 
 # Elementeer MCP
 
