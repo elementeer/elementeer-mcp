@@ -1,1 +1,0 @@
-Elementify MCP server started.

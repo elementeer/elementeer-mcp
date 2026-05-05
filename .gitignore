@@ -147,3 +147,9 @@ vite.config.ts.timestamp-*
 
 # SkillWeave work directory (session-local tracking, never pushed)
 .skillweave/
+
+# Claude Code local state
+.claude/
+
+# Codenomad session-local state
+.codenomad/
