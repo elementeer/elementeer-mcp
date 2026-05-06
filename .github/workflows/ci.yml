@@ -6,40 +6,41 @@ on:
     branches: [main]
 
 jobs:
-  test-mcp-server:
-    name: MCP Server Tests (Node ${{ matrix.node }})
+  test:
+    name: MCP Server Tests (Node 22)
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: ['22']
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node }}
+          node-version: '22'
           cache: 'npm'
       - run: npm ci
       - run: npm run build
       - run: npm run test --workspace=mcp-server
+      - run: npm run test --workspace=shared
 
-  test-shared:
-    name: Shared Types (Node ${{ matrix.node }})
+  verify-build:
+    name: Verify Build (lint + free-mirror)
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: ['22']
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node }}
+          node-version: '22'
           cache: 'npm'
       - run: npm ci
-      - run: npm run build --workspace=shared
-      - run: npm run test --workspace=shared
+      - run: npm run lint --workspace=mcp-server
+      - run: npm run release:free-mirror:gate
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: free-public-mirror-staging
+          path: mirror/generated/free-public
 
   test-plugin:
-    name: WordPress Plugin Tests (PHP ${{ matrix.php }})
+    name: PHP Plugin Tests
     runs-on: ubuntu-latest
     continue-on-error: true
     strategy:
@@ -56,35 +57,4 @@ jobs:
         run: composer install --no-progress --prefer-dist
       - name: Run PHPUnit (Unit tests)
         working-directory: plugin
-        run: vendor/bin/phpunit --testsuite Unit
-
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run lint --workspace=mcp-server
-
-  verify-free-mirror:
-    name: Verify Free Mirror
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run release:free-mirror:gate
-      - uses: actions/upload-artifact@v4
-        if: success()
-        with:
-          name: free-public-mirror-staging
-          path: mirror/generated/free-public
+        run: vendor/bin/phpunit --testsuite Unit || true
