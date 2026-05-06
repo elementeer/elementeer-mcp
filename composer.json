@@ -2,7 +2,7 @@
   "name": "elementeer/elementeer-mcp",
   "description": "Elementeer MCP WordPress Plugin",
   "type": "wordpress-plugin",
-  "license": "GPL-3.0-or-later",
+  "license": "Apache-2.0",
   "require": {
     "php": ">=8.0"
   },

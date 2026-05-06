@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "main": "dist/index.js",
+  "license": "Apache-2.0",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
