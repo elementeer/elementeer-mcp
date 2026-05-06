@@ -15,7 +15,7 @@ async function main(): Promise<void> {
   await server.connect(transport);
 
   // Log to stderr so it doesn't interfere with MCP stdio protocol
-  process.stderr.write('Elementify MCP server started.\n');
+  process.stderr.write('Elementeer MCP server started.\n');
 }
 
 main().catch((err: unknown) => {
