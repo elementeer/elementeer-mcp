@@ -1,7 +1,7 @@
 [![repo-safety](https://github.com/elementeer/elementeer-mcp/actions/workflows/repo-safety.yml/badge.svg)](https://github.com/elementeer/elementeer-mcp/actions/workflows/repo-safety.yml)
 [![CI](https://github.com/elementeer/elementeer-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/elementeer/elementeer-mcp/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/elementeer/elementeer-mcp/actions/workflows/codeql.yml/badge.svg)](https://github.com/elementeer/elementeer-mcp/actions/workflows/codeql.yml)
-[![npm](https://img.shields.io/npm/v/@elementeer/mcp?label=npm)](https://www.npmjs.com/package/@elementeer/mcp)
+[![npm](https://img.shields.io/npm/v/@elementeer/mcp?label=coming+soon&color=lightgrey)](https://www.npmjs.com/package/@elementeer/mcp)
 [![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-green.svg)](./LICENSE)
 [![WordPress tested](https://img.shields.io/badge/WordPress-6.0%2B-21759b.svg?logo=wordpress)](./plugin/readme.txt)
 [![Elementor tested](https://img.shields.io/badge/Elementor-3.x-92003b.svg)](./plugin/readme.txt)
