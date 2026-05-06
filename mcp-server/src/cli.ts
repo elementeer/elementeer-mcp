@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 /**
- * elementify-mcp CLI
+ * elementeer-mcp CLI
  *
  * Usage:
- *   elementify-mcp          — starts the MCP server (stdio transport)
- *   elementify-mcp init     — creates ~/.elementeer/config.json with an example
- *   elementify-mcp sites    — lists configured sites
- *   elementify-mcp version  — prints version
+ *   elementeer-mcp          — starts the MCP server (stdio transport)
+ *   elementeer-mcp init     — creates ~/.elementeer/config.json with an example
+ *   elementeer-mcp sites    — lists configured sites
+ *   elementeer-mcp version  — prints version
  */
 
 import fs from 'node:fs';
@@ -23,12 +23,12 @@ switch (command) {
   case 'version':
   case '--version':
   case '-v':
-    console.log(`elementify-mcp v${VERSION}`);
+    console.log(`elementeer-mcp v${VERSION}`);
     process.exit(0);
     break;
 
   case 'init': {
-    const configDir = path.join(os.homedir(), '.elementify');
+    const configDir = path.join(os.homedir(), '.elementeer');
     const configPath = path.join(configDir, 'config.json');
 
     if (fs.existsSync(configPath)) {
@@ -56,22 +56,21 @@ switch (command) {
     console.log(`Created config at ${configPath}`);
     console.log('');
     console.log('Next steps:');
-    console.log('  1. Install the Elementify MCP Plugin on your WordPress site');
-    console.log('  2. Generate an API key in Settings → Elementify MCP');
+    console.log('  1. Install the Elementeer Plugin on your WordPress site');
+    console.log('  2. Generate an API key in Settings → Elementeer');
     console.log(`  3. Edit ${configPath} with your site URL and API key`);
     console.log('  4. Add to your MCP client config:');
-    console.log('     { "mcpServers": { "elementify": { "command": "elementeer-mcp" } } }');
+    console.log('     { "mcpServers": { "elementeer": { "command": "elementeer-mcp" } } }');
     process.exit(0);
     break;
   }
 
   case 'sites': {
-    // Dynamically import config to avoid initializing MCP server
     const { listSites } = await import('./config.js');
     try {
       const sites = listSites();
       if (sites.length === 0) {
-        console.log('No sites configured. Run `elementify-mcp init` to create a config.');
+        console.log('No sites configured. Run `elementeer-mcp init` to create a config.');
       } else {
         console.log(`${sites.length} site(s):`);
         for (const s of sites) {
@@ -89,13 +88,12 @@ switch (command) {
 
   case undefined:
   case 'start': {
-    // Default: start MCP server (index.ts runs main() on import)
     await import('./index.js');
     break;
   }
 
   default:
     console.error(`Unknown command: ${command}`);
-    console.error('Usage: elementify-mcp [init|sites|version]');
+    console.error('Usage: elementeer-mcp [init|sites|version]');
     process.exit(1);
 }

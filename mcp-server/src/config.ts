@@ -2,18 +2,18 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import type { ElementifyConfig, SiteConfig } from '@elementeer/shared';
+import type { ElementeerConfig, SiteConfig } from '@elementeer/shared';
 import { ElementeerClient } from './client.js';
 
-const DEFAULT_CONFIG_PATH = path.join(os.homedir(), '.elementify', 'config.json');
+const DEFAULT_CONFIG_PATH = path.join(os.homedir(), '.elementeer', 'config.json');
 
 function getConfigPath(): string {
-  return process.env['ELEMENTIFY_CONFIG_PATH']
-    ? path.resolve(process.env['ELEMENTIFY_CONFIG_PATH'].replace(/^~/, os.homedir()))
+  return process.env['ELEMENTEER_CONFIG_PATH']
+    ? path.resolve(process.env['ELEMENTEER_CONFIG_PATH'].replace(/^~/, os.homedir()))
     : DEFAULT_CONFIG_PATH;
 }
 
-const EXAMPLE_CONFIG: ElementifyConfig = {
+const EXAMPLE_CONFIG: ElementeerConfig = {
   sites: [
     {
       id: 'my-site',
@@ -26,7 +26,7 @@ const EXAMPLE_CONFIG: ElementifyConfig = {
   ],
 };
 
-export function loadConfig(): ElementifyConfig {
+export function loadConfig(): ElementeerConfig {
   const configPath = getConfigPath();
 
   if (!fs.existsSync(configPath)) {
@@ -39,7 +39,7 @@ export function loadConfig(): ElementifyConfig {
   }
 
   const raw = fs.readFileSync(configPath, 'utf-8');
-  const parsed = JSON.parse(raw) as ElementifyConfig;
+  const parsed = JSON.parse(raw) as ElementeerConfig;
 
   if (!parsed.sites || !Array.isArray(parsed.sites) || parsed.sites.length === 0) {
     throw new Error(`Config at ${configPath} has no sites defined.`);
@@ -75,7 +75,7 @@ export function getClient(siteId?: string): ElementeerClient {
   return new ElementeerClient(site.url, site.apiKey);
 }
 
-export function saveConfig(config: ElementifyConfig): void {
+export function saveConfig(config: ElementeerConfig): void {
   const configPath = getConfigPath();
   fs.mkdirSync(path.dirname(configPath), { recursive: true });
   fs.writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf-8');

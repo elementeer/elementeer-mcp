@@ -1,1 +1,0 @@
-elementify-mcp.sh
