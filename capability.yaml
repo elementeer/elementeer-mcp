@@ -1,28 +1,44 @@
-kind: mcp-server
 name: elementeer-mcp
-version: 1.0.0
+version: 2.0.3
+kind: mcp-server
 owner: elementeer
-description: AI-native MCP server for Elementor — the agent-native Elementor growth layer. Enhanced API, intelligent composition, workflow staging, governance systems.
-author: elementeer
 license: Apache-2.0
-homepage: https://elementeer.xyz
+description: >
+  AI-native MCP server for Elementor providing 250+ tools for site management,
+  page building, content orchestration, add-on analytics, design system management,
+  and framework-level workflow automation.
+homepage: https://github.com/elementeer/elementeer-mcp
 repository: https://github.com/elementeer/elementeer-mcp
-keywords:
-  - mcp
+entrypoint: mcp-server
+runtimes:
+  node: ">=22"
+capabilities:
+  - site-audit
+  - stack-bootstrap
+  - site-foundation
+  - design-system
+  - content-structure
+  - theme-structure
+  - library-operations
+  - media-operations
+  - plugin-stack-context
+  - governance
+  - ally
+  - translate
+  - lms
+  - charity
+  - booking
+  - voxel
+  - diagnostics
+  - workflow-orchestration
+  - site-settings
+  - seo-operations
+  - performance-operations
+  - ecommerce-operations
+tags:
   - elementor
   - wordpress
-  - ai
   - page-builder
-frameworks:
-  - opencode
-  - claude-desktop
-  - codex
-mcp:
-  transport: stdio
-  command: node
-  args:
-    - dist/index.js
-  supported_clients:
-    - opencode
-    - claude-desktop
-    - codex
+  - mcp
+  - ai
+  - site-management
