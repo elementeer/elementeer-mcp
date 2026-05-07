@@ -602,56 +602,7 @@ export function registerFormFreeTools(
   // migrate_form (FORM-006)
   // ------------------------------------------------------------------ //
 
-  // ------------------------------------------------------------------ //
-  // wizard_forms (FORM-009)
-  // ------------------------------------------------------------------ //
-  server.tool(
-    'wizard_forms',
-    'Forms module wizard — Detect form plugins, assess submission rate, recommend anti-spam.',
-    {
-      site_id: z.string().optional().describe('Site ID from config (defaults to active site)'),
-    },
-    async ({ site_id }) => {
-      try {
-        const client = getClient(site_id);
-        const result = await client.getWizard('forms');
-
-        return {
-          content: [{
-            type: 'text',
-            text: [
-              '# Forms Wizard',
-              `**Status**: ${result.status}`,
-              '',
-              '## Gaps',
-              ...result.gaps.map(gap => `- ${gap.severity.toUpperCase()}: ${gap.description}`),
-              '',
-              '## Recommendations',
-              ...result.recommendations.map(rec => `- ${rec.priority.toUpperCase()}: ${rec.title} — ${rec.description}`),
-              '',
-              result.suggested_tools.length > 0 ? [
-                '## Suggested MCP Tools',
-                ...result.suggested_tools.map(tool => `- \`${tool.tool}\`: ${tool.purpose}` + (tool.governance_level ? ` (${tool.governance_level})` : '')),
-                ''
-              ].join('\n') : '',
-              result.suggested_plugins.length > 0 ? [
-                '## Suggested Plugins',
-                ...result.suggested_plugins.map(plugin => `- **${plugin.name}** (${plugin.slug}): ${plugin.reason}`),
-                ''
-              ].join('\n') : '',
-            ].filter(line => line !== '').join('\n'),
-          }],
-        };
-      } catch (error) {
-        return {
-          content: [{
-            type: 'text',
-            text: `❌ Error running wizard: ${error instanceof Error ? error.message : String(error)}`,
-          }],
-        };
-      }
-    },
-  );
+  // wizard_forms is registered via registerModuleWizards in wizards.ts
 }
 
 
