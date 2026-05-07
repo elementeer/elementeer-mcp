@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { registerLibraryTools } from '../../tools/library.js';
 import type { ElementeerClient } from '../../client.js';
-import { ElementifyApiError } from '../../client.js';
+import { ElementeerApiError } from '../../client.js';
 
 function makeTemplate(overrides: Record<string, unknown> = {}) {
   return {
@@ -126,9 +126,9 @@ describe('Library tools', () => {
       expect(parsed).toHaveProperty('has_elementor_data');
     });
 
-    it('surfaces ElementifyApiError for not found', async () => {
+    it('surfaces ElementeerApiError for not found', async () => {
       vi.mocked(client.getTemplate).mockRejectedValueOnce(
-        new ElementifyApiError('not_found', 'Template not found.', 404),
+        new ElementeerApiError('not_found', 'Template not found.', 404),
       );
       await expect(callTool('get_template', { id: 999 })).rejects.toThrow('Template not found.');
     });
@@ -171,7 +171,7 @@ describe('Library tools', () => {
     it('reports partial failures without throwing', async () => {
       vi.mocked(client.updateTemplate)
         .mockResolvedValueOnce(makeTemplate({ id: 1, title: 'Alpha' }))
-        .mockRejectedValueOnce(new ElementifyApiError('not_found', 'Template 2 not found.', 404));
+        .mockRejectedValueOnce(new ElementeerApiError('not_found', 'Template 2 not found.', 404));
 
       const result = await callTool('bulk_rename', {
         renames: [

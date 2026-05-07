@@ -1,13 +1,13 @@
-# Elementify Pilot Feedback Log
+# Elementeer Pilot Feedback Log
 
 ## Purpose
 
-This is the lightweight running log for real-world Elementify testing.
+This is the lightweight running log for real-world Elementeer testing.
 
 Use it during live pilots on:
 
 - a real client or staging site
-- the Elementify site itself
+- the Elementeer site itself
 
 This log is intentionally simple.
 

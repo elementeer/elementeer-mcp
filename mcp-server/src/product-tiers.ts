@@ -360,7 +360,7 @@ export const TOOL_TIER_ASSIGNMENTS: ProductSurfaceAssignment[] = [
     tier: 'advanced',
     visibility: 'private',
     kind: 'tool',
-    rationale: 'Advanced needs an honest scenario-aware upgrade and stack-shaping seam so Elementor Pro, Elementify Advanced, and curated addon choices stay distinct.',
+    rationale: 'Advanced needs an honest scenario-aware upgrade and stack-shaping seam so Elementor Pro, Elementeer Advanced, and curated addon choices stay distinct.',
     dependsOn: ['get_advanced_recommendations', 'get_destination_capabilities'],
   },
   {

@@ -1,5 +1,5 @@
 {
-  "project": "Elementify Voxel Adapter Integration",
+  "project": "Elementeer Voxel Adapter Integration",
   "version": "1.0",
   "description": "Execute the Voxel adapter integration PRD: detect, read, register, test",
   "estimatedEffort": "8 hours",
@@ -30,7 +30,7 @@
               ],
               "acceptanceCriteria": [
                 "Implements BaseController with register_routes()",
-                "6+ REST endpoints under /elementify/v1/voxel/",
+                "6+ REST endpoints under /elementeer/v1/voxel/",
                 "detect endpoint uses class_exists + option reading",
                 "Post types proxied from /wp-json/voxel/v1/post-types/"
               ],

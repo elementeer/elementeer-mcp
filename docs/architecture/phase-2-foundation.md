@@ -1,7 +1,7 @@
 # Phase 2 Architecture Note
 
 ## Position
-Elementify Studio phase 2 should be treated as:
+Elementeer Studio phase 2 should be treated as:
 
 - MACH-oriented
 - contracts-first
@@ -39,4 +39,4 @@ Future phase-2 work should keep these concerns explicitly separable:
 - Introduce AI assistance behind clear interfaces, feature flags, and validated outputs.
 - Avoid speculative architecture build-out before the next slice requires it.
 
-For the explicit current deferment boundary, see [studio-deferment-note.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/architecture/studio-deferment-note.md).
+For the explicit current deferment boundary, see [studio-deferment-note.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/architecture/studio-deferment-note.md).

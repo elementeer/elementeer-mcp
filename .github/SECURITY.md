@@ -12,7 +12,7 @@
 
 Please **do not** open public GitHub issues for security vulnerabilities.
 
-Use [GitHub Private Security Advisories](https://github.com/Vamerli/elementify-mcp/security/advisories/new) to report privately.
+Use [GitHub Private Security Advisories](https://github.com/Vamerli/elementeer-mcp/security/advisories/new) to report privately.
 
 **Response timeline:**
 - Initial acknowledgment: 5 business days

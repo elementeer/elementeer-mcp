@@ -2,7 +2,7 @@
 [![CI](https://github.com/elementeer/elementeer-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/elementeer/elementeer-mcp/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/elementeer/elementeer-mcp/actions/workflows/codeql.yml/badge.svg)](https://github.com/elementeer/elementeer-mcp/actions/workflows/codeql.yml)
 [![npm](https://img.shields.io/npm/v/@elementeer/mcp?label=coming+soon&color=lightgrey)](https://www.npmjs.com/package/@elementeer/mcp)
-[![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-green.svg)](./LICENSE)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
 [![WordPress tested](https://img.shields.io/badge/WordPress-6.0%2B-21759b.svg?logo=wordpress)](./plugin/readme.txt)
 [![Elementor tested](https://img.shields.io/badge/Elementor-3.x-92003b.svg)](./plugin/readme.txt)
 [![Node.js](https://img.shields.io/badge/Node.js-20%2B-339933.svg?logo=node.js)](./mcp-server/package.json)
@@ -19,9 +19,9 @@ With **111+ tools** and a granular governance model (L0‑L3), Elementeer enable
 
 ## Product Surfaces
 
-- `Free`: public and mirror-safe.
-- `Advanced`: private in the Forgejo primary repository.
-- `Studio`: future seam for cloud, cross-site, and delivery orchestration.
+- **`Free`**: Public and mirror-safe. Local-site focused. Covers site intelligence, library management, brand setup, simple assembly, and wizard workflows. [See what Free includes →](TIERS.md)
+- **`Advanced`**: Private in the Forgejo primary repository. Adds Theme Builder, stock images, AI generation, governance queues, WooCommerce, and premium library access. [Full comparison →](TIERS.md)
+- **`Studio`**: Future seam for cloud, cross-site, and delivery orchestration. Not yet active.
 
 The WordPress plugin registers a REST API under `/wp-json/elementeer/v1/` that queries `elementor_library` directly, bypassing the limitations in Elementor's own REST modifications. The MCP server bridges Claude, Cursor, or any MCP-compatible client to any WordPress site running the plugin, with support for multiple sites, capability-scoped API keys, and a site-level governance layer.
 
@@ -333,4 +333,5 @@ Never commit API keys or `.env` files. Use governance settings to restrict destr
 
 ## License
 
-GPL-3.0-or-later — see [LICENSE](./LICENSE).
+MCP Server: Apache-2.0 — see [LICENSE](./LICENSE).
+WordPress Plugin: GPL-2.0-or-later — see [plugin/composer.json](./plugin/composer.json).

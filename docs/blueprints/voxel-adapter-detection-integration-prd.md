@@ -1,8 +1,8 @@
-# PRD: Elementify Voxel Adapter Integration
+# PRD: Elementeer Voxel Adapter Integration
 
 ## 1. Executive Summary
 
-**Goal:** Enable Elementify (MCP server + WordPress plugin) to detect, inspect, and manage Voxel — the WordPress directory/community platform — through a dedicated adapter, following the same integration pattern as existing LMS, Charity, and Booking integrations.
+**Goal:** Enable Elementeer (MCP server + WordPress plugin) to detect, inspect, and manage Voxel — the WordPress directory/community platform — through a dedicated adapter, following the same integration pattern as existing LMS, Charity, and Booking integrations.
 
 **Tier:** Free tier (detect + list + get only; no write operations in first iteration)
 
@@ -26,7 +26,7 @@ Voxel exposes a comprehensive REST API (`/wp-json/voxel/v1/`) for most of its co
 
 ### Why an Adapter?
 
-Elementify currently has no awareness of Voxel. An adapter gives users:
+Elementeer currently has no awareness of Voxel. An adapter gives users:
 - Detection of Voxel + version in site assessment
 - Listing of Voxel-defined post types and taxonomies
 - Inspection of Voxel-specific settings and configurations
@@ -72,14 +72,14 @@ class Voxel extends BaseController {
 
 ### MCP Server Side: `mcp-server/src/tools/voxel.ts`
 
-Each map to a `elementify_voxel_*` tool following naming convention:
-- `elementify_detect_voxel`
-- `elementify_list_voxel_post_types`
-- `elementify_get_voxel_post_type`
-- `elementify_list_voxel_taxonomies`
-- `elementify_get_voxel_product_types`
-- `elementify_get_voxel_settings`
-- `elementify_voxel_health_check`
+Each map to a `elementeer_voxel_*` tool following naming convention:
+- `elementeer_detect_voxel`
+- `elementeer_list_voxel_post_types`
+- `elementeer_get_voxel_post_type`
+- `elementeer_list_voxel_taxonomies`
+- `elementeer_get_voxel_product_types`
+- `elementeer_get_voxel_settings`
+- `elementeer_voxel_health_check`
 
 ### Tool Registration
 
@@ -138,7 +138,7 @@ In `mcp-server/src/product-tiers.ts` — registered under Free tier.
 | Voxel REST API disabled | Detection falls back to PHP class_exists + option reading |
 | Voxel changes API in update | Version-gate API calls; log warnings on mismatch |
 | Large post types with many fields | Paginate responses; default limit of 50 |
-| Performance on big sites | Cache Voxel settings in Elementify assessment cache |
+| Performance on big sites | Cache Voxel settings in Elementeer assessment cache |
 
 ## 9. Success Metrics
 

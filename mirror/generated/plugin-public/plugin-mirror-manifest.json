@@ -1,0 +1,22 @@
+{
+  "name": "elementeer-plugin-public-mirror",
+  "description": "Generated public mirror of the Elementeer WordPress plugin.",
+  "sourceDirectory": "plugin/",
+  "included": [
+    "elementeer.php",
+    "composer.json",
+    "readme.txt",
+    "includes/",
+    "assets/",
+    "languages/",
+    "README.md"
+  ],
+  "excludedBuildAssets": [
+    "tests/",
+    "__tests__/",
+    ".phpunit.cache",
+    "vendor/",
+    "node_modules/",
+    "composer.lock"
+  ]
+}

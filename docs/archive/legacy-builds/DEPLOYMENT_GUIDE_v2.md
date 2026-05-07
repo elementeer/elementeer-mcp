@@ -1,8 +1,8 @@
-# Elementify v2 Deployment Guide
+# Elementeer v2 Deployment Guide
 ## WordPress/Elementor AI Development Platform
 
 ## 📦 Deployment Package
-**Datei:** `elementify-2.0.0-wordpress.zip`
+**Datei:** `elementeer-2.0.0-wordpress.zip`
 **Größe:** ~190KB
 **Version:** 2.0.0
 **PHP:** 8.0+
@@ -13,7 +13,7 @@
 
 ### 1. marcus-urban.de (Produktion)
 **Aktueller Status:**
-- Elementify v1 installiert
+- Elementeer v1 installiert
 - 2 Popup-Formulare (ID 524, 525) aktiv
 - "Startseite NEU" verwendet Popups
 
@@ -21,13 +21,13 @@
 ```bash
 # 1. Backup erstellen
 - WordPress Database exportieren
-- Plugin-Verzeichnis sichern: /wp-content/plugins/elementify/
+- Plugin-Verzeichnis sichern: /wp-content/plugins/elementeer/
 
 # 2. Altes Plugin deaktivieren
-WordPress Admin → Plugins → Elementify → Deaktivieren
+WordPress Admin → Plugins → Elementeer → Deaktivieren
 
 # 3. Neues Plugin hochladen
-Plugins → Add New → Upload Plugin → elementify-2.0.0-wordpress.zip
+Plugins → Add New → Upload Plugin → elementeer-2.0.0-wordpress.zip
 
 # 4. Plugin aktivieren
 WordPress wird automatisch v1 → v2 migrieren
@@ -45,7 +45,7 @@ WordPress wird automatisch v1 → v2 migrieren
 **Deployment Schritte:**
 ```bash
 # 1. Plugin installieren
-Plugins → Add New → Upload Plugin → elementify-2.0.0-wordpress.zip
+Plugins → Add New → Upload Plugin → elementeer-2.0.0-wordpress.zip
 
 # 2. Plugin aktivieren
 - Ersteinrichtung durchführen
@@ -66,7 +66,7 @@ Das Plugin führt automatisch folgende Migrationen durch:
 ### Manuelle Überprüfung nach Migration
 ```php
 // Prüfe Migration Status
-$ curl https://marcus-urban.de/wp-json/elementify/v1/health
+$ curl https://marcus-urban.de/wp-json/elementeer/v1/health
 {
   "status": "ok",
   "version": "2.0.0",
@@ -80,13 +80,13 @@ $ curl https://marcus-urban.de/wp-json/elementify/v1/health
 ### 1. Basis-Funktionalität
 ```bash
 # API Health Check
-curl https://marcus-urban.de/wp-json/elementify/v1/health
+curl https://marcus-urban.de/wp-json/elementeer/v1/health
 
 # Template Listing
-curl https://marcus-urban.de/wp-json/elementify/v1/templates
+curl https://marcus-urban.de/wp-json/elementeer/v1/templates
 
 # Capability Check
-curl https://marcus-urban.de/wp-json/elementify/v1/capabilities
+curl https://marcus-urban.de/wp-json/elementeer/v1/capabilities
 ```
 
 ### 2. Popup-Formulare testen (marcus-urban.de)
@@ -103,26 +103,26 @@ document.querySelector('[data-elementor-action="popup:open"]').click();
 ### 3. Neue v2 Features testen
 ```bash
 # Intelligence Layer
-curl -X POST https://preview.fusionaize.com/wp-json/elementify/v1/intelligence/compose \
+curl -X POST https://preview.fusionaize.com/wp-json/elementeer/v1/intelligence/compose \
   -H "Content-Type: application/json" \
   -d '{"sections": ["hero", "features", "cta"]}'
 
 # Workflow Staging
-curl -X POST https://preview.fusionaize.com/wp-json/elementify/v1/workflow/create \
+curl -X POST https://preview.fusionaize.com/wp-json/elementeer/v1/workflow/create \
   -H "Content-Type: application/json" \
   -d '{"content": "test", "environment": "draft"}'
 
 # Governance System
-curl https://preview.fusionaize.com/wp-json/elementify/v1/governance/settings
+curl https://preview.fusionaize.com/wp-json/elementeer/v1/governance/settings
 ```
 
 ### 4. Performance Testing
 ```bash
 # API Response Time
-time curl -s https://marcus-urban.de/wp-json/elementify/v1/health > /dev/null
+time curl -s https://marcus-urban.de/wp-json/elementeer/v1/health > /dev/null
 
 # Concurrent Requests
-ab -n 100 -c 10 https://marcus-urban.de/wp-json/elementify/v1/health
+ab -n 100 -c 10 https://marcus-urban.de/wp-json/elementeer/v1/health
 ```
 
 ## 🚨 Rollback Procedure
@@ -130,11 +130,11 @@ ab -n 100 -c 10 https://marcus-urban.de/wp-json/elementify/v1/health
 ### Falls Probleme auftreten:
 ```bash
 # 1. Plugin deaktivieren
-WordPress Admin → Plugins → Elementify v2 → Deaktivieren
+WordPress Admin → Plugins → Elementeer v2 → Deaktivieren
 
 # 2. v1 Plugin wiederherstellen
-#    a) Aus Backup: /wp-content/plugins/elementify-v1/
-#    b) Oder: elementify-1.0.0-wordpress.zip hochladen
+#    a) Aus Backup: /wp-content/plugins/elementeer-v1/
+#    b) Oder: elementeer-1.0.0-wordpress.zip hochladen
 
 # 3. v1 Plugin aktivieren
 #    Daten bleiben erhalten (keine DB Änderungen in v2)
@@ -197,7 +197,7 @@ WordPress Admin → Plugins → Elementify v2 → Deaktivieren
 ### Support:
 - Debug Log: `/wp-content/debug.log`
 - Elementor System Info: Elementor → Tools → System Info
-- API Test: `/wp-json/elementify/v1/health`
+- API Test: `/wp-json/elementeer/v1/health`
 
 ## 🎉 Erfolgsmeldung
 
@@ -208,4 +208,4 @@ Wenn alles funktioniert:
 - ✅ Neue Features funktionieren
 - ✅ Performance ist gut (<200ms)
 
-**Elementify v2 ist erfolgreich deployed!** 🚀
+**Elementeer v2 ist erfolgreich deployed!** 🚀

@@ -18,31 +18,31 @@ Create a new file `plugin/includes/Api/Voxel.php` following the pattern of `Lms.
 
 Implement these REST endpoints under the `voxel` namespace:
 
-1. `/wp-json/elementify/v1/voxel/detect`
+1. `/wp-json/elementeer/v1/voxel/detect`
    - Returns: `{ active: bool, version: string, elementor_integration: bool, theme_active: bool }`
    - Detection: `class_exists('Voxel\Plugin')`, `\Voxel\Plugin::version()` or `get_option('voxel_version')`
 
-2. `/wp-json/elementify/v1/voxel/post-types`
+2. `/wp-json/elementeer/v1/voxel/post-types`
    - Proxy to Voxel REST: `GET /wp-json/voxel/v1/post-types/`
    - Returns: array of `{ slug, label, field_count, taxonomy_count }`
 
-3. `/wp-json/elementify/v1/voxel/post-types/{type}`
+3. `/wp-json/elementeer/v1/voxel/post-types/{type}`
    - Proxy to `GET /wp-json/voxel/v1/post-types/{type}`
    - Returns full post type definition with fields, taxonomies, product types
 
-4. `/wp-json/elementify/v1/voxel/taxonomies`
+4. `/wp-json/elementeer/v1/voxel/taxonomies`
    - Proxy to `GET /wp-json/voxel/v1/taxonomies/`
    - Returns: array of `{ slug, label, post_types, term_count }`
 
-5. `/wp-json/elementify/v1/voxel/product-types`
+5. `/wp-json/elementeer/v1/voxel/product-types`
    - Proxy to `GET /wp-json/voxel/v1/product-types/`
    - Returns: array of `{ slug, label, price, interval, features }`
 
-6. `/wp-json/elementify/v1/voxel/settings`
+6. `/wp-json/elementeer/v1/voxel/settings`
    - Proxy to `GET /wp-json/voxel/v1/settings/`
    - Returns: `{ pagination, map_provider, currency, moderation_enabled }`
 
-7. `/wp-json/elementify/v1/voxel/health`
+7. `/wp-json/elementeer/v1/voxel/health`
    - Returns: `{ rest_reachable: bool, tables_exist: bool, memory_usage: string }`
 
 **Verification:**
@@ -63,13 +63,13 @@ Create a new file `mcp-server/src/tools/voxel.ts` following the pattern of `lms.
 
 Implement these tool definitions:
 
-1. `elementify_detect_voxel` — no params, calls `/voxel/detect`
-2. `elementify_list_voxel_post_types` — no params, calls `/voxel/post-types`
-3. `elementify_get_voxel_post_type` — param `{ type: string }`, calls `/voxel/post-types/{type}`
-4. `elementify_list_voxel_taxonomies` — no params, calls `/voxel/taxonomies`
-5. `elementify_get_voxel_product_types` — no params, calls `/voxel/product-types`
-6. `elementify_get_voxel_settings` — no params, calls `/voxel/settings`
-7. `elementify_voxel_health_check` — no params, calls `/voxel/health`
+1. `elementeer_detect_voxel` — no params, calls `/voxel/detect`
+2. `elementeer_list_voxel_post_types` — no params, calls `/voxel/post-types`
+3. `elementeer_get_voxel_post_type` — param `{ type: string }`, calls `/voxel/post-types/{type}`
+4. `elementeer_list_voxel_taxonomies` — no params, calls `/voxel/taxonomies`
+5. `elementeer_get_voxel_product_types` — no params, calls `/voxel/product-types`
+6. `elementeer_get_voxel_settings` — no params, calls `/voxel/settings`
+7. `elementeer_voxel_health_check` — no params, calls `/voxel/health`
 
 All tools use Free tier governance (L2 auto-queue for reads = no governance needed).
 

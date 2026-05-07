@@ -12,6 +12,9 @@
     "verify:free-mirror": "node scripts/verify-free-mirror.mjs",
     "prepare:free-mirror": "node scripts/prepare-free-mirror.mjs",
     "verify:free-release": "node scripts/verify-free-release.mjs",
-    "release:free-mirror:gate": "npm run build && npm run test:free-contracts && npm run verify:free-mirror && npm run prepare:free-mirror && npm run verify:free-release"
+    "prepare:plugin-mirror": "node scripts/prepare-plugin-mirror.mjs",
+    "verify:plugin-mirror": "node scripts/verify-plugin-mirror.mjs",
+    "release:free-mirror:gate": "npm run build && npm run test:free-contracts && npm run verify:free-mirror && npm run prepare:free-mirror && npm run verify:free-release",
+    "plugin-mirror:gate": "npm run verify:plugin-mirror && npm run prepare:plugin-mirror"
   }
 }

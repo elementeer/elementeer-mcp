@@ -1,6 +1,6 @@
-# Elementify Add‑on Integration Guide
+# Elementeer Add‑on Integration Guide
 
-This guide explains how the Elementify MCP adapter framework works, how to create new adapters for Elementor add‑ons, and how to expose detection and inventory tools through the MCP server.
+This guide explains how the Elementeer MCP adapter framework works, how to create new adapters for Elementor add‑ons, and how to expose detection and inventory tools through the MCP server.
 
 ## Overview
 
@@ -9,7 +9,7 @@ The adapter framework provides a unified way to detect installed Elementor add�
 1. **AddonAdapterInterface** – contract each adapter must implement.
 2. **BaseAddonAdapter** – skeleton implementation with common detection helpers.
 3. **AddonRegistry** – auto‑discovers and registers all installed adapters.
-4. **REST endpoint** `/wp-json/elementify/v1/addons` – returns active add‑ons.
+4. **REST endpoint** `/wp-json/elementeer/v1/addons` – returns active add‑ons.
 5. **MCP tools** – Free and Advanced tools for each add‑on (detect, list widgets, wizard).
 
 ## Creating a new adapter
@@ -29,7 +29,7 @@ Example skeleton:
 
 declare(strict_types=1);
 
-namespace Elementify\MCP\Api\Adapters;
+namespace Elementeer\MCP\Api\Adapters;
 
 final class MyPluginAdapter extends BaseAddonAdapter {
     private const FREE_BASENAME = 'my-plugin/my-plugin.php';
@@ -106,7 +106,7 @@ Import your tool registrars in `mcp‑server/src/tools/index.ts` and add them to
 
 ## Detection lifecycle
 
-1. **Plugin activation** – When a request hits the `/addons` endpoint, `AddonRegistry` scans the `Adapters` directory (and applies the `elementify_mcp_addon_adapters` filter) to find all concrete adapter classes.
+1. **Plugin activation** – When a request hits the `/addons` endpoint, `AddonRegistry` scans the `Adapters` directory (and applies the `elementeer_mcp_addon_adapters` filter) to find all concrete adapter classes.
 2. **Instantiation** – Each adapter is instantiated; its `detect()` method checks whether the corresponding plugin is active.
 3. **Registration** – If `detect()` returns non‑null metadata, the adapter is stored in the registry.
 4. **Data aggregation** – The registry’s `get_active_addons()` returns basic metadata; `get_all_info()` calls each adapter’s `get_info()`, which in turn calls `get_widgets()`, `get_post_types()`, `get_capabilities()`, and `get_elementor_widget_types()`.
@@ -139,7 +139,7 @@ Example test structure:
 ```php
 use Brain\Monkey;
 use Brain\Monkey\Functions;
-use Elementify\MCP\Api\Adapters\MyPluginAdapter;
+use Elementeer\MCP\Api\Adapters\MyPluginAdapter;
 
 class MyPluginAdapterTest extends TestCase {
     protected function setUp(): void {

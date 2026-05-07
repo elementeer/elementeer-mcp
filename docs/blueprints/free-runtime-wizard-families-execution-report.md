@@ -1,9 +1,9 @@
-# Elementify Free Runtime Wizard Families Execution Report
+# Elementeer Free Runtime Wizard Families Execution Report
 
 ## Batch Summary
 
 - batch_id: `BATCH-FREE-RUNTIME-WIZARDS-001`
-- sequence: [free-runtime-wizard-families-sequence.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-runtime-wizard-families-sequence.md)
+- sequence: [free-runtime-wizard-families-sequence.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-runtime-wizard-families-sequence.md)
 - sequence_type: `mixed`
 - execution_mode: `ralph_attended`
 - gate_result: `continue`
@@ -11,7 +11,7 @@
 ## Steps Completed
 
 - `S1`
-  - added the runtime plan layer in [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/free-runtime-wizards.ts)
+  - added the runtime plan layer in [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/free-runtime-wizards.ts)
   - implemented deterministic plan builders for:
     - stack bootstrap
     - optimization lite
@@ -19,7 +19,7 @@
   - connected the plan builders to live recommendation/context data when a site is available
 
 - `S2`
-  - added the Free runtime wizard tools in [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/free-runtime-wizards.ts)
+  - added the Free runtime wizard tools in [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/free-runtime-wizards.ts)
   - registered:
     - `wizard_stack_bootstrap`
     - `wizard_relaunch_lite`
@@ -33,17 +33,17 @@
     - upgrade signal
 
 - `S3`
-  - added the new runtime wizard families to [index.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/index.ts)
-  - mapped them into the Free tier in [product-tiers.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/product-tiers.ts)
-  - updated the Free product surface in [product-surfaces.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/product-surfaces.ts)
+  - added the new runtime wizard families to [index.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/index.ts)
+  - mapped them into the Free tier in [product-tiers.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/product-tiers.ts)
+  - updated the Free product surface in [product-surfaces.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/product-surfaces.ts)
 
 - `S4`
-  - added plan-level regression tests in [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/free-runtime-wizards.test.ts)
-  - added tool-level registration and output tests in [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/tools/free-runtime-wizards.test.ts)
+  - added plan-level regression tests in [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/free-runtime-wizards.test.ts)
+  - added tool-level registration and output tests in [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/tools/free-runtime-wizards.test.ts)
   - updated registration and product-surface tests in:
-    - [index.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/tools/index.test.ts)
-    - [product-tiers.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/product-tiers.test.ts)
-    - [product-surfaces.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/product-surfaces.test.ts)
+    - [index.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/tools/index.test.ts)
+    - [product-tiers.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/product-tiers.test.ts)
+    - [product-surfaces.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/product-surfaces.test.ts)
 
 ## Verification Commands
 
@@ -57,16 +57,16 @@
 
 ## Files Changed
 
-- [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/free-runtime-wizards.ts)
-- [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/free-runtime-wizards.ts)
-- [index.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/index.ts)
-- [product-tiers.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/product-tiers.ts)
-- [product-surfaces.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/product-surfaces.ts)
-- [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/free-runtime-wizards.test.ts)
-- [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/tools/free-runtime-wizards.test.ts)
-- [index.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/tools/index.test.ts)
-- [product-tiers.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/product-tiers.test.ts)
-- [product-surfaces.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/product-surfaces.test.ts)
+- [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/free-runtime-wizards.ts)
+- [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/free-runtime-wizards.ts)
+- [index.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/index.ts)
+- [product-tiers.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/product-tiers.ts)
+- [product-surfaces.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/product-surfaces.ts)
+- [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/free-runtime-wizards.test.ts)
+- [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/tools/free-runtime-wizards.test.ts)
+- [index.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/tools/index.test.ts)
+- [product-tiers.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/product-tiers.test.ts)
+- [product-surfaces.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/product-surfaces.test.ts)
 
 ## Review Result
 

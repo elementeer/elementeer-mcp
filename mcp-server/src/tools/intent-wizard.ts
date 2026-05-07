@@ -72,7 +72,7 @@ export function registerIntentWizardTools(
 ): void {
   server.tool(
     'route_intent_wizard',
-    'Route a user situation through the scenario-first Elementify front door. This is the main runtime entry for intent, scenario, tier, stack profile, skill profile, and addon profile guidance.',
+    'Route a user situation through the scenario-first Elementeer front door. This is the main runtime entry for intent, scenario, tier, stack profile, skill profile, and addon profile guidance.',
     {
       site_id: z.string().optional().describe('Optional configured site ID for using live site signals'),
       origin: z.enum([

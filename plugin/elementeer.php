@@ -1,14 +1,14 @@
 <?php
 /**
- * Plugin Name: Elementify
- * Plugin URI:  https://github.com/elementify/elementify-mcp
+ * Plugin Name: Elementeer
+ * Plugin URI:  https://github.com/elementeer/elementeer-mcp
  * Description: Complete WordPress/Elementor AI development platform with enhanced API, intelligent composition, workflow staging, governance systems, and MCP integration.
  * Version:     2.0.1
- * Author:      Elementify
- * Author URI:  https://elementify.dev
- * License:     GPL-3.0-or-later
- * License URI: https://www.gnu.org/licenses/gpl-3.0.html
- * Text Domain: elementify
+ * Author:      Elementeer
+ * Author URI:  https://elementeer.dev
+ * License:     GPL-2.0-or-later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain: elementeer
  * Domain Path: /languages
  * Requires at least: 6.0
  * Requires PHP: 8.0
@@ -16,7 +16,7 @@
 
 declare(strict_types=1);
 
-namespace Elementify\MCP;
+namespace Elementeer\MCP;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
@@ -28,33 +28,33 @@ if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 }
 
 // Plugin constants - using WordPress functions when available, fallback otherwise
-define( 'ELEMENTIFY_MCP_VERSION', '2.0.1' );
-define( 'ELEMENTIFY_MCP_FILE', __FILE__ );
+define( 'ELEMENTEER_MCP_VERSION', '2.0.1' );
+define( 'ELEMENTEER_MCP_FILE', __FILE__ );
 
-// Define ELEMENTIFY_MCP_DIR safely
+// Define ELEMENTEER_MCP_DIR safely
 if ( function_exists( 'plugin_dir_path' ) ) {
-    define( 'ELEMENTIFY_MCP_DIR', \plugin_dir_path( __FILE__ ) );
+    define( 'ELEMENTEER_MCP_DIR', \plugin_dir_path( __FILE__ ) );
 } else {
-    define( 'ELEMENTIFY_MCP_DIR', dirname( __FILE__ ) . '/' );
+    define( 'ELEMENTEER_MCP_DIR', dirname( __FILE__ ) . '/' );
 }
 
-// Define ELEMENTIFY_MCP_URL safely  
+// Define ELEMENTEER_MCP_URL safely  
 if ( function_exists( 'plugin_dir_url' ) ) {
-    define( 'ELEMENTIFY_MCP_URL', \plugin_dir_url( __FILE__ ) );
+    define( 'ELEMENTEER_MCP_URL', \plugin_dir_url( __FILE__ ) );
 } elseif ( function_exists( 'plugins_url' ) ) {
-    define( 'ELEMENTIFY_MCP_URL', \plugins_url( '', __FILE__ ) );
+    define( 'ELEMENTEER_MCP_URL', \plugins_url( '', __FILE__ ) );
 } else {
-    define( 'ELEMENTIFY_MCP_URL', '' );
+    define( 'ELEMENTEER_MCP_URL', '' );
 }
 
-define( 'ELEMENTIFY_MCP_OPTION_KEYS', 'elementify_mcp_api_keys' );
-define( 'ELEMENTIFY_MCP_OPTION_GOVERNANCE', 'elementify_mcp_governance' );
-define( 'ELEMENTIFY_MCP_OPTION_MODE', 'elementify_mcp_activation_mode' );
+define( 'ELEMENTEER_MCP_OPTION_KEYS', 'elementeer_mcp_api_keys' );
+define( 'ELEMENTEER_MCP_OPTION_GOVERNANCE', 'elementeer_mcp_governance' );
+define( 'ELEMENTEER_MCP_OPTION_MODE', 'elementeer_mcp_activation_mode' );
 
 // Autoloader for our classes
 spl_autoload_register( function ( string $class ): void {
-    $prefix   = 'Elementify\\MCP\\';
-    $base_dir = ELEMENTIFY_MCP_DIR . 'includes/';
+    $prefix   = 'Elementeer\\MCP\\';
+    $base_dir = ELEMENTEER_MCP_DIR . 'includes/';
 
     if ( str_starts_with( $class, $prefix ) ) {
         $relative = substr( $class, strlen( $prefix ) );
@@ -75,11 +75,11 @@ if ( function_exists( 'add_action' ) ) {
                 echo '<div class="notice notice-error"><p>';
                 if ( function_exists( 'esc_html_e' ) ) {
                     \esc_html_e(
-                         'Elementify MCP Plugin requires Elementor to be installed and active.',
-                        'elementify'
+                         'Elementeer MCP Plugin requires Elementor to be installed and active.',
+                        'elementeer'
                     );
                 } else {
-                    echo 'Elementify MCP Plugin requires Elementor to be installed and active.';
+                    echo 'Elementeer MCP Plugin requires Elementor to be installed and active.';
                 }
                 echo '</p></div>';
             } );

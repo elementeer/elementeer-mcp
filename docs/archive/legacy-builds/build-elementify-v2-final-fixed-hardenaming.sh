@@ -1,5 +1,5 @@
 #!/bin/bash
-# build-elementify-v2-final-fixed.sh
+# build-elementeer-v2-final-fixed.sh
 # ==============================================
 # 🛠️  FINALE VERSION - 99% SICHERHEIT
 # ✅ Alle kritischen Probleme gefixt
@@ -12,18 +12,18 @@ set -e  # Bei Fehler abbrechen
 set -u  # Undefinierte Variablen als Fehler behandeln
 
 echo ""
-echo "🚀 ELEMENTIFY v2 FINAL PLUGIN-ZIP ERSTELLUNG"
+echo "🚀 ELEMENTEER v2 FINAL PLUGIN-ZIP ERSTELLUNG"
 echo "============================================"
 echo ""
 
 # ===================== KONFIGURATION =====================
-PLUGIN_SLUG="elementify"
+PLUGIN_SLUG="elementeer"
 PLUGIN_VERSION="2.0.0"
-PLUGIN_DISPLAY_NAME="Elementify"
+PLUGIN_DISPLAY_NAME="Elementeer"
 PLUGIN_DESCRIPTION="Complete WordPress/Elementor AI development platform with enhanced API, intelligent composition, workflow staging, governance systems, and MCP integration."
 
 # Verzeichnispfade
-REPO_ROOT="/Users/andrelange/Documents/repositories/github/elementify-mcp"
+REPO_ROOT="/Users/andrelange/Documents/repositories/github/elementeer-mcp"
 PLUGIN_SOURCE_DIR="$REPO_ROOT/plugin"
 BUILD_DIR="$REPO_ROOT/build-temp-$PLUGIN_VERSION-final"
 OUTPUT_ZIP="$REPO_ROOT/$PLUGIN_SLUG-$PLUGIN_VERSION-final-fixed.zip"
@@ -58,7 +58,7 @@ echo "📁 DATEIEN KOPIEREN"
 echo "  • Kopiere Plugin-Dateien..."
 
 # 1. Haupt-Plugin-Datei und Includes
-cp "$PLUGIN_SOURCE_DIR/elementify-mcp-fixed.php" "$BUILD_DIR/$PLUGIN_SLUG/elementify-mcp.php"
+cp "$PLUGIN_SOURCE_DIR/elementeer-mcp-fixed.php" "$BUILD_DIR/$PLUGIN_SLUG/elementeer-mcp.php"
 echo "    ✅ Haupt-Plugin-Datei kopiert"
 
 if [ -d "$PLUGIN_SOURCE_DIR/includes" ]; then
@@ -159,7 +159,7 @@ echo ""
 
 # ===================== 🔧 PLUGIN-DATEI PATTERN =====================
 echo "🔧 PLUGIN-DATEI OPTIMIEREN"
-MAIN_PLUGIN_FILE="$BUILD_DIR/$PLUGIN_SLUG/elementify-mcp.php"
+MAIN_PLUGIN_FILE="$BUILD_DIR/$PLUGIN_SLUG/elementeer-mcp.php"
 
 if [ -f "$MAIN_PLUGIN_FILE" ]; then
     # Backup der Originaldatei
@@ -167,9 +167,9 @@ if [ -f "$MAIN_PLUGIN_FILE" ]; then
     
     echo "  • Aktualisiere Plugin-Header..."
     
-    # 1. Plugin-Name auf "Elementify" vereinfachen
-    sed -i '' "s/Plugin Name: Elementify v2 - WordPress\/Elementor AI Development Platform/Plugin Name: $PLUGIN_DISPLAY_NAME/" "$MAIN_PLUGIN_FILE"
-    sed -i '' "s/Title: Elementify v2 - WordPress\/Elementor AI Development Platform/Title: $PLUGIN_DISPLAY_NAME/" "$MAIN_PLUGIN_FILE"
+    # 1. Plugin-Name auf "Elementeer" vereinfachen
+    sed -i '' "s/Plugin Name: Elementeer v2 - WordPress\/Elementor AI Development Platform/Plugin Name: $PLUGIN_DISPLAY_NAME/" "$MAIN_PLUGIN_FILE"
+    sed -i '' "s/Title: Elementeer v2 - WordPress\/Elementor AI Development Platform/Title: $PLUGIN_DISPLAY_NAME/" "$MAIN_PLUGIN_FILE"
     
     # 2. Description aktualisieren (falls anders)
     CURRENT_DESC=$(grep -o 'Description: .*' "$MAIN_PLUGIN_FILE" | head -1)
@@ -195,21 +195,21 @@ if [ -f "$MAIN_PLUGIN_FILE" ]; then
 if ( file_exists( \$composer_autoload ) ) {
     try {
         require_once \$composer_autoload;
-        \$elementify_autoloader_loaded = true;
+        \$elementeer_autoloader_loaded = true;
     } catch ( \\Throwable \$e ) {
         // Composer autoloader failed, fall back to custom autoloader
         if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-            error_log( 'Elementify MCP: Composer autoloader failed: ' . \$e->getMessage() );
+            error_log( 'Elementeer MCP: Composer autoloader failed: ' . \$e->getMessage() );
         }
-        \$elementify_autoloader_loaded = false;
+        \$elementeer_autoloader_loaded = false;
     }
 }
 
 // If Composer autoloader not loaded or failed, register our own
-if ( ! isset( \$elementify_autoloader_loaded ) || ! \$elementify_autoloader_loaded ) {
+if ( ! isset( \$elementeer_autoloader_loaded ) || ! \$elementeer_autoloader_loaded ) {
     spl_autoload_register( function ( string \$class ): void {
-        \$prefix   = 'Elementify\\\\MCP\\\\';
-        \$base_dir = ELEMENTIFY_MCP_DIR . 'includes/';
+        \$prefix   = 'Elementeer\\\\MCP\\\\';
+        \$base_dir = ELEMENTEER_MCP_DIR . 'includes/';
         
         // Does the class use the plugin namespace?
         \$len = strlen( \$prefix );
@@ -246,7 +246,7 @@ AUTOLOADER_PATCH
                 
                 # Füge den neuen Autoloader ein (vor der Plugin Bootstrap Section)
                 # Finde die Zeile nach den Constants
-                CONSTANTS_END=$(grep -n "define( 'ELEMENTIFY_MCP_OPTION_MODE" "$MAIN_PLUGIN_FILE" | head -1 | cut -d: -f1)
+                CONSTANTS_END=$(grep -n "define( 'ELEMENTEER_MCP_OPTION_MODE" "$MAIN_PLUGIN_FILE" | head -1 | cut -d: -f1)
                 if [ -n "$CONSTANTS_END" ]; then
                     INSERT_LINE=$((CONSTANTS_END + 1))
                     # Erstelle temporäre Datei mit Patch
@@ -291,15 +291,15 @@ AUTOLOADER_PATCH
 if ( function_exists( 'register_activation_hook' ) ) {
     register_activation_hook( __FILE__, function() {
         // Ensure plugin is bootstrapped before activation
-        if ( class_exists( 'Elementify\\MCP\\Plugin' ) ) {
-            Elementify\MCP\Plugin::activate();
+        if ( class_exists( 'Elementeer\\MCP\\Plugin' ) ) {
+            Elementeer\MCP\Plugin::activate();
         } else {
             // Fallback activation logic
-            if ( false === get_option( ELEMENTIFY_MCP_OPTION_KEYS ) ) {
-                update_option( ELEMENTIFY_MCP_OPTION_KEYS, [] );
+            if ( false === get_option( ELEMENTEER_MCP_OPTION_KEYS ) ) {
+                update_option( ELEMENTEER_MCP_OPTION_KEYS, [] );
             }
-            if ( false === get_option( ELEMENTIFY_MCP_OPTION_GOVERNANCE ) ) {
-                update_option( ELEMENTIFY_MCP_OPTION_GOVERNANCE, [
+            if ( false === get_option( ELEMENTEER_MCP_OPTION_GOVERNANCE ) ) {
+                update_option( ELEMENTEER_MCP_OPTION_GOVERNANCE, [
                     'allowed_capabilities' => [
                         'site-audit:read',
                         'stack-bootstrap:read',
@@ -379,17 +379,17 @@ ACTIVATION_HOOKS
 // ======================================================================
 // DEBUG HELPER (only in development)
 // ======================================================================
-if ( defined( 'WP_DEBUG' ) && WP_DEBUG && ! defined( 'ELEMENTIFY_MCP_NO_DEBUG' ) ) {
+if ( defined( 'WP_DEBUG' ) && WP_DEBUG && ! defined( 'ELEMENTEER_MCP_NO_DEBUG' ) ) {
     add_action( 'admin_bar_menu', function ( \$wp_admin_bar ) {
         if ( ! current_user_can( 'manage_options' ) ) {
             return;
         }
         
         \$wp_admin_bar->add_node( [
-            'id'    => 'elementify-debug',
-            'title' => 'Elementify v' . ELEMENTIFY_MCP_VERSION,
-            'href'  => admin_url( 'admin.php?page=elementify-mcp' ),
-            'meta'  => [ 'class' => 'elementify-debug-node' ],
+            'id'    => 'elementeer-debug',
+            'title' => 'Elementeer v' . ELEMENTEER_MCP_VERSION,
+            'href'  => admin_url( 'admin.php?page=elementeer-mcp' ),
+            'meta'  => [ 'class' => 'elementeer-debug-node' ],
         ] );
     }, 100 );
 }
@@ -412,7 +412,7 @@ echo "  • Überprüfe, ob alle essentiellen Dateien vorhanden sind..."
 
 # Kritische Dateien für v2 Funktion
 CRITICAL_FILES=(
-    "elementify-mcp.php"
+    "elementeer-mcp.php"
     "vendor/autoload.php"
     "includes/Plugin.php"
     "includes/Auth/Manager.php"
@@ -452,7 +452,7 @@ EXPECTED_ICONS=(
     "assets/images/icon.svg"
     "assets/images/icon-128x128.png"
     "assets/images/icon-256x256.png"
-    "assets/images/elementify.ico"
+    "assets/images/elementeer.ico"
 )
 
 ICONS_OK=true
@@ -499,7 +499,7 @@ unzip -q "$OUTPUT_ZIP" 2>/dev/null || true
 
 echo "  • Wichtige Dateien im ZIP:"
 IMPORTANT_FILES=(
-    "$PLUGIN_SLUG/elementify-mcp.php"
+    "$PLUGIN_SLUG/elementeer-mcp.php"
     "$PLUGIN_SLUG/vendor/autoload.php"
     "$PLUGIN_SLUG/includes/Plugin.php"
     "$PLUGIN_SLUG/includes/Auth/Manager.php"
@@ -557,7 +557,7 @@ echo "📦 AUSGABE-DATEI:"
 echo "   $OUTPUT_ZIP"
 echo ""
 echo "✅ ALLE FIXES ENTHALTEN:"
-echo "   ✓ Plugin-Name: 'Elementify' (nicht 'Elementify v2')"
+echo "   ✓ Plugin-Name: 'Elementeer' (nicht 'Elementeer v2')"
 echo "   ✓ Robuste Autoloader-Logik mit Fallback"
 echo "   ✓ Verbesserte Activation Hooks"
 echo "   ✓ Debug-Helper für Entwicklung"
@@ -570,8 +570,8 @@ echo "   2. Gehe zu: Plugins → Installieren"
 echo "   3. Lade die ZIP-Datei hoch: $OUTPUT_ZIP"
 echo "   4. Aktiviere das Plugin"
 echo "   5. Teste die REST API mit:"
-echo "      curl -H \"X-Elementify-Key: ek_8eb2088d7da2d9e9b2088cf90e09e4d214bbe456c16bf672\" \\"
-echo "           https://www.marcus-urban.de/wp-json/elementify/v1"
+echo "      curl -H \"X-Elementeer-Key: ek_8eb2088d7da2d9e9b2088cf90e09e4d214bbe456c16bf672\" \\"
+echo "           https://www.marcus-urban.de/wp-json/elementeer/v1"
 echo ""
 echo "🔧 BEI PROBLEMEN:"
 echo "   • Aktiviere WP_DEBUG in wp-config.php"

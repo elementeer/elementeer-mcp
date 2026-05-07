@@ -1,4 +1,4 @@
-# Elementify Free Completion Batch B Sequence
+# Elementeer Free Completion Batch B Sequence
 
 ## Metadata
 

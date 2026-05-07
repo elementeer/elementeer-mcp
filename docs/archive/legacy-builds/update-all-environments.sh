@@ -2,7 +2,7 @@
 set -e
 
 # ============================================
-# Elementify v1.0.0 - Multi-Environment Update
+# Elementeer v1.0.0 - Multi-Environment Update
 # ============================================
 # Updates all environments to v1.0.0
 # ============================================
@@ -28,7 +28,7 @@ success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
 print_banner() {
     echo -e "${BLUE}"
     echo "╔══════════════════════════════════════════════════════════╗"
-    echo "║          ELEMENTIFY v1.0.0 - UPDATE ALL                  ║"
+    echo "║          ELEMENTEER v1.0.0 - UPDATE ALL                  ║"
     echo "╚══════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
 }
@@ -101,7 +101,7 @@ build_plugin_zip() {
     composer install --no-dev --optimize-autoloader --quiet
     
     # Create ZIP
-    ZIP_FILE="/tmp/elementify-v1.0.0-$(date +%Y%m%d-%H%M%S).zip"
+    ZIP_FILE="/tmp/elementeer-v1.0.0-$(date +%Y%m%d-%H%M%S).zip"
     log "Creating plugin ZIP: $ZIP_FILE"
     
     zip -r "$ZIP_FILE" . \
@@ -137,36 +137,36 @@ deploy_to() {
     scp -q "$zip_file" "$ssh_user@$ssh_host:$wp_path/wp-content/plugins/"
     
     # Create deployment script
-    cat > /tmp/deploy-elementify.sh << DEPLOYSCRIPT
+    cat > /tmp/deploy-elementeer.sh << DEPLOYSCRIPT
 #!/bin/bash
 set -e
 
-echo "=== Elementify v1.0.0 Deployment on \$HOSTNAME ==="
+echo "=== Elementeer v1.0.0 Deployment on \$HOSTNAME ==="
 cd "$wp_path/wp-content/plugins"
 
 # Backup existing
-if [ -d "elementify" ]; then
-    backup_dir="elementify-backup-\$(date +%Y%m%d-%H%M%S)"
+if [ -d "elementeer" ]; then
+    backup_dir="elementeer-backup-\$(date +%Y%m%d-%H%M%S)"
     echo "Creating backup: \$backup_dir"
-    cp -r elementify "\$backup_dir"
+    cp -r elementeer "\$backup_dir"
     echo "Backup created: \$backup_dir"
 fi
 
 # Remove old version
-rm -rf elementify-old 2>/dev/null || true
-if [ -d "elementify" ]; then
-    mv elementify elementify-old
-    echo "Moved old version to elementify-old"
+rm -rf elementeer-old 2>/dev/null || true
+if [ -d "elementeer" ]; then
+    mv elementeer elementeer-old
+    echo "Moved old version to elementeer-old"
 fi
 
 # Extract new version
 echo "Extracting v1.0.0..."
-unzip -q -o "$(basename "$zip_file")" -d elementify
+unzip -q -o "$(basename "$zip_file")" -d elementeer
 rm -f "$(basename "$zip_file")"
 
 # Install PHP dependencies
 echo "Installing PHP dependencies..."
-cd elementify
+cd elementeer
 composer install --no-dev --optimize-autoloader --quiet
 
 # Fix permissions
@@ -180,8 +180,8 @@ echo "✅ Deployment complete on \$HOSTNAME"
 if command -v wp &> /dev/null; then
     echo "Activating plugin via WP-CLI..."
     cd "$wp_path"
-    wp plugin deactivate elementify --quiet 2>/dev/null || true
-    wp plugin activate elementify --quiet
+    wp plugin deactivate elementeer --quiet 2>/dev/null || true
+    wp plugin activate elementeer --quiet
     wp cache flush --quiet
     echo "Plugin activated"
 else
@@ -190,12 +190,12 @@ fi
 DEPLOYSCRIPT
     
     # Copy and run deployment script
-    scp -q /tmp/deploy-elementify.sh "$ssh_user@$ssh_host:/tmp/deploy-elementify.sh"
-    ssh "$ssh_user@$ssh_host" "bash /tmp/deploy-elementify.sh"
+    scp -q /tmp/deploy-elementeer.sh "$ssh_user@$ssh_host:/tmp/deploy-elementeer.sh"
+    ssh "$ssh_user@$ssh_host" "bash /tmp/deploy-elementeer.sh"
     
     # Verify deployment
     log "Verifying deployment..."
-    if ssh "$ssh_user@$ssh_host" "cd '$wp_path/wp-content/plugins/elementify' && grep -q 'Version:     1.0.0' elementify-mcp.php"; then
+    if ssh "$ssh_user@$ssh_host" "cd '$wp_path/wp-content/plugins/elementeer' && grep -q 'Version:     1.0.0' elementeer-mcp.php"; then
         success "✅ $env_name: Successfully updated to v1.0.0"
     else
         warn "⚠️  $env_name: Version check failed (may still be OK)"
@@ -207,7 +207,7 @@ update_local_mcp() {
     log "Updating local MCP installation..."
     
     # Check if installed globally
-    if command -v elementify-mcp &> /dev/null; then
+    if command -v elementeer-mcp &> /dev/null; then
         log "Found global installation, updating..."
         cd "$MCP_SERVER_DIR"
         npm install -g --silent
@@ -218,10 +218,10 @@ update_local_mcp() {
     fi
     
     # Update config if needed
-    if [ -f "$HOME/.elementify/config.json" ]; then
-        log "Found existing config: $HOME/.elementify/config.json"
+    if [ -f "$HOME/.elementeer/config.json" ]; then
+        log "Found existing config: $HOME/.elementeer/config.json"
     else
-        warn "No config found. Run: ./scripts/elementify-mcp.sh setup"
+        warn "No config found. Run: ./scripts/elementeer-mcp.sh setup"
     fi
 }
 
@@ -229,7 +229,7 @@ update_local_mcp() {
 main() {
     print_banner
     
-    log "Starting Elementify v1.0.0 update process..."
+    log "Starting Elementeer v1.0.0 update process..."
     echo ""
     
     # 1. Check prerequisites
@@ -271,7 +271,7 @@ main() {
     
     # 7. Cleanup
     log "Cleaning up temporary files..."
-    rm -f "$ZIP_FILE" /tmp/deploy-elementify.sh 2>/dev/null || true
+    rm -f "$ZIP_FILE" /tmp/deploy-elementeer.sh 2>/dev/null || true
     
     # 8. Summary
     success "🎉 UPDATE COMPLETE!"
@@ -282,9 +282,9 @@ main() {
     echo "- Environments: Updated as selected"
     echo ""
     echo "Next steps:"
-    echo "1. Test WordPress REST API: https://marcus-urban.de/wp-json/elementify/v1/health"
-    echo "2. Test MCP server: elementify-mcp --version"
-    echo "3. Verify new addon features: Check /wp-json/elementify/v1/addons"
+    echo "1. Test WordPress REST API: https://marcus-urban.de/wp-json/elementeer/v1/health"
+    echo "2. Test MCP server: elementeer-mcp --version"
+    echo "3. Verify new addon features: Check /wp-json/elementeer/v1/addons"
     echo ""
     echo "For issues, check:"
     echo "- Plugin error logs: /var/log/apache2/error.log"

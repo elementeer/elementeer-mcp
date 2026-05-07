@@ -144,12 +144,12 @@ describe('buildPremiumLibraryImportInput', () => {
       assetId: 'premium-service-section-stack',
     });
 
-    expect(payload.source.kind).toBe('elementify-premium');
+    expect(payload.source.kind).toBe('elementeer-premium');
     expect(payload.source.asset_id).toBe('premium-service-section-stack');
     expect(payload.type).toBe('section');
     expect(payload.status).toBe('draft');
     expect(Array.isArray(payload.elementor_data)).toBe(true);
-    expect(payload.categories).toContain('elementify-premium');
+    expect(payload.categories).toContain('elementeer-premium');
   });
 });
 
@@ -161,7 +161,7 @@ describe('premium library catalog helpers', () => {
       capabilityMatrix: makeCapabilityMatrix(),
     });
 
-    expect(report.provider).toBe('elementify-premium');
+    expect(report.provider).toBe('elementeer-premium');
     expect(report.assetCount).toBe(PREMIUM_LIBRARY_CATALOG.length);
     expect(report.assets[0]!.title).toContain('Premium');
     expect(report.notes.join(' ')).toContain('Catalog collections:');

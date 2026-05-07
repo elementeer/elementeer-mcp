@@ -1,4 +1,4 @@
-# Elementify Runtime Transition Uplift Sequence
+# Elementeer Runtime Transition Uplift Sequence
 
 ## Metadata
 

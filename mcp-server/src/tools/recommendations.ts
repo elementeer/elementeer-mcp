@@ -66,7 +66,7 @@ export function registerRecommendationTools(
         change_style: z.enum(['minimal', 'adaptive', 'transformative']).optional(),
         question_policy: z.enum(['ask-on-ambiguity', 'choose-conservative-default', 'prefer-complete-content']).optional(),
         notes: z.string().nullable().optional(),
-      }).optional().describe('Optional Elementify project profile that shapes editing posture, copy density, and approval behavior.'),
+      }).optional().describe('Optional Elementeer project profile that shapes editing posture, copy density, and approval behavior.'),
     },
     async ({ site_id, project_profile, ...ctx }) => {
       const client = getClient(site_id);
@@ -438,7 +438,7 @@ bulk_rename({ pattern: "Hero*", prefix: "SECTION_" })
 
 **Problem**: No pages are built with Elementor yet. The site is not using the page builder at all.
 
-**Impact**: High — without Elementor pages, all other Elementify features are underutilized.
+**Impact**: High — without Elementor pages, all other Elementeer features are underutilized.
 
 **Steps**:
 1. Check what pages exist (may not be Elementor pages yet):

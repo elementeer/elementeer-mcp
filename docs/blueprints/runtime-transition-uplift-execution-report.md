@@ -1,9 +1,9 @@
-# Elementify Runtime Transition Uplift Execution Report
+# Elementeer Runtime Transition Uplift Execution Report
 
 ## Batch Summary
 
 - batch_id: `BATCH-RUNTIME-TRANSITION-UPLIFT-001`
-- sequence: [runtime-transition-uplift-sequence.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/runtime-transition-uplift-sequence.md)
+- sequence: [runtime-transition-uplift-sequence.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/runtime-transition-uplift-sequence.md)
 - sequence_type: `build`
 - execution_mode: `ralph_attended`
 - gate_result: `continue`
@@ -11,7 +11,7 @@
 ## Steps Completed
 
 - `S1`
-  - strengthened the Free runtime wizard families in [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/free-runtime-wizards.ts)
+  - strengthened the Free runtime wizard families in [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/free-runtime-wizards.ts)
   - converted descriptive follow-on guidance into stronger action presets for:
     - `set_site_context`
     - `wizard_brand_setup`
@@ -19,23 +19,23 @@
     - `explain_recommendation`
     - `save_full_page_as_template`
     - `get_advanced_recommendations`
-  - rendered the new preset layer in [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/free-runtime-wizards.ts)
+  - rendered the new preset layer in [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/free-runtime-wizards.ts)
 
 - `S2`
-  - mirrored the same runtime-uplift pattern into the Advanced workflow layer in [advanced-workflows.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/advanced-workflows.ts)
+  - mirrored the same runtime-uplift pattern into the Advanced workflow layer in [advanced-workflows.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/advanced-workflows.ts)
   - added structured:
     - operative handoffs
     - action presets
     - workflow applications
-  - exposed the new sections in [advanced-workflows.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/advanced-workflows.ts)
+  - exposed the new sections in [advanced-workflows.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/advanced-workflows.ts)
 
 - `S3`
   - updated Free-side tests in:
-    - [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/free-runtime-wizards.test.ts)
-    - [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/tools/free-runtime-wizards.test.ts)
+    - [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/free-runtime-wizards.test.ts)
+    - [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/tools/free-runtime-wizards.test.ts)
   - updated Advanced-side tests in:
-    - [advanced-workflows.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/advanced-workflows.test.ts)
-    - [advanced-workflows.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/tools/advanced-workflows.test.ts)
+    - [advanced-workflows.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/advanced-workflows.test.ts)
+    - [advanced-workflows.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/tools/advanced-workflows.test.ts)
 
 ## Verification Commands
 
@@ -49,14 +49,14 @@
 
 ## Files Changed
 
-- [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/free-runtime-wizards.ts)
-- [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/free-runtime-wizards.ts)
-- [advanced-workflows.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/advanced-workflows.ts)
-- [advanced-workflows.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/advanced-workflows.ts)
-- [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/free-runtime-wizards.test.ts)
-- [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/tools/free-runtime-wizards.test.ts)
-- [advanced-workflows.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/advanced-workflows.test.ts)
-- [advanced-workflows.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/tools/advanced-workflows.test.ts)
+- [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/free-runtime-wizards.ts)
+- [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/free-runtime-wizards.ts)
+- [advanced-workflows.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/advanced-workflows.ts)
+- [advanced-workflows.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/advanced-workflows.ts)
+- [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/free-runtime-wizards.test.ts)
+- [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/tools/free-runtime-wizards.test.ts)
+- [advanced-workflows.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/advanced-workflows.test.ts)
+- [advanced-workflows.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/tools/advanced-workflows.test.ts)
 
 ## Review Result
 

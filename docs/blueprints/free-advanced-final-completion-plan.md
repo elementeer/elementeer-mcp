@@ -1,8 +1,8 @@
-# Elementify Free + Advanced Final Completion Plan
+# Elementeer Free + Advanced Final Completion Plan
 
 ## 1. Purpose
 
-This document turns the current Elementify state into a clean final execution ladder for:
+This document turns the current Elementeer state into a clean final execution ladder for:
 
 - completing the runtime product behavior of `Free`
 - completing the runtime product behavior of `Advanced`
@@ -16,11 +16,11 @@ It assumes:
 
 Grounding artifacts:
 
-- [free-advanced-launch-prd.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-advanced-launch-prd.md)
-- [free-advanced-scenario-wizard-prd-v2.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-advanced-scenario-wizard-prd-v2.md)
-- [free-advanced-full-scope-gap-map.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-advanced-full-scope-gap-map.md)
-- [free-preset-execution-report.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-preset-execution-report.md)
-- [runtime-transition-uplift-execution-report.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/runtime-transition-uplift-execution-report.md)
+- [free-advanced-launch-prd.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-advanced-launch-prd.md)
+- [free-advanced-scenario-wizard-prd-v2.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-advanced-scenario-wizard-prd-v2.md)
+- [free-advanced-full-scope-gap-map.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-advanced-full-scope-gap-map.md)
+- [free-preset-execution-report.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-preset-execution-report.md)
+- [runtime-transition-uplift-execution-report.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/runtime-transition-uplift-execution-report.md)
 
 ## 2. Current Completion View
 
@@ -77,10 +77,10 @@ Recommended lane logic:
 
 Keep central and tightly controlled:
 
-- [mcp-server/src/tools/index.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/index.ts)
-- [mcp-server/src/product-tiers.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/product-tiers.ts)
-- [mcp-server/src/product-surfaces.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/product-surfaces.ts)
-- [mirror/free-mirror.manifest.json](/Users/andrelange/Documents/repositories/github/elementify-mcp/mirror/free-mirror.manifest.json)
+- [mcp-server/src/tools/index.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/index.ts)
+- [mcp-server/src/product-tiers.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/product-tiers.ts)
+- [mcp-server/src/product-surfaces.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/product-surfaces.ts)
+- [mirror/free-mirror.manifest.json](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mirror/free-mirror.manifest.json)
 
 ## 4. Remaining Completion Slices
 

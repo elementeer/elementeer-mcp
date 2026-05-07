@@ -38,7 +38,7 @@ Completed the final surface and release lock for the current Free and Advanced s
 
 ## Next Best Prompt
 
-Produce a final completion summary for Elementify Free + Advanced:
+Produce a final completion summary for Elementeer Free + Advanced:
 
 1. what is now implemented
 2. what remains intentionally deferred to Studio

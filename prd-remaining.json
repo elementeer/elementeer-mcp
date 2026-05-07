@@ -1,5 +1,5 @@
 {
-  "projectName": "Elementify MCP PRD v2/v3 Completion - Remaining Enhancements",
+  "projectName": "Elementeer MCP PRD v2/v3 Completion - Remaining Enhancements",
   "version": "1.0",
   "status": "completed",
   "execution_recommendation": {
@@ -16,7 +16,7 @@
       "description": "Replace placeholder in translation.ts with actual AI-powered batch translation via FaiGate integration. Implement translate_strings tool that hooks into WPML/Polylang string translation with context-aware prompts.",
       "acceptanceCriteria": [
         "translate_strings tool accepts string arrays and target language",
-        "Integration with FaiGate config from ~/.elementify/config.json",
+        "Integration with FaiGate config from ~/.elementeer/config.json",
         "Returns translation results with confidence scores",
         "Handles batch translation with progress reporting",
         "Governance level L2 (auto-queue) as per product-tiers.ts"

@@ -1,8 +1,8 @@
-# Elementify Stack Profile Model
+# Elementeer Stack Profile Model
 
 ## Purpose
 
-This document defines the canonical stack-profile model for Elementify Free and Advanced.
+This document defines the canonical stack-profile model for Elementeer Free and Advanced.
 
 It translates the scenario and intent model into curated supported starting points across:
 
@@ -65,7 +65,7 @@ A justified next step when the scenario needs more workflow depth, more reliable
 Examples:
 
 - Elementor Pro
-- Elementify Advanced
+- Elementeer Advanced
 - selected supported pro addon profile
 
 ## Free Stack Profiles
@@ -146,7 +146,7 @@ Profile:
 - WordPress
 - Hello Theme or approved compatible baseline
 - Elementor Free or Pro depending scenario fit
-- Elementify Advanced
+- Elementeer Advanced
 - no extra pro addon profile by default
 
 Why it exists:
@@ -185,7 +185,7 @@ Profile:
 - current site context retained
 - stronger diagnostic layer
 - stronger rebuild and critique support
-- Elementor Pro, Elementify Advanced, and curated supported addons only when scenario-fit is clear
+- Elementor Pro, Elementeer Advanced, and curated supported addons only when scenario-fit is clear
 
 ## Profile Selection Rules
 
@@ -209,7 +209,7 @@ Hello Theme should be treated as:
 The system should remain open to:
 
 - compatible retained themes in brownfield scenarios
-- a later Elementify Theme or Elementify Theme System direction
+- a later Elementeer Theme or Elementeer Theme System direction
 
 But that future should not distort current recommendation honesty.
 

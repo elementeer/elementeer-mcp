@@ -4,8 +4,8 @@ import axios, { AxiosInstance, AxiosError } from 'axios';
 import type {
   ElementeerTemplate,
   ElementeerTemplateList,
-  ElementifyError,
-  ElementifyErrorCode,
+  ElementeerError,
+  ElementeerErrorCode,
   SiteInfo,
   GlobalColor,
   GlobalTypographyEntry,
@@ -139,14 +139,14 @@ export type {
   StackReadinessSignals,
 } from '@elementeer/shared';
 
-export class ElementifyApiError extends Error {
+export class ElementeerApiError extends Error {
   constructor(
-    public readonly code: ElementifyErrorCode,
+    public readonly code: ElementeerErrorCode,
     message: string,
     public readonly status: number,
   ) {
     super(message);
-    this.name = 'ElementifyApiError';
+    this.name = 'ElementeerApiError';
   }
 }
 
@@ -167,7 +167,7 @@ export interface UpdateTemplateInput {
 }
 
 export interface LibraryImportSource {
-  kind: 'local-elementor' | 'elementify-premium';
+  kind: 'local-elementor' | 'elementeer-premium';
   asset_id: string;
   asset_title?: string;
   reference?: string;
@@ -539,12 +539,12 @@ export class ElementeerClient {
   private http: AxiosInstance;
 
   constructor(siteUrl: string, apiKey: string) {
-    const baseURL = siteUrl.replace(/\/$/, '') + '/wp-json/elementify/v1';
+    const baseURL = siteUrl.replace(/\/$/, '') + '/wp-json/elementeer/v1';
 
     this.http = axios.create({
       baseURL,
       headers: {
-        'X-Elementify-Key': apiKey,
+        'X-Elementeer-Key': apiKey,
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
         Accept: 'application/json',
@@ -562,9 +562,9 @@ export class ElementeerClient {
   }
 
   /** @internal — public for unit testing only */
-  handleError(err: AxiosError<unknown>): ElementifyApiError {
+  handleError(err: AxiosError<unknown>): ElementeerApiError {
     if (!err.response) {
-      return new ElementifyApiError(
+      return new ElementeerApiError(
         'not_found',
         `Network error: ${err.message}`,
         0,
@@ -572,36 +572,36 @@ export class ElementeerClient {
     }
 
     const { status } = err.response;
-    const data = err.response.data as ElementifyError | undefined;
+    const data = err.response.data as ElementeerError | undefined;
     const code = data?.code as string | undefined;
 
     // Critical distinction: scope errors must NOT surface as "invalid key"
-    if (code === 'elementify_insufficient_scope' || code === 'auth_insufficient_scope') {
-      return new ElementifyApiError(
+    if (code === 'elementeer_insufficient_scope' || code === 'auth_insufficient_scope') {
+      return new ElementeerApiError(
         'auth_insufficient_scope',
         data?.message ?? 'API key lacks the required capability for this operation.',
         status,
       );
     }
 
-    if (code === 'elementify_governance_blocked' || code === 'governance_blocked') {
-      return new ElementifyApiError(
+    if (code === 'elementeer_governance_blocked' || code === 'governance_blocked') {
+      return new ElementeerApiError(
         'governance_blocked',
         data?.message ?? 'This operation is blocked by governance settings.',
         status,
       );
     }
 
-    if (code === 'elementify_invalid_key' || code === 'auth_invalid_key') {
-      return new ElementifyApiError(
+    if (code === 'elementeer_invalid_key' || code === 'auth_invalid_key') {
+      return new ElementeerApiError(
         'auth_invalid_key',
         data?.message ?? 'Invalid or missing API key.',
         status,
       );
     }
 
-    if (code === 'elementify_key_inactive' || code === 'auth_key_inactive') {
-      return new ElementifyApiError(
+    if (code === 'elementeer_key_inactive' || code === 'auth_key_inactive') {
+      return new ElementeerApiError(
         'auth_key_inactive',
         data?.message ?? 'API key is inactive.',
         status,
@@ -609,7 +609,7 @@ export class ElementeerClient {
     }
 
     if (status === 401) {
-      return new ElementifyApiError(
+      return new ElementeerApiError(
         'auth_invalid_key',
         data?.message ?? 'Unauthorized.',
         status,
@@ -620,21 +620,21 @@ export class ElementeerClient {
       // 403 with a "scope" message is insufficient_scope, not invalid_key
       const msg = data?.message ?? '';
       if (msg.toLowerCase().includes('scope') || msg.toLowerCase().includes('capabilit')) {
-        return new ElementifyApiError('auth_insufficient_scope', msg, status);
+        return new ElementeerApiError('auth_insufficient_scope', msg, status);
       }
-      return new ElementifyApiError('governance_blocked', msg || 'Forbidden.', status);
+      return new ElementeerApiError('governance_blocked', msg || 'Forbidden.', status);
     }
 
     if (status === 404) {
-      return new ElementifyApiError('not_found', data?.message ?? 'Not found.', status);
+      return new ElementeerApiError('not_found', data?.message ?? 'Not found.', status);
     }
 
     if (status === 429) {
-      return new ElementifyApiError('rate_limited', data?.message ?? 'Rate limited.', status);
+      return new ElementeerApiError('rate_limited', data?.message ?? 'Rate limited.', status);
     }
 
-    const knownCode = (data?.code as ElementifyErrorCode) ?? 'not_found';
-    return new ElementifyApiError(
+    const knownCode = (data?.code as ElementeerErrorCode) ?? 'not_found';
+    return new ElementeerApiError(
       knownCode,
       data?.message ?? `Request failed with status ${status}`,
       status,

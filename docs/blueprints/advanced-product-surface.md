@@ -1,4 +1,4 @@
-# Elementify Advanced Product Surface
+# Elementeer Advanced Product Surface
 
 ## Positioning
 
@@ -8,7 +8,7 @@ Advanced is the first paid and private product layer. It must feel like a real p
 
 ## Core Promise
 
-Advanced extends the same scenario families as Free with deeper workflow control, deeper creator power, stronger critique and adaptation, richer stack shaping, and the first visible Elementify Library experience.
+Advanced extends the same scenario families as Free with deeper workflow control, deeper creator power, stronger critique and adaptation, richer stack shaping, and the first visible Elementeer Library experience.
 
 ## What Advanced Includes
 
@@ -86,9 +86,9 @@ Why this belongs in Advanced:
 - It deepens contextualization, planning quality, critique quality, and confidence.
 - It is a clear productivity and workflow upgrade.
 
-### 7. Elementify Library as curated premium layer
+### 7. Elementeer Library as curated premium layer
 
-Advanced should visibly introduce the `Elementify Library`.
+Advanced should visibly introduce the `Elementeer Library`.
 
 This means:
 
@@ -142,7 +142,7 @@ The Advanced critique layer should not stop at advice:
 
 ### Advanced workflow 7: Premium library usage
 
-Use curated Elementify assets through a `list -> inspect -> plan -> import locally` flow as a stronger reusable building layer on the current site.
+Use curated Elementeer assets through a `list -> inspect -> plan -> import locally` flow as a stronger reusable building layer on the current site.
 
 ### Advanced workflow 8: Upgrade and stack shaping
 
@@ -150,7 +150,7 @@ Use scenario-aware runtime guidance to distinguish:
 
 - keep current stack
 - Elementor Pro for builder / structural gaps
-- Elementify Advanced for workflow depth
+- Elementeer Advanced for workflow depth
 - one curated supported pro addon profile when it is genuinely justified
 
 ### Advanced workflow 9: Variant, rollout, and repair depth
@@ -178,7 +178,7 @@ The productivity layer should be explicit in runtime output:
 - Advanced remains private in the Forgejo primary repo.
 - Advanced must remain separable from the public Free mirror.
 - Advanced extends the Free core, but Free must not depend on Advanced modules.
-- Advanced may brand the premium layer as `Elementify Library`, but must not imply Studio cloud behavior.
+- Advanced may brand the premium layer as `Elementeer Library`, but must not imply Studio cloud behavior.
 - Advanced may recommend richer addon profiles and deeper skill profiles, but must remain scenario-led and not turn into stack inflation.
 
 ## Strategic Interpretation

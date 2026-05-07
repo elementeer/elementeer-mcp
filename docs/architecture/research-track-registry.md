@@ -3,8 +3,8 @@
 ## Purpose
 This document describes the isolated research-track modules introduced for phase 2:
 
-- [mcp-server/src/research/registry.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/research/registry.ts)
-- [mcp-server/src/research/resolver.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/research/resolver.ts)
+- [mcp-server/src/research/registry.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/research/registry.ts)
+- [mcp-server/src/research/resolver.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/research/resolver.ts)
 
 They are intentionally separate from the stable product core.
 

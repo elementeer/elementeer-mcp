@@ -1,8 +1,8 @@
-# Elementify Intent Wizard Contract
+# Elementeer Intent Wizard Contract
 
 ## Purpose
 
-This document defines the front-door wizard contract for Elementify.
+This document defines the front-door wizard contract for Elementeer.
 
 It is the primary routing layer that turns user situation and intent into:
 
@@ -21,13 +21,13 @@ It should be understandable for:
 
 The Intent Wizard is not just onboarding.
 
-It is the decision layer that prevents Elementify from feeling like:
+It is the decision layer that prevents Elementeer from feeling like:
 
 - a generic tool shelf
 - a capability list
 - a hidden upsell engine
 
-Instead it should make Elementify feel like:
+Instead it should make Elementeer feel like:
 
 - a guided operating system for WordPress + Elementor outcomes
 
@@ -254,7 +254,7 @@ Supported free addon profiles should be suggested only when:
 Advanced may recommend:
 
 - Elementor Pro
-- Elementify Advanced
+- Elementeer Advanced
 - selected supported pro plugin profiles
 
 But only if they improve:

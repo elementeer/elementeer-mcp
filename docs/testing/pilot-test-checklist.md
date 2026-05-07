@@ -1,4 +1,4 @@
-# Elementify Pilot Test Checklist
+# Elementeer Pilot Test Checklist
 
 ## Goal
 
@@ -7,7 +7,7 @@ Run fast, real-world pilot tests without bloating the process.
 This checklist is for immediate use on:
 
 - one real client or staging site
-- one internal Elementify site test
+- one internal Elementeer site test
 
 ## Rules
 
@@ -55,10 +55,10 @@ This checklist is for immediate use on:
 ### End Check
 
 - was the outcome actually useful?
-- did Elementify reduce work?
+- did Elementeer reduce work?
 - would this flow be repeatable for a real delivery job?
 
-## Pilot B — Elementify Site
+## Pilot B — Elementeer Site
 
 ### Before Start
 
@@ -130,5 +130,5 @@ At the end of each site session, add:
 ## Suggested Immediate Order
 
 1. client-site pilot on one narrow scenario
-2. Elementify-site Advanced pilot on one bounded structural or relaunch scenario
+2. Elementeer-site Advanced pilot on one bounded structural or relaunch scenario
 3. quick daily synthesis in `feedback-testing.md`

@@ -1,8 +1,8 @@
-# Elementify Free + Advanced Launch Blueprint
+# Elementeer Free + Advanced Launch Blueprint
 
 ## 1. Executive Summary
 
-Elementify will be implemented as a Forgejo-first product with a public GitHub mirror that exposes only the `Free` product surface.
+Elementeer will be implemented as a Forgejo-first product with a public GitHub mirror that exposes only the `Free` product surface.
 
 The product model is:
 
@@ -12,15 +12,15 @@ The product model is:
 
 This blueprint is grounded in:
 
-- the final launch strategy in [elementify_drei_stufen_launchstrategie_finalisierung.md](/Users/andrelange/Library/CloudStorage/GoogleDrive-andre.lange@lange-network.com/Meine%20Ablage/02_Projects/Vamerli_Elementify/05_Go_to_Market/elementify_drei_stufen_launchstrategie_finalisierung.md)
-- the repository baseline correction in [phase-2-baseline-alignment.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/phase-2-baseline-alignment.md)
-- the current MCP/plugin capability surface in [README.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/README.md), [ROADMAP.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/ROADMAP.md), and [mcp-server/src/tools/index.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/index.ts)
+- the final launch strategy in [elementeer_drei_stufen_launchstrategie_finalisierung.md](/Users/andrelange/Library/CloudStorage/GoogleDrive-andre.lange@lange-network.com/Meine%20Ablage/02_Projects/Vamerli_Elementeer/05_Go_to_Market/elementeer_drei_stufen_launchstrategie_finalisierung.md)
+- the repository baseline correction in [phase-2-baseline-alignment.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/phase-2-baseline-alignment.md)
+- the current MCP/plugin capability surface in [README.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/README.md), [ROADMAP.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/ROADMAP.md), and [mcp-server/src/tools/index.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/index.ts)
 
 The implementation goal is not only to make `Free` and `Advanced` fully functional, but to make the boundary between them explicit enough that a public `Free` mirror can be produced cleanly and repeatably.
 
 ## 2. Problem Statement
 
-Elementify already has a strong operational foundation as a WordPress plugin plus MCP server, but its current codebase is not yet packaged as a clean three-layer product model.
+Elementeer already has a strong operational foundation as a WordPress plugin plus MCP server, but its current codebase is not yet packaged as a clean three-layer product model.
 
 The immediate product problem is:
 
@@ -41,7 +41,7 @@ If these boundaries are not made explicit now, the team will face:
 - Launch a private `Advanced` offer that clearly feels like a workflow and productivity upgrade
 - Preserve a clean future path to `Studio` without prematurely shipping cloud or cross-site systems
 - Make the Forgejo primary and GitHub mirror split operationally cheap
-- Differentiate Elementify through intelligent workflow lift, not through site limits
+- Differentiate Elementeer through intelligent workflow lift, not through site limits
 
 ## 4. Target Users & Personas
 
@@ -66,7 +66,7 @@ If these boundaries are not made explicit now, the team will face:
 
 ## 5. Product Vision
 
-Elementify should be perceived as an intelligent operational layer for Elementor workflows.
+Elementeer should be perceived as an intelligent operational layer for Elementor workflows.
 
 It should not be positioned as:
 
@@ -112,7 +112,7 @@ It delivers:
 - stronger contextualization and output critique
 - brand adaptation workflows
 - reuse-light workflows and stronger premium asset usage
-- first visible `Elementify Library` as a curated premium library
+- first visible `Elementeer Library` as a curated premium library
 - stronger agent-native workflow acceleration
 
 ### 6.3 Studio Seams
@@ -121,7 +121,7 @@ It delivers:
 
 The current deferment boundary is locked in:
 
-- [studio-deferment-note.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/architecture/studio-deferment-note.md)
+- [studio-deferment-note.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/architecture/studio-deferment-note.md)
 
 Studio future scope:
 
@@ -224,7 +224,7 @@ Acceptance:
 
 #### FR-A-4 Premium library experience
 
-- Advanced shall expose a curated premium library clearly branded as `Elementify Library`.
+- Advanced shall expose a curated premium library clearly branded as `Elementeer Library`.
 - Premium assets shall import into or work with the local Elementor Library on the current site.
 
 Acceptance:
@@ -293,9 +293,9 @@ The implementation starts from the current MCP/plugin baseline, not from a Studi
 
 Key current assets include:
 
-- plugin activation modes in [plugin/includes/Activation/Mode.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Activation/Mode.php)
-- shared config in [shared/src/types/config.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/shared/src/types/config.ts)
-- current MCP tool registration in [mcp-server/src/tools/index.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/index.ts)
+- plugin activation modes in [plugin/includes/Activation/Mode.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Activation/Mode.php)
+- shared config in [shared/src/types/config.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/shared/src/types/config.ts)
+- current MCP tool registration in [mcp-server/src/tools/index.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/index.ts)
 
 ### 9.2 Proposed boundary model
 

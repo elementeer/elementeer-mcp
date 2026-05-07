@@ -92,7 +92,7 @@ function makeRoute(overrides: Partial<IntentWizardRoute> = {}): IntentWizardRout
       baselineStack: ['Current WordPress site', 'Current theme assessed', 'Elementor Free'],
       addonProfile: 'none',
       addonRationale: 'Stay simple first.',
-      upgradePath: ['Elementify Advanced only if the path turns into a deeper migration'],
+      upgradePath: ['Elementeer Advanced only if the path turns into a deeper migration'],
       supportConfidence: 'high',
     },
     recommendedSkillProfile: {

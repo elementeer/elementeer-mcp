@@ -131,7 +131,7 @@ export function registerPremiumLibraryTools(
 ): void {
   server.tool(
     'list_premium_library_assets',
-    'List curated Elementify Premium Library assets for the current site. This is an Advanced-only catalog inspection surface and stays local-site operational.',
+    'List curated Elementeer Premium Library assets for the current site. This is an Advanced-only catalog inspection surface and stays local-site operational.',
     {
       site_id: z.string().optional().describe('Site ID from config'),
       target_type: z.enum(['page-starter', 'section-starter', 'component', 'theme-block']).optional()
@@ -169,7 +169,7 @@ export function registerPremiumLibraryTools(
 
   server.tool(
     'inspect_premium_library_asset',
-    'Inspect a curated Elementify Premium Library asset before importing it locally. This is an Advanced-only inspection surface and does not imply cloud storage or Studio delivery semantics.',
+    'Inspect a curated Elementeer Premium Library asset before importing it locally. This is an Advanced-only inspection surface and does not imply cloud storage or Studio delivery semantics.',
     {
       site_id: z.string().optional().describe('Site ID from config'),
       asset_id: z.string().describe('Premium library asset identifier'),
@@ -205,7 +205,7 @@ export function registerPremiumLibraryTools(
 
   server.tool(
     'plan_premium_library_usage',
-    'Plan how a curated Elementify Premium Library asset should be used on the current site. This is an Advanced-only workflow surface: it explains how premium assets are imported into or used alongside the local Elementor Library without implying cloud sync or Studio delivery semantics.',
+    'Plan how a curated Elementeer Premium Library asset should be used on the current site. This is an Advanced-only workflow surface: it explains how premium assets are imported into or used alongside the local Elementor Library without implying cloud sync or Studio delivery semantics.',
     {
       site_id: z.string().optional().describe('Site ID from config'),
       asset_id: z.string().optional().describe('Optional premium library asset identifier'),
@@ -269,7 +269,7 @@ export function registerPremiumLibraryTools(
 
   server.tool(
     'import_premium_library_asset',
-    'Import a curated Elementify Premium Library asset into the local Elementor Library on the current site. This is an Advanced-only execution seam that uses the dedicated local library/import endpoint and does not imply cloud sync or Studio delivery behavior.',
+    'Import a curated Elementeer Premium Library asset into the local Elementor Library on the current site. This is an Advanced-only execution seam that uses the dedicated local library/import endpoint and does not imply cloud sync or Studio delivery behavior.',
     {
       site_id: z.string().optional().describe('Site ID from config'),
       asset_id: z.string().describe('Premium library asset identifier'),

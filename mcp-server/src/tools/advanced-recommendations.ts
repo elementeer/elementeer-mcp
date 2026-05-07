@@ -38,7 +38,7 @@ export function registerAdvancedRecommendationTools(
 ): void {
   server.tool(
     'plan_advanced_upgrade_path',
-    'Plan a scenario-aware Advanced upgrade and stack-shaping path. Distinguishes baseline correction, Elementor Pro needs, Elementify Advanced workflow depth, and curated pro-addon guidance without collapsing into generic upsell behavior.',
+    'Plan a scenario-aware Advanced upgrade and stack-shaping path. Distinguishes baseline correction, Elementor Pro needs, Elementeer Advanced workflow depth, and curated pro-addon guidance without collapsing into generic upsell behavior.',
     {
       site_id: z.string().optional(),
       current_tier: z.enum(['free', 'advanced']).optional().default('advanced')

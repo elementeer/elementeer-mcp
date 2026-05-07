@@ -175,8 +175,8 @@ class ElementeerTestRunner {
 
 // Example configuration (would normally come from environment variables)
 const config: TestConfig = {
-  siteUrl: process.env.ELEMENTIFY_TEST_SITE || 'https://example.com',
-  apiKey: process.env.ELEMENTIFY_API_KEY || 'test-key',
+  siteUrl: process.env.ELEMENTEER_TEST_SITE || 'https://example.com',
+  apiKey: process.env.ELEMENTEER_API_KEY || 'test-key',
   verbose: process.env.VERBOSE === 'true',
 };
 

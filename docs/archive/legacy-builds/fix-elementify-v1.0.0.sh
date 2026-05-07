@@ -2,18 +2,18 @@
 set -e
 
 # ============================================
-# FIX ELEMENTIFY v1.0.0 INSTALLATION
+# FIX ELEMENTEER v1.0.0 INSTALLATION
 # Für REST API 500 Error nach Update
 # ============================================
 
-echo "=== ELEMENTIFY v1.0.0 FIX SCRIPT ==="
+echo "=== ELEMENTEER v1.0.0 FIX SCRIPT ==="
 echo ""
 
 # SSH Zugangsdaten (anpassen falls nötig)
 SSH_HOST="marcus-urban.de"
 SSH_USER="$(whoami)"
 WP_PATH="/var/www/html"
-PLUGIN_DIR="$WP_PATH/wp-content/plugins/elementify"
+PLUGIN_DIR="$WP_PATH/wp-content/plugins/elementeer"
 
 # Colors
 RED='\033[0;31m'
@@ -31,10 +31,10 @@ ssh "$SSH_USER@$SSH_HOST" "
     if [ -d '$PLUGIN_DIR' ]; then
         echo '✅ Plugin-Verzeichnis existiert'
         echo '   Version:'
-        grep 'Version:' '$PLUGIN_DIR/elementify-mcp.php' || echo '   ❌ Version nicht gefunden'
+        grep 'Version:' '$PLUGIN_DIR/elementeer-mcp.php' || echo '   ❌ Version nicht gefunden'
         
         echo '   Wichtige Dateien:'
-        ls -la '$PLUGIN_DIR/' | grep -E 'elementify-mcp.php|composer.json|vendor'
+        ls -la '$PLUGIN_DIR/' | grep -E 'elementeer-mcp.php|composer.json|vendor'
         
         echo '   vendor/ Ordner:'
         if [ -d '$PLUGIN_DIR/vendor' ]; then
@@ -53,7 +53,7 @@ log ""
 log "2. Prüfe REST API Fehler..."
 ssh "$SSH_USER@$SSH_HOST" "
     echo 'WordPress Debug Log (letzte 10 Einträge):'
-    tail -10 '$WP_PATH/wp-content/debug.log' 2>/dev/null | grep -i 'error\|fatal\|elementify' || echo '   Keine relevanten Fehler im debug.log'
+    tail -10 '$WP_PATH/wp-content/debug.log' 2>/dev/null | grep -i 'error\|fatal\|elementeer' || echo '   Keine relevanten Fehler im debug.log'
     
     echo ''
     echo 'PHP Error Log:'
@@ -104,7 +104,7 @@ log "4. Lösung B: Komplette ZIP mit vendor/ neu erstellen..."
 
 # Lokal: ZIP mit allen Abhängigkeiten erstellen
 log "Erstelle komplette ZIP mit vendor/ Ordner..."
-cd /Users/andrelange/Documents/repositories/github/elementify-mcp/plugin
+cd /Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin
 
 # Stelle sicher, dass vendor/ existiert
 if [ ! -d "vendor" ]; then
@@ -113,7 +113,7 @@ if [ ! -d "vendor" ]; then
 fi
 
 # Erstelle ZIP inklusive vendor/
-ZIP_FILE="/tmp/elementify-v1.0.0-complete-$(date +%Y%m%d-%H%M%S).zip"
+ZIP_FILE="/tmp/elementeer-v1.0.0-complete-$(date +%Y%m%d-%H%M%S).zip"
 log "Erstelle ZIP: $ZIP_FILE"
 zip -r "$ZIP_FILE" . \
     -x "*.git*" \
@@ -134,41 +134,41 @@ log "ZIP Größe: $(du -h "$ZIP_FILE" | cut -f1)"
 
 # Hochladen und ersetzen
 log "Lade ZIP hoch und ersetze Plugin..."
-scp "$ZIP_FILE" "$SSH_USER@$SSH_HOST:/tmp/elementify-complete.zip"
+scp "$ZIP_FILE" "$SSH_USER@$SSH_HOST:/tmp/elementeer-complete.zip"
 
 ssh "$SSH_USER@$SSH_HOST" "
     cd '$WP_PATH/wp-content/plugins'
     
     # Backup des aktuellen
-    if [ -d 'elementify' ]; then
-        backup_name='elementify-backup-\$(date +%Y%m%d-%H%M%S)'
+    if [ -d 'elementeer' ]; then
+        backup_name='elementeer-backup-\$(date +%Y%m%d-%H%M%S)'
         echo 'Erstelle Backup: \$backup_name'
-        cp -r elementify \"\$backup_name\"
+        cp -r elementeer \"\$backup_name\"
     fi
     
     # Entferne altes Plugin
-    rm -rf elementify
+    rm -rf elementeer
     
     # Extrahiere neue Version
     echo 'Extrahiere komplette Version...'
-    unzip -q -o /tmp/elementify-complete.zip -d elementify
+    unzip -q -o /tmp/elementeer-complete.zip -d elementeer
     
     # Setze korrekte Berechtigungen
     echo 'Setze Berechtigungen...'
-    chmod -R 755 elementify
-    find elementify -type f -exec chmod 644 {} \;
+    chmod -R 755 elementeer
+    find elementeer -type f -exec chmod 644 {} \;
     
     # Lös temporäre ZIP
-    rm -f /tmp/elementify-complete.zip
+    rm -f /tmp/elementeer-complete.zip
     
     echo '✅ Komplette Version installiert'
     
     # Prüfe Installation
     echo 'Installationsprüfung:'
-    if [ -d 'elementify/vendor' ]; then
+    if [ -d 'elementeer/vendor' ]; then
         echo '✅ vendor/ Ordner vorhanden'
         echo '   Autoloader:'
-        ls -la elementify/vendor/autoload.php 2>/dev/null && echo '   ✅ autoload.php existiert'
+        ls -la elementeer/vendor/autoload.php 2>/dev/null && echo '   ✅ autoload.php existiert'
     else
         echo '❌ vendor/ immer noch nicht vorhanden'
     fi
@@ -182,10 +182,10 @@ ssh "$SSH_USER@$SSH_HOST" "
     
     if command -v wp &> /dev/null; then
         echo 'Deaktiviere Plugin...'
-        wp plugin deactivate elementify --quiet 2>/dev/null || true
+        wp plugin deactivate elementeer --quiet 2>/dev/null || true
         
         echo 'Aktiviere Plugin...'
-        wp plugin activate elementify --quiet
+        wp plugin activate elementeer --quiet
         
         echo 'Leere Cache...'
         wp cache flush --quiet
@@ -200,7 +200,7 @@ ssh "$SSH_USER@$SSH_HOST" "
 log ""
 log "6. Finaler Test..."
 log "Teste REST API:"
-curl -s -o /tmp/final-test.txt -w "HTTP Status: %{http_code}\n" https://www.marcus-urban.de/wp-json/elementify/v1/health
+curl -s -o /tmp/final-test.txt -w "HTTP Status: %{http_code}\n" https://www.marcus-urban.de/wp-json/elementeer/v1/health
 echo "Antwort:"
 head -c 200 /tmp/final-test.txt 2>/dev/null || true
 echo ""
@@ -215,12 +215,12 @@ log "7. Alternative: Rollback auf v0.5.0 falls Probleme bleiben..."
 log "Falls die obigen Lösungen nicht funktionieren:"
 echo "  ssh $SSH_USER@$SSH_HOST"
 echo "  cd $WP_PATH/wp-content/plugins"
-echo "  rm -rf elementify"
-echo "  unzip -o elementify-mcp-0.5.0.zip -d elementify"
-echo "  cd elementify"
+echo "  rm -rf elementeer"
+echo "  unzip -o elementeer-mcp-0.5.0.zip -d elementeer"
+echo "  cd elementeer"
 echo "  composer install --no-dev --optimize-autoloader"
 echo "  cd $WP_PATH"
-echo "  wp plugin activate elementify"
+echo "  wp plugin activate elementeer"
 echo ""
 
 # 8. Zusammenfassung
@@ -241,7 +241,7 @@ log "4. Erhöhe PHP memory_limit in wp-config.php"
 log ""
 log "Support:"
 log "- Debug Log: ssh $SSH_USER@$SSH_HOST 'tail -50 /var/www/html/wp-content/debug.log'"
-log "- Plugin Status: ssh $SSH_USER@$SSH_HOST 'cd /var/www/html && wp plugin status elementify'"
+log "- Plugin Status: ssh $SSH_USER@$SSH_HOST 'cd /var/www/html && wp plugin status elementeer'"
 log "- PHP Info: ssh $SSH_USER@$SSH_HOST 'php -v && php -m | grep -E \"json|curl\"'"
 log ""
 

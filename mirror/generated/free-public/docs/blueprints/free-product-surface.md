@@ -1,4 +1,4 @@
-# Elementify Free Product Surface
+# Elementeer Free Product Surface
 
 ## Positioning
 
@@ -53,11 +53,11 @@ Why this belongs in Free:
 
 Current technical basis:
 
-- [assessment.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/assessment.ts)
-- [recommendations.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/recommendations.ts)
-- [fingerprint.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/fingerprint.ts)
-- [destination.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/destination.ts)
-- [validation.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/validation.ts)
+- [assessment.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/assessment.ts)
+- [recommendations.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/recommendations.ts)
+- [fingerprint.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/fingerprint.ts)
+- [destination.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/destination.ts)
+- [validation.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/validation.ts)
 
 ### 3. Brand setup and site foundation
 
@@ -98,7 +98,7 @@ Why this belongs in Free:
 Why this belongs in Free:
 
 - The local Elementor Library is the primary target system.
-- Elementify should make the existing Elementor stack more useful, not replace it.
+- Elementeer should make the existing Elementor stack more useful, not replace it.
 
 ### 6. Agent-native setup and skill-facing entry
 
@@ -171,7 +171,7 @@ Within the runtime layer:
 ## What Free Explicitly Does Not Include
 
 - Theme Builder delivery workflows
-- premium Elementify Library access
+- premium Elementeer Library access
 - change-queue governance workflows
 - brand adaptation planning
 - rebuild strategy planning and critique
@@ -189,12 +189,12 @@ Within the runtime layer:
 - Free must never promise cloud-library or Studio semantics.
 - Free may recommend curated skill profiles and free addon profiles, but must not collapse into extension inflation.
 - The Free mirror must stay aligned with `registerFreeTools`, the public docs list, and the staged `free-tool-surface.json` snapshot produced from the runtime build.
-- The public onboarding path lives in [docs/quickstart/free.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/quickstart/free.md).
-- The public release checklist lives in [docs/release/free-public-release-checklist.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/release/free-public-release-checklist.md).
+- The public onboarding path lives in [docs/quickstart/free.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/quickstart/free.md).
+- The public release checklist lives in [docs/release/free-public-release-checklist.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/release/free-public-release-checklist.md).
 
 ## Strategic Interpretation
 
-Free is not “small Elementify”.
+Free is not “small Elementeer”.
 
 It is:
 
@@ -204,6 +204,6 @@ It is:
 - the first real operational value layer
 - the first useful stack-bootstrap layer
 
-For a short public-facing summary, see [docs/public/free-includes-excludes.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/public/free-includes-excludes.md).
+For a short public-facing summary, see [docs/public/free-includes-excludes.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/public/free-includes-excludes.md).
 
 That only works if Free feels strong on its own.

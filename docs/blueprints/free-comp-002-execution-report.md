@@ -1,9 +1,9 @@
-# Elementify FREE-COMP-002 Execution Report
+# Elementeer FREE-COMP-002 Execution Report
 
 ## Batch Summary
 
 - batch_id: `FREE-COMP-002`
-- sequence: [free-comp-002-sequence.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-comp-002-sequence.md)
+- sequence: [free-comp-002-sequence.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-comp-002-sequence.md)
 - sequence_type: `build`
 - execution_mode: `ralph_attended`
 - gate_result: `continue`
@@ -11,31 +11,31 @@
 ## Steps Completed
 
 - `S1`
-  - added `new-site-lite` runtime planning in [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/free-runtime-wizards.ts)
-  - added `extension-lite` runtime planning in [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/free-runtime-wizards.ts)
-  - registered the corresponding Free tools in [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/free-runtime-wizards.ts):
+  - added `new-site-lite` runtime planning in [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/free-runtime-wizards.ts)
+  - added `extension-lite` runtime planning in [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/free-runtime-wizards.ts)
+  - registered the corresponding Free tools in [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/free-runtime-wizards.ts):
     - `wizard_new_site_lite`
     - `wizard_extension_lite`
 
 - `S2`
-  - updated intent routing in [intent-wizard.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/intent-wizard.ts) so:
+  - updated intent routing in [intent-wizard.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/intent-wizard.ts) so:
     - `idea_only` and `brand_without_site` route into `new-site-lite-wizard`
     - `clean_up` routes into `optimization-lite-wizard`
     - `refresh` routes into `optimization-lite-wizard`
     - `extension` routes into `extension-lite-wizard`
-  - kept runtime wording scenario-specific inside [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/free-runtime-wizards.ts) so cleanup and refresh do not collapse into generic optimization copy
+  - kept runtime wording scenario-specific inside [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/free-runtime-wizards.ts) so cleanup and refresh do not collapse into generic optimization copy
 
 - `S3`
   - mapped the new families into Free tier and surface manifests in:
-    - [product-tiers.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/product-tiers.ts)
-    - [product-surfaces.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/product-surfaces.ts)
+    - [product-tiers.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/product-tiers.ts)
+    - [product-surfaces.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/product-surfaces.ts)
   - updated tests in:
-    - [intent-wizard.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/intent-wizard.test.ts)
-    - [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/free-runtime-wizards.test.ts)
-    - [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/tools/free-runtime-wizards.test.ts)
-    - [intent-wizard.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/tools/intent-wizard.test.ts)
-    - [product-surfaces.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/product-surfaces.test.ts)
-    - [product-tiers.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/product-tiers.test.ts)
+    - [intent-wizard.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/intent-wizard.test.ts)
+    - [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/free-runtime-wizards.test.ts)
+    - [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/tools/free-runtime-wizards.test.ts)
+    - [intent-wizard.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/tools/intent-wizard.test.ts)
+    - [product-surfaces.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/product-surfaces.test.ts)
+    - [product-tiers.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/product-tiers.test.ts)
 
 ## Verification Commands
 

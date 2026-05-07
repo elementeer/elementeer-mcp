@@ -1,4 +1,4 @@
-import type { ElementifyClient, QueuedChange } from './client.js';
+import type { ElementeerClient, QueuedChange } from './client.js';
 import { getRiskLevel, getCapabilityRequirement } from './capability-registry.js';
 
 export interface AutoApprovalRule {
@@ -57,11 +57,11 @@ export interface QueueV2Stats {
  */
 export class QueueV2 {
   private config: QueueV2Config;
-  private client: ElementifyClient;
+  private client: ElementeerClient;
   private siteId?: string;
   
   constructor(
-    client: ElementifyClient,
+    client: ElementeerClient,
     siteId?: string,
     config?: Partial<QueueV2Config>
   ) {
@@ -115,7 +115,7 @@ export class QueueV2 {
   async shouldAutoApprove(
     operation: string,
     params: Record<string, unknown>,
-    client: ElementifyClient,
+    client: ElementeerClient,
     siteId?: string
   ): Promise<{ autoApprove: boolean; reason?: string; rule?: AutoApprovalRule }> {
     if (!this.config.enableAutoApproval) {
@@ -194,7 +194,7 @@ export class QueueV2 {
    */
   private async checkConditions(
     rule: AutoApprovalRule,
-    _client: ElementifyClient,
+    _client: ElementeerClient,
     _siteId?: string
   ): Promise<boolean> {
     if (!rule.conditions) {
@@ -234,7 +234,7 @@ export class QueueV2 {
   async processChange(
     operation: string,
     params: Record<string, unknown>,
-    client: ElementifyClient,
+    client: ElementeerClient,
     note?: string,
     siteId?: string
   ): Promise<{ queued: boolean; change?: QueuedChange; autoApproved?: boolean; message: string }> {
@@ -303,7 +303,7 @@ export class QueueV2 {
   /**
    * Execute a change (moved from change-queue.ts OPERATION_EXECUTORS)
    */
-  private async executeChange(change: QueuedChange, client: ElementifyClient): Promise<unknown> {
+  private async executeChange(change: QueuedChange, client: ElementeerClient): Promise<unknown> {
     // Import the operation executors from change-queue.ts
     const changeQueueModule = await import('./tools/change-queue.js');
     
@@ -324,7 +324,7 @@ export class QueueV2 {
   /**
    * Get queue statistics
    */
-  async getStats(client: ElementifyClient): Promise<QueueV2Stats> {
+  async getStats(client: ElementeerClient): Promise<QueueV2Stats> {
     const allChanges = await client.listChanges('all');
     
     let autoApproved = 0;
@@ -382,7 +382,7 @@ export class QueueV2 {
   /**
    * Clean up old changes based on retention policy
    */
-  async cleanupOldChanges(client: ElementifyClient): Promise<{ deleted: number; errors: number }> {
+  async cleanupOldChanges(client: ElementeerClient): Promise<{ deleted: number; errors: number }> {
     const allChanges = await client.listChanges('all');
     const now = new Date();
     let deleted = 0;

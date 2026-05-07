@@ -1,7 +1,7 @@
 # Regression Guidance
 
 ## Purpose
-Elementify phase-2 regression coverage should protect behavior that agents and users rely on without turning the test suite into a wall of brittle snapshots.
+Elementeer phase-2 regression coverage should protect behavior that agents and users rely on without turning the test suite into a wall of brittle snapshots.
 
 ## What to Prefer
 - stable assertions over exact giant payload dumps

@@ -1,14 +1,21 @@
-# Forgejo to GitHub Free Mirror Runbook
+# Forgejo to GitHub Mirror Runbook
 
 ## Purpose
 
-This runbook turns the Free mirror strategy into an operational release procedure.
+This runbook turns the mirror strategy into an operational release procedure.
+
+It covers three mirror paths:
+
+1. **MCP Server Free Mirror** — public GitHub mirror of the Free MCP surface (47 tools, public docs only)
+2. **WP Plugin Mirror** — public GitHub mirror of the WordPress plugin (standalone, GPL-2.0-or-later)
+3. **Private Full Mirror** — private GitHub mirror of the complete repository (backup, all tiers)
 
 It assumes:
 
 - Forgejo is the canonical private primary repository
-- GitHub is the public `Free` mirror
-- `Advanced` and `studio_future` remain private
+- GitHub hosts public `Free` mirrors for discovery and distribution
+- `Advanced` and `studio_future` remain private in public mirrors
+- Private full mirrors on GitHub serve as operational backup
 
 ## Operators
 
@@ -134,3 +141,80 @@ Do not publish if:
 
 - This runbook is private operational documentation and must not be part of the public mirror docs set.
 - The staged artifact is the source of truth for what should appear in the public GitHub mirror.
+
+---
+
+## Mirror Path 2: WP Plugin Mirror
+
+### Release Gate Command
+
+```bash
+npm run plugin-mirror:gate
+```
+
+This runs:
+
+1. Plugin mirror verification (`verify:plugin-mirror`)
+2. Plugin mirror staging preparation (`prepare:plugin-mirror`)
+
+### Staging Output
+
+```text
+mirror/generated/plugin-public/plugin/
+```
+
+Contains: `elementeer.php`, `composer.json`, `readme.txt`, `includes/`, `assets/`, `README.md`, `plugin-mirror-manifest.json`
+
+### Publication Flow
+
+1. Run `npm run plugin-mirror:gate` on Forgejo primary
+2. Inspect `mirror/generated/plugin-public/plugin/` for completeness
+3. Push staged plugin to public GitHub mirror repository (`elementeer/elementeer`)
+4. Verify WordPress.org compatibility: `readme.txt` header is correct
+
+### Stop Conditions
+
+- Plugin bootstrap file (`elementeer.php`) missing
+- `plugin/composer.json` license is not `GPL-2.0-or-later`
+- `plugin/readme.txt` contains "elementify" references
+- Plugin verification script fails
+
+---
+
+## Mirror Path 3: Private Full Mirror (Backup)
+
+### Purpose
+
+A complete private mirror on GitHub serves as an operational backup of the entire Forgejo primary. It contains ALL tiers (Free + Advanced + Studio Future) and ALL code — no filtering.
+
+### How It Works
+
+From the Forgejo primary:
+
+```bash
+git remote add github-mirror git@github.com:elementeer/elementeer-mcp.git
+git push --mirror github-mirror
+```
+
+Or via CI/CD workflow on Forgejo Actions (every push to main):
+
+```yaml
+name: Private Mirror to GitHub
+on:
+  push:
+    branches: [main]
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: |
+          git remote add github-mirror https://${{ secrets.GH_MIRROR_TOKEN }}@github.com/elementeer/elementeer-mcp.git
+          git push --mirror github-mirror
+```
+
+### Stop Conditions
+
+- Only if GitHub is unreachable — this is a best-effort backup

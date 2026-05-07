@@ -19,7 +19,7 @@ describe('product surface manifests', () => {
     expect(FREE_PRODUCT_SURFACE.primaryTools).toContain('run_free_guided_transition');
     expect(FREE_PRODUCT_SURFACE.primaryTools).not.toContain('wizard_theme_builder');
     expect(FREE_PRODUCT_SURFACE.primaryTools).not.toContain('plan_premium_library_usage');
-    expect(FREE_PRODUCT_SURFACE.excludes).toContain('Premium Elementify Library access');
+    expect(FREE_PRODUCT_SURFACE.excludes).toContain('Premium Elementeer Library access');
   });
 
   it('defines a private Advanced surface with deeper workflow depth', () => {

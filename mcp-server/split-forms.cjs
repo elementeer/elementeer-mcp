@@ -48,7 +48,7 @@ const freeIndices = [0, 2];
 const advancedIndices = [1, 3];
 
 function createFunction(name, indices) {
-  let code = `export function ${name}(\n  server: McpServer,\n  getClient: (siteId?: string) => ElementifyClient,\n): void {\n`;
+  let code = `export function ${name}(\n  server: McpServer,\n  getClient: (siteId?: string) => ElementeerClient,\n): void {\n`;
   for (const idx of indices) {
     code += '\n' + blocks[idx] + '\n';
   }

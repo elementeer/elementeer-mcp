@@ -148,7 +148,7 @@ export const FREE_PRODUCT_SURFACE: ProductSurfaceManifest = {
   ],
   excludes: [
     'Theme Builder delivery workflows',
-    'Premium Elementify Library access',
+    'Premium Elementeer Library access',
     'Change-queue governance flows',
     'Brand adaptation planning',
     'Rebuild planning and critique',
@@ -167,7 +167,7 @@ export const ADVANCED_PRODUCT_SURFACE: ProductSurfaceManifest = {
   tier: 'advanced',
   label: 'Advanced',
   positioning: 'The smarter workflow and premium creation layer for Elementor.',
-  promise: 'Extend the Free core with deeper workflow control, deeper creator power, stronger critique and adaptation, and the first curated Elementify Library experience.',
+  promise: 'Extend the Free core with deeper workflow control, deeper creator power, stronger critique and adaptation, and the first curated Elementeer Library experience.',
   entitlements: getProductTierProfile('advanced').entitlements,
   primaryTools: toolsForTier('advanced'),
   workflows: [
@@ -200,7 +200,7 @@ export const ADVANCED_PRODUCT_SURFACE: ProductSurfaceManifest = {
         'route_advanced_scenario',
       ],
       notes: [
-        'This keeps Elementor Pro, Elementify Advanced, and curated pro-addon profiles clearly separated.',
+        'This keeps Elementor Pro, Elementeer Advanced, and curated pro-addon profiles clearly separated.',
       ],
     },
     {
@@ -260,9 +260,9 @@ export const ADVANCED_PRODUCT_SURFACE: ProductSurfaceManifest = {
     },
     {
       id: 'advanced-premium-library',
-      label: 'Elementify Library premium layer',
+      label: 'Elementeer Library premium layer',
       summary: 'Browse, inspect, and plan curated premium assets that import into the local Elementor Library on the current site.',
-      valueProposition: 'Advanced introduces a visible Elementify Library catalog without prematurely claiming cloud behavior.',
+      valueProposition: 'Advanced introduces a visible Elementeer Library catalog without prematurely claiming cloud behavior.',
       toolIds: [
         'route_advanced_scenario',
         'advanced_creator_mode',
@@ -287,6 +287,6 @@ export const ADVANCED_PRODUCT_SURFACE: ProductSurfaceManifest = {
   notes: [
     'Advanced is private in the Forgejo primary and must remain separable from the public mirror.',
     'Advanced extends the Free core rather than replacing it.',
-    'Advanced may mention the Elementify Library, but must not imply Studio cloud sync.',
+    'Advanced may mention the Elementeer Library, but must not imply Studio cloud sync.',
   ],
 };

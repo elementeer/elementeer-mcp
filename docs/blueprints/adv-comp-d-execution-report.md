@@ -27,7 +27,7 @@ Completed `ADV-COMP-003` and `ADV-COMP-004` by adding scenario-aware runtime upg
 - Added upgrade/runtime distinctions for:
   - current stack is enough
   - Elementor Pro for builder / structural gaps
-  - Elementify Advanced for workflow depth
+  - Elementeer Advanced for workflow depth
   - curated supported pro-addon profile when scenario-fit is strong
 - Added Advanced recommendation tracks:
   - `upgrade-guidance`

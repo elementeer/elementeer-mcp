@@ -1,8 +1,8 @@
-# Elementify Domain Capability Remap Sequence
+# Elementeer Domain Capability Remap Sequence
 
 ## 1. Metadata
 
-- title: Elementify Domain Capability Source of Truth and Transitional Remap
+- title: Elementeer Domain Capability Source of Truth and Transitional Remap
 - domain: software
 - intent: build
 - sequence_type: mixed
@@ -34,12 +34,12 @@ Translate the capability reset into a typed runtime source of truth, preserve ba
 
 ## 5. Inputs Required
 
-- [capability-reset.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/capability-reset.md)
-- [auth.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/shared/src/types/auth.ts)
-- [Capabilities.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Auth/Capabilities.php)
-- [Manager.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Auth/Manager.php)
-- [Page.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Admin/Page.php)
-- [Settings.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Governance/Settings.php)
+- [capability-reset.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/capability-reset.md)
+- [auth.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/shared/src/types/auth.ts)
+- [Capabilities.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Auth/Capabilities.php)
+- [Manager.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Auth/Manager.php)
+- [Page.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Admin/Page.php)
+- [Settings.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Governance/Settings.php)
 
 ## 6. Outputs Required
 
@@ -59,9 +59,9 @@ Create canonical domain capabilities and legacy alias metadata in shared types.
 
 Write scope:
 
-- [auth.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/shared/src/types/auth.ts)
-- [intelligence.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/shared/src/types/intelligence.ts)
-- [types.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/shared/src/__tests__/types.test.ts)
+- [auth.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/shared/src/types/auth.ts)
+- [intelligence.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/shared/src/types/intelligence.ts)
+- [types.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/shared/src/__tests__/types.test.ts)
 
 ### S2 — Plugin Capability Registry Reset
 
@@ -71,9 +71,9 @@ Move the plugin capability registry to the new domain model while preserving leg
 
 Write scope:
 
-- [Capabilities.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Auth/Capabilities.php)
-- [Manager.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Auth/Manager.php)
-- [Settings.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Governance/Settings.php)
+- [Capabilities.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Auth/Capabilities.php)
+- [Manager.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Auth/Manager.php)
+- [Settings.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Governance/Settings.php)
 
 ### S3 — Admin and Governance Realignment
 
@@ -83,9 +83,9 @@ Present domain-oriented capability groups in the admin UI and normalize legacy d
 
 Write scope:
 
-- [Page.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Admin/Page.php)
-- [PageTest.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/tests/Unit/Admin/PageTest.php)
-- [ManagerTest.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/tests/Unit/Auth/ManagerTest.php)
+- [Page.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Admin/Page.php)
+- [PageTest.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/tests/Unit/Admin/PageTest.php)
+- [ManagerTest.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/tests/Unit/Auth/ManagerTest.php)
 
 ### GATE A — Transitional Compatibility Gate
 

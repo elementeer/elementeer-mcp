@@ -1,4 +1,4 @@
-# Elementify Free + Advanced Scenario/Wizard Blueprint v2
+# Elementeer Free + Advanced Scenario/Wizard Blueprint v2
 
 ## 1. Executive Summary
 
@@ -7,9 +7,9 @@ This v2 blueprint extends the scenario-first and wizard-first model with the mis
 - users may already have Elementor
 - users may have a WordPress site without Elementor
 - users may only have an idea, a brand, or a business concept
-- users may need Elementify to recommend and bootstrap the initial stack
+- users may need Elementeer to recommend and bootstrap the initial stack
 
-Elementify therefore must not be modeled only as:
+Elementeer therefore must not be modeled only as:
 
 - an Elementor enhancement layer
 
@@ -23,7 +23,7 @@ This means `Free` and `Advanced` must cover not only site change scenarios, but 
 - Elementor Free
 - Hello Theme
 - supported free addon plugins
-- later upgrade recommendations for Elementor Pro, Elementify Advanced, and selected supported pro plugins
+- later upgrade recommendations for Elementor Pro, Elementeer Advanced, and selected supported pro plugins
 
 ## 2. Problem Statement
 
@@ -38,13 +38,13 @@ In reality, important user entry states include:
 - an idea for a new site with no chosen builder or theme
 - a site owner who wants a guided path toward a better stack
 
-If Elementify ignores this entry state, it loses one of its strongest possible positions:
+If Elementeer ignores this entry state, it loses one of its strongest possible positions:
 
 - a 360-degree guided starting point into a modern WordPress + Elementor setup
 
 ## 3. Product Vision
 
-Elementify should feel like:
+Elementeer should feel like:
 
 - the intelligent operating layer for WordPress + Elementor work
 - the guided entry point into that stack when the user is not there yet
@@ -61,7 +61,7 @@ The product must therefore think in:
 
 ## 3.1 Strategic USP
 
-Elementify should explicitly position itself as:
+Elementeer should explicitly position itself as:
 
 - the user-first 360-degree guidance and operating layer for the Elementor ecosystem
 - intent-led rather than vendor-led
@@ -71,10 +71,10 @@ Elementify should explicitly position itself as:
 This means:
 
 - recommendations should serve the user's scenario first
-- Elementor, Hello Theme, addon plugins, Elementor Pro, and Elementify Advanced may all be recommended
+- Elementor, Hello Theme, addon plugins, Elementor Pro, and Elementeer Advanced may all be recommended
 - but only when they are genuinely the best next step for the user's intent, stack state, and scope
 
-Elementify should therefore be able to say, credibly:
+Elementeer should therefore be able to say, credibly:
 
 - “Here is the right next step for your site”
 - “Here is what you do not need yet”
@@ -89,15 +89,15 @@ This positioning also creates the natural future bridge to Vamerli.
 
 Near term:
 
-- Elementify is the operating and guidance layer for WordPress + Elementor outcomes
+- Elementeer is the operating and guidance layer for WordPress + Elementor outcomes
 
 Later:
 
-- Vamerli becomes the broader brand presence and intelligence platform that can incorporate Elementify as a strong execution and stack-intelligence layer
+- Vamerli becomes the broader brand presence and intelligence platform that can incorporate Elementeer as a strong execution and stack-intelligence layer
 
 Implication:
 
-- Elementify should remain product-honest and ecosystem-honest now
+- Elementeer should remain product-honest and ecosystem-honest now
 - so that its later role inside Vamerli feels like a natural expansion rather than a forced repositioning
 
 ## 4. Core Product Axes
@@ -183,7 +183,7 @@ The user has:
 - or a weak concept / rough idea
 - or a brand / offer without a built site
 
-Elementify Free should help with:
+Elementeer Free should help with:
 
 - selecting a sensible baseline stack
 - recommending Elementor Free + Hello Theme as default baseline when suitable
@@ -206,7 +206,7 @@ The user already has WordPress but:
 - a manually built theme-based site
 - or an unclear plugin/theme baseline
 
-Elementify should help:
+Elementeer should help:
 
 - assess current baseline
 - recommend whether Elementor is appropriate
@@ -221,12 +221,12 @@ The user has partial readiness:
 - maybe Elementor Free installed
 - maybe wrong or incomplete theme/plugin setup
 
-Elementify should help:
+Elementeer should help:
 
 - identify what is missing
 - recommend the next supported stack pieces
 - explain when Free is enough
-- explain when Elementor Pro or Elementify Advanced makes sense
+- explain when Elementor Pro or Elementeer Advanced makes sense
 
 ## 7.2 Existing-site change scenarios
 
@@ -353,7 +353,7 @@ The result should route into the correct wizard family rather than dropping the 
 
 ## 10. Stack Recommendation Model
 
-Elementify should support a `stack recommendation` layer.
+Elementeer should support a `stack recommendation` layer.
 
 This layer should not be treated as random plugin upsell.
 
@@ -364,7 +364,7 @@ It should evaluate whether the current or intended scenario calls for:
 - Hello Theme
 - supported free addon plugins
 - Elementor Pro
-- Elementify Advanced
+- Elementeer Advanced
 - selected supported pro plugins
 
 ## 10.1 Free baseline recommendation
@@ -390,7 +390,7 @@ Important:
 Advanced may add stronger recommendation logic for:
 
 - when Elementor Pro is worth it
-- when Elementify Advanced is worth it
+- when Elementeer Advanced is worth it
 - when selected supported pro plugins are justified
 - when a richer stack materially reduces work or improves outcomes
 
@@ -404,7 +404,7 @@ not:
 
 ## 11. Bootstrap and Install Behavior
 
-Elementify should be able to support a staged bootstrap path.
+Elementeer should be able to support a staged bootstrap path.
 
 That path may include:
 
@@ -443,7 +443,7 @@ The domain layer should now explicitly include:
 
 ## 12.1 Modular extension architecture
 
-Elementify should remain modular and extensible around two curated extension surfaces:
+Elementeer should remain modular and extensible around two curated extension surfaces:
 
 - skills
 - addon profiles
@@ -512,7 +512,7 @@ Acceptance:
 
 - the product description includes WordPress, theme, Elementor, and supported plugin context
 - the bootstrap wizard family is explicit
-- the path from idea or non-Elementor site into Elementify usage is documented
+- the path from idea or non-Elementor site into Elementeer usage is documented
 
 ### FR-F-3 Intent-aware routing
 
@@ -548,7 +548,7 @@ Advanced shall provide better recommendation depth for stack evolution.
 Acceptance:
 
 - the blueprint includes a richer upgrade-path layer
-- recommendations for Elementor Pro, Elementify Advanced, and supported pro plugins are scenario-based
+- recommendations for Elementor Pro, Elementeer Advanced, and supported pro plugins are scenario-based
 
 ### FR-A-3 Better creation, variants, and reuse
 
@@ -572,8 +572,8 @@ Acceptance:
 - the wizard system reflects origin, intent, depth, and user posture
 - upgrade guidance becomes scenario-based and stack-aware
 - the resulting model remains compatible with the Free public mirror and Advanced private layer
-- Elementify can be positioned clearly as an ecosystem-honest, user-interest-first guidance layer
-- the future bridge from Elementify to Vamerli is explicit without overclaiming current platform scope
+- Elementeer can be positioned clearly as an ecosystem-honest, user-interest-first guidance layer
+- the future bridge from Elementeer to Vamerli is explicit without overclaiming current platform scope
 
 ## 16. Recommended Execution Package v2
 
@@ -593,7 +593,7 @@ Acceptance:
    Define the modular extension model for skill profiles and addon profiles as curated, support-aware extension surfaces.
 
 6. `UPGRADE-GUIDANCE-001`
-   Define scenario-based upgrade guidance for Elementor Pro, Elementify Advanced, and supported addon profiles.
+   Define scenario-based upgrade guidance for Elementor Pro, Elementeer Advanced, and supported addon profiles.
 
 7. `CAP-RESET-001`
    Rebuild the capability layer under the scenario/wizard model.
@@ -605,23 +605,23 @@ Acceptance:
 
 The first batch now has dedicated artifacts:
 
-- [usp-foundation.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/usp-foundation.md)
-- [bootstrap-scenarios.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/bootstrap-scenarios.md)
-- [intent-wizard-contract.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/intent-wizard-contract.md)
+- [usp-foundation.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/usp-foundation.md)
+- [bootstrap-scenarios.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/bootstrap-scenarios.md)
+- [intent-wizard-contract.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/intent-wizard-contract.md)
 
 The second batch now has dedicated artifacts:
 
-- [stack-profiles.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/stack-profiles.md)
-- [skill-addon-architecture.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/skill-addon-architecture.md)
-- [upgrade-guidance.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/upgrade-guidance.md)
+- [stack-profiles.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/stack-profiles.md)
+- [skill-addon-architecture.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/skill-addon-architecture.md)
+- [upgrade-guidance.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/upgrade-guidance.md)
 
 The third batch now has dedicated artifacts:
 
-- [capability-reset.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/capability-reset.md)
-- [free-product-surface.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-product-surface.md)
-- [advanced-product-surface.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/advanced-product-surface.md)
+- [capability-reset.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/capability-reset.md)
+- [free-product-surface.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-product-surface.md)
+- [advanced-product-surface.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/advanced-product-surface.md)
 
 The fourth batch now has dedicated artifacts:
 
-- [capability-domain-remap-sequence.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/capability-domain-remap-sequence.md)
-- [capability-domain-remap-execution-report.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/capability-domain-remap-execution-report.md)
+- [capability-domain-remap-sequence.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/capability-domain-remap-sequence.md)
+- [capability-domain-remap-execution-report.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/capability-domain-remap-execution-report.md)

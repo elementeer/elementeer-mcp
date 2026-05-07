@@ -1,9 +1,9 @@
-# Elementify Capability Completion Execution Report
+# Elementeer Capability Completion Execution Report
 
 ## Batch Summary
 
 - batch_id: `BATCH-CAP-COMPLETE-001`
-- sequence: [capability-completion-sequence.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/capability-completion-sequence.md)
+- sequence: [capability-completion-sequence.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/capability-completion-sequence.md)
 - sequence_type: `mixed`
 - execution_mode: `ralph_attended`
 - gate_result: `continue`
@@ -11,17 +11,17 @@
 ## Steps Completed
 
 - `S1`
-  - remapped plugin endpoint authorization calls from legacy resource-first scopes to canonical domain capabilities in [Assessment.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/Assessment.php), [Site.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/Site.php), [Logo.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/Logo.php), [SiteContext.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/SiteContext.php), [GlobalStyles.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/GlobalStyles.php), [MediaSideload.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/MediaSideload.php), [Pages.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/Pages.php), [Templates.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/Templates.php), [ThemeBuilder.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/ThemeBuilder.php), and [ChangeQueue.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/ChangeQueue.php)
+  - remapped plugin endpoint authorization calls from legacy resource-first scopes to canonical domain capabilities in [Assessment.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/Assessment.php), [Site.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/Site.php), [Logo.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/Logo.php), [SiteContext.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/SiteContext.php), [GlobalStyles.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/GlobalStyles.php), [MediaSideload.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/MediaSideload.php), [Pages.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/Pages.php), [Templates.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/Templates.php), [ThemeBuilder.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/ThemeBuilder.php), and [ChangeQueue.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/ChangeQueue.php)
   - tightened change queue semantics so queue creation uses `workflow-orchestration:prepare`, review transitions use `governance:review`, and applied transitions use `governance:apply`
 
 - `S2`
-  - added editable domain-capability governance controls in [Page.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Admin/Page.php)
+  - added editable domain-capability governance controls in [Page.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Admin/Page.php)
   - persisted normalized governance capability selections through the existing settings layer
-  - added governance UI coverage and persistence checks in [PageTest.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/tests/Unit/Admin/PageTest.php) and [SettingsTest.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/tests/Unit/Governance/SettingsTest.php)
+  - added governance UI coverage and persistence checks in [PageTest.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/tests/Unit/Admin/PageTest.php) and [SettingsTest.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/tests/Unit/Governance/SettingsTest.php)
 
 - `S3`
-  - updated MCP client fixtures and capability error examples to the domain vocabulary in [client.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/client.test.ts), [client-api.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/integration/client-api.test.ts), and [site.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/tools/site.test.ts)
-  - refreshed public capability language and transition notes in [README.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/README.md) and [plugin/readme.txt](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/readme.txt)
+  - updated MCP client fixtures and capability error examples to the domain vocabulary in [client.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/client.test.ts), [client-api.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/integration/client-api.test.ts), and [site.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/tools/site.test.ts)
+  - refreshed public capability language and transition notes in [README.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/README.md) and [plugin/readme.txt](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/readme.txt)
 
 ## Verification Commands
 
@@ -41,24 +41,24 @@
 
 ## Files Changed
 
-- [Assessment.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/Assessment.php)
-- [Site.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/Site.php)
-- [Logo.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/Logo.php)
-- [SiteContext.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/SiteContext.php)
-- [GlobalStyles.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/GlobalStyles.php)
-- [MediaSideload.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/MediaSideload.php)
-- [Pages.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/Pages.php)
-- [Templates.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/Templates.php)
-- [ThemeBuilder.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/ThemeBuilder.php)
-- [ChangeQueue.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/ChangeQueue.php)
-- [Page.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Admin/Page.php)
-- [PageTest.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/tests/Unit/Admin/PageTest.php)
-- [SettingsTest.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/tests/Unit/Governance/SettingsTest.php)
-- [client.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/client.test.ts)
-- [client-api.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/integration/client-api.test.ts)
-- [site.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/tools/site.test.ts)
-- [README.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/README.md)
-- [plugin/readme.txt](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/readme.txt)
+- [Assessment.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/Assessment.php)
+- [Site.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/Site.php)
+- [Logo.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/Logo.php)
+- [SiteContext.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/SiteContext.php)
+- [GlobalStyles.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/GlobalStyles.php)
+- [MediaSideload.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/MediaSideload.php)
+- [Pages.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/Pages.php)
+- [Templates.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/Templates.php)
+- [ThemeBuilder.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/ThemeBuilder.php)
+- [ChangeQueue.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/ChangeQueue.php)
+- [Page.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Admin/Page.php)
+- [PageTest.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/tests/Unit/Admin/PageTest.php)
+- [SettingsTest.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/tests/Unit/Governance/SettingsTest.php)
+- [client.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/client.test.ts)
+- [client-api.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/integration/client-api.test.ts)
+- [site.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/tools/site.test.ts)
+- [README.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/README.md)
+- [plugin/readme.txt](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/readme.txt)
 
 ## Review Result
 

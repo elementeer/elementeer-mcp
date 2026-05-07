@@ -1,9 +1,9 @@
-# Elementify Domain Capability Remap Execution Report
+# Elementeer Domain Capability Remap Execution Report
 
 ## Batch Summary
 
 - batch_id: `BATCH-CAP-DOMAIN-001`
-- sequence: [capability-domain-remap-sequence.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/capability-domain-remap-sequence.md)
+- sequence: [capability-domain-remap-sequence.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/capability-domain-remap-sequence.md)
 - sequence_type: `mixed`
 - execution_mode: `ralph_attended`
 - gate_result: `continue`
@@ -11,20 +11,20 @@
 ## Steps Completed
 
 - `S1`
-  - introduced canonical domain capabilities, legacy capability aliases, and normalization helpers in [auth.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/shared/src/types/auth.ts)
-  - widened stored capability-bearing contracts in [intelligence.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/shared/src/types/intelligence.ts)
-  - updated shared tests in [types.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/shared/src/__tests__/types.test.ts)
+  - introduced canonical domain capabilities, legacy capability aliases, and normalization helpers in [auth.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/shared/src/types/auth.ts)
+  - widened stored capability-bearing contracts in [intelligence.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/shared/src/types/intelligence.ts)
+  - updated shared tests in [types.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/shared/src/__tests__/types.test.ts)
 
 - `S2`
-  - moved plugin capability source of truth to domain capabilities in [Capabilities.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Auth/Capabilities.php)
-  - added transitional alias matching in [Manager.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Auth/Manager.php)
-  - normalized governance capability handling in [Settings.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Governance/Settings.php)
+  - moved plugin capability source of truth to domain capabilities in [Capabilities.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Auth/Capabilities.php)
+  - added transitional alias matching in [Manager.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Auth/Manager.php)
+  - normalized governance capability handling in [Settings.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Governance/Settings.php)
 
 - `S3`
-  - updated admin key display and capability generation grouping in [Page.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Admin/Page.php)
-  - added transitional UI coverage in [PageTest.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/tests/Unit/Admin/PageTest.php)
-  - expanded capability transition coverage in [ManagerTest.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/tests/Unit/Auth/ManagerTest.php)
-  - updated governance tests for canonical domain defaults in [SettingsTest.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/tests/Unit/Governance/SettingsTest.php)
+  - updated admin key display and capability generation grouping in [Page.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Admin/Page.php)
+  - added transitional UI coverage in [PageTest.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/tests/Unit/Admin/PageTest.php)
+  - expanded capability transition coverage in [ManagerTest.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/tests/Unit/Auth/ManagerTest.php)
+  - updated governance tests for canonical domain defaults in [SettingsTest.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/tests/Unit/Governance/SettingsTest.php)
 
 ## Verification Commands
 
@@ -46,16 +46,16 @@
 
 ## Files Changed
 
-- [auth.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/shared/src/types/auth.ts)
-- [intelligence.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/shared/src/types/intelligence.ts)
-- [types.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/shared/src/__tests__/types.test.ts)
-- [Capabilities.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Auth/Capabilities.php)
-- [Manager.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Auth/Manager.php)
-- [Settings.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Governance/Settings.php)
-- [Page.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Admin/Page.php)
-- [ManagerTest.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/tests/Unit/Auth/ManagerTest.php)
-- [PageTest.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/tests/Unit/Admin/PageTest.php)
-- [SettingsTest.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/tests/Unit/Governance/SettingsTest.php)
+- [auth.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/shared/src/types/auth.ts)
+- [intelligence.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/shared/src/types/intelligence.ts)
+- [types.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/shared/src/__tests__/types.test.ts)
+- [Capabilities.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Auth/Capabilities.php)
+- [Manager.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Auth/Manager.php)
+- [Settings.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Governance/Settings.php)
+- [Page.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Admin/Page.php)
+- [ManagerTest.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/tests/Unit/Auth/ManagerTest.php)
+- [PageTest.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/tests/Unit/Admin/PageTest.php)
+- [SettingsTest.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/tests/Unit/Governance/SettingsTest.php)
 
 ## Review Result
 

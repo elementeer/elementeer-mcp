@@ -1,6 +1,6 @@
 {
-  "name": "elementify-free-public-mirror",
-  "description": "Rule-based public GitHub mirror containing only the Elementify Free surface.",
+  "name": "elementeer-free-public-mirror",
+  "description": "Rule-based public GitHub mirror containing only the Elementeer Free surface.",
   "publicToolEntrypoint": "registerFreeTools",
   "privateToolEntrypoints": [
     "registerAdvancedTools",

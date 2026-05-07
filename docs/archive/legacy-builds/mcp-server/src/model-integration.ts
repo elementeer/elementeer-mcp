@@ -333,7 +333,7 @@ export class ModelIntegrationManager {
     criteria: any
   ): string {
     return `
-You are an expert web design assistant for Elementify, a WordPress/Elementor site builder.
+You are an expert web design assistant for Elementeer, a WordPress/Elementor site builder.
 
 CONTEXT:
 - Site ID: ${context.siteId}
@@ -362,7 +362,7 @@ Format the response as a JSON array of recommendation objects.
     section: any
   ): string {
     return `
-You are a content strategist for Elementify.
+You are a content strategist for Elementeer.
 
 SECTION DETAILS:
 - Type: ${section.type}

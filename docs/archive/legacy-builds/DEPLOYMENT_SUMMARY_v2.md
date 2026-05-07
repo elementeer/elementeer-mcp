@@ -1,4 +1,4 @@
-# Elementify v2 Deployment Summary
+# Elementeer v2 Deployment Summary
 ## Erfolgreiches Deployment auf zwei WordPress Sites
 **Datum:** 19. April 2026  
 **Version:** 2.0.0
@@ -29,7 +29,7 @@
 - ✅ Site Info und Capabilities
 
 ### Issues/Bugs gefunden:
-1. **Health Check Endpoint** (`/wp-json/elementify/v1/health`) existiert nicht in v2 (404)
+1. **Health Check Endpoint** (`/wp-json/elementeer/v1/health`) existiert nicht in v2 (404)
 2. **Intelligence Layer** (Assessment/Recommendations) wirft Critical Error
 3. **Manuelle Tests erforderlich:**
    - Form Submission Funktionalität
@@ -80,7 +80,7 @@
 Bei Issues:
 1. Check WordPress Debug Log
 2. Test mit deaktivierten Plugins
-3. Rollback auf v1 ZIP verfügbar: `elementify-1.0.0-wordpress.zip`
+3. Rollback auf v1 ZIP verfügbar: `elementeer-1.0.0-wordpress.zip`
 
 ---
 

@@ -1,13 +1,13 @@
-# Elementify Upgrade Guidance Model
+# Elementeer Upgrade Guidance Model
 
 ## Purpose
 
-This document defines how Elementify should recommend deeper stack levels and paid paths without collapsing into generic upsell behavior.
+This document defines how Elementeer should recommend deeper stack levels and paid paths without collapsing into generic upsell behavior.
 
 It covers recommendations for:
 
 - Elementor Pro
-- Elementify Advanced
+- Elementeer Advanced
 - selected supported pro addon profiles
 
 ## Core Rule
@@ -28,7 +28,7 @@ The system should be comfortable saying:
 
 ## Upgrade Questions
 
-Before recommending a stronger paid layer, Elementify should be able to answer:
+Before recommending a stronger paid layer, Elementeer should be able to answer:
 
 1. What is the user trying to achieve?
 2. What is missing in the current baseline?
@@ -51,7 +51,7 @@ Do not recommend when:
 - the user can reach the current goal cleanly with Elementor Free plus a simpler stack
 - the real need is workflow depth rather than builder licensing
 
-## 2. Elementify Advanced
+## 2. Elementeer Advanced
 
 Recommend when:
 
@@ -86,7 +86,7 @@ The recommendation order should remain:
 2. improve baseline if enough
 3. add one curated free addon profile if enough
 4. recommend Elementor Pro if the builder gap is real
-5. recommend Elementify Advanced if workflow/productivity depth is the real need
+5. recommend Elementeer Advanced if workflow/productivity depth is the real need
 6. recommend a supported pro addon profile only when scenario-fit is strong
 
 ## Explanation Contract
@@ -114,12 +114,12 @@ It should not feel like:
 - a vague premium promise
 - a generic “buy the pro version” prompt
 
-## Elementor Pro vs Elementify Advanced
+## Elementor Pro vs Elementeer Advanced
 
 These recommendations should remain distinct:
 
 - Elementor Pro solves builder and structural capability gaps
-- Elementify Advanced solves workflow, productivity, guidance, and premium-creation depth
+- Elementeer Advanced solves workflow, productivity, guidance, and premium-creation depth
 
 Some scenarios may justify both.
 
@@ -142,7 +142,7 @@ Upgrade guidance should eventually produce:
 ## Guardrails
 
 - Do not recommend paid paths just because the user is ambitious.
-- Do not recommend both Elementor Pro and Elementify Advanced by default.
+- Do not recommend both Elementor Pro and Elementeer Advanced by default.
 - Do not let addon-profile monetization distort recommendation honesty.
 - Do not frame Advanced as “more features”; frame it as deeper workflow value.
 
@@ -150,5 +150,5 @@ Upgrade guidance should eventually produce:
 
 - Upgrade logic clearly distinguishes baseline correction, builder upgrades, workflow upgrades, and addon-profile upgrades.
 - The model can explain when Free is enough.
-- Elementor Pro and Elementify Advanced are recommended for different reasons.
+- Elementor Pro and Elementeer Advanced are recommended for different reasons.
 - The guidance remains aligned with the user-first, ecosystem-honest USP.

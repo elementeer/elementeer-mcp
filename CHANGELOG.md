@@ -5,6 +5,15 @@ All notable changes to Elementeer MCP will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+- **Rebrand complete**: All Elementify references replaced with Elementeer across code, docs, and config (readme.txt, plugin composer.json, mirror manifest, quickstart, tier docs)
+- **License clarified**: MCP Server = Apache-2.0, WordPress Plugin = GPL-2.0-or-later
+- **TIERS.md added**: Complete Free vs Advanced vs Studio comparison table with pricing logic
+- **Plugin rebrand**: Main plugin file renamed to `elementeer.php`, namespace `Elementeer\MCP\`
+- **Mirror system verified**: Free mirror gate passes with all Elementeer branding
+
 ## [2.0.1] - 2026-04-22
 
 ### Added

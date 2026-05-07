@@ -1,5 +1,5 @@
 {
-  "projectName": "Elementify Free + Advanced Scenario/Wizard Realignment",
+  "projectName": "Elementeer Free + Advanced Scenario/Wizard Realignment",
   "version": "1.0",
   "status": "draft",
   "sequence_type": "mixed",
@@ -80,11 +80,11 @@
     },
     {
       "id": "THEME-STACK-001",
-      "title": "Clarify Hello Theme and future Elementify Theme role",
-      "description": "Define how Hello Theme, WordPress, Elementor, and a future Elementify Theme or theme-system fit into Free and Advanced workflows.",
+      "title": "Clarify Hello Theme and future Elementeer Theme role",
+      "description": "Define how Hello Theme, WordPress, Elementor, and a future Elementeer Theme or theme-system fit into Free and Advanced workflows.",
       "acceptanceCriteria": [
         "Hello Theme is positioned explicitly as the current stable baseline for Free",
-        "The role of a future Elementify Theme or theme-system is documented without overcommitting implementation",
+        "The role of a future Elementeer Theme or theme-system is documented without overcommitting implementation",
         "The stack model includes WordPress, Elementor, theme, and plugin context",
         "Theme decisions are tied to user scenarios rather than isolated technical preference"
       ],

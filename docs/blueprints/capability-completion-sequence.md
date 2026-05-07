@@ -1,8 +1,8 @@
-# Elementify Capability Completion Sequence
+# Elementeer Capability Completion Sequence
 
 ## 1. Metadata
 
-- title: Elementify Domain Capability Completion and Governance Policy UX
+- title: Elementeer Domain Capability Completion and Governance Policy UX
 - domain: software
 - intent: build
 - sequence_type: mixed
@@ -34,12 +34,12 @@ Carry the domain capability reset through the remaining runtime surfaces so the 
 
 ## 5. Inputs Required
 
-- [capability-domain-remap-sequence.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/capability-domain-remap-sequence.md)
-- [capability-reset.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/capability-reset.md)
-- [free-advanced-scenario-wizard-prd-v2.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-advanced-scenario-wizard-prd-v2.md)
-- [auth.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/shared/src/types/auth.ts)
-- [Capabilities.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Auth/Capabilities.php)
-- [Page.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Admin/Page.php)
+- [capability-domain-remap-sequence.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/capability-domain-remap-sequence.md)
+- [capability-reset.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/capability-reset.md)
+- [free-advanced-scenario-wizard-prd-v2.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-advanced-scenario-wizard-prd-v2.md)
+- [auth.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/shared/src/types/auth.ts)
+- [Capabilities.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Auth/Capabilities.php)
+- [Page.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Admin/Page.php)
 
 ## 6. Outputs Required
 
@@ -59,16 +59,16 @@ Replace remaining legacy required capabilities in plugin endpoints with canonica
 
 Write scope:
 
-- [Assessment.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/Assessment.php)
-- [Site.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/Site.php)
-- [Logo.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/Logo.php)
-- [SiteContext.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/SiteContext.php)
-- [GlobalStyles.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/GlobalStyles.php)
-- [MediaSideload.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/MediaSideload.php)
-- [Pages.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/Pages.php)
-- [Templates.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/Templates.php)
-- [ThemeBuilder.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/ThemeBuilder.php)
-- [ChangeQueue.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/ChangeQueue.php)
+- [Assessment.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/Assessment.php)
+- [Site.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/Site.php)
+- [Logo.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/Logo.php)
+- [SiteContext.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/SiteContext.php)
+- [GlobalStyles.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/GlobalStyles.php)
+- [MediaSideload.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/MediaSideload.php)
+- [Pages.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/Pages.php)
+- [Templates.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/Templates.php)
+- [ThemeBuilder.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/ThemeBuilder.php)
+- [ChangeQueue.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/ChangeQueue.php)
 
 ### S2 — Governance Policy UX
 
@@ -78,10 +78,10 @@ Make the governance screen capable of explicitly allowing and denying domain cap
 
 Write scope:
 
-- [Page.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Admin/Page.php)
-- [Settings.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Governance/Settings.php)
-- [PageTest.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/tests/Unit/Admin/PageTest.php)
-- [SettingsTest.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/tests/Unit/Governance/SettingsTest.php)
+- [Page.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Admin/Page.php)
+- [Settings.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Governance/Settings.php)
+- [PageTest.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/tests/Unit/Admin/PageTest.php)
+- [SettingsTest.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/tests/Unit/Governance/SettingsTest.php)
 
 ### S3 — Client and Public Surface Cleanup
 
@@ -91,11 +91,11 @@ Align mcp-server fixtures and public docs to the canonical domain capability lan
 
 Write scope:
 
-- [client.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/client.test.ts)
-- [client-api.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/integration/client-api.test.ts)
-- [site.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/tools/site.test.ts)
-- [README.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/README.md)
-- [plugin/readme.txt](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/readme.txt)
+- [client.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/client.test.ts)
+- [client-api.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/integration/client-api.test.ts)
+- [site.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/tools/site.test.ts)
+- [README.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/README.md)
+- [plugin/readme.txt](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/readme.txt)
 
 ### GATE A — Capability Completion Gate
 

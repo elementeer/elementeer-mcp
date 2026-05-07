@@ -13,9 +13,9 @@ echo ""
 # Verzeichnisse
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLUGIN_SRC="$PROJECT_ROOT/plugin"
-PLUGIN_NAME="elementify"
+PLUGIN_NAME="elementeer"
 VERSION="1.0.0"
-TEMP_DIR="/tmp/elementify-clean-$(date +%s)"
+TEMP_DIR="/tmp/elementeer-clean-$(date +%s)"
 DIST_DIR="$PROJECT_ROOT/dist"
 
 # Farben
@@ -65,7 +65,7 @@ mkdir -p "$DIST_DIR"
 log "3. Kopiere Plugin-Dateien..."
 cp -r includes "$TEMP_DIR/$PLUGIN_NAME/" 2>/dev/null || true
 cp -r vendor "$TEMP_DIR/$PLUGIN_NAME/" 2>/dev/null || true
-cp elementify-mcp.php "$TEMP_DIR/$PLUGIN_NAME/"
+cp elementeer-mcp.php "$TEMP_DIR/$PLUGIN_NAME/"
 cp composer.json "$TEMP_DIR/$PLUGIN_NAME/" 2>/dev/null || true
 
 # Endanwender readme
@@ -79,7 +79,7 @@ fi
 # 4. Erstelle ZIP
 log "4. Erstelle WordPress ZIP..."
 cd "$TEMP_DIR"
-ZIP_NAME="elementify-${VERSION}-clean.zip"
+ZIP_NAME="elementeer-${VERSION}-clean.zip"
 zip -ry "$ZIP_NAME" "$PLUGIN_NAME/" -q
 
 # 5. Validiere
@@ -94,8 +94,8 @@ find "$PLUGIN_NAME" -type f -name "*.php" | head -10 | while read file; do
     echo "  - $(basename "$file")"
 done
 
-if [ -f "$PLUGIN_NAME/elementify-mcp.php" ]; then
-    VERSION_CHECK=$(grep -i "version" "$PLUGIN_NAME/elementify-mcp.php" | head -1)
+if [ -f "$PLUGIN_NAME/elementeer-mcp.php" ]; then
+    VERSION_CHECK=$(grep -i "version" "$PLUGIN_NAME/elementeer-mcp.php" | head -1)
     echo "✅ Plugin-Version: $VERSION_CHECK"
 fi
 
@@ -108,7 +108,7 @@ fi
 # 6. Kopiere fertige ZIP
 log "6. Kopiere fertige Dateien..."
 cp "$TEMP_DIR/$ZIP_NAME" "$DIST_DIR/"
-cp "$TEMP_DIR/$ZIP_NAME" "$PROJECT_ROOT/elementify-${VERSION}-clean.zip"
+cp "$TEMP_DIR/$ZIP_NAME" "$PROJECT_ROOT/elementeer-${VERSION}-clean.zip"
 
 # 7. Aufräumen
 rm -rf "$VALID_TEMP"
@@ -119,9 +119,9 @@ success "✅ Clean WordPress Plugin ZIP erstellt!"
 echo ""
 echo "Dateien:"
 echo "  - $DIST_DIR/$ZIP_NAME"
-echo "  - $PROJECT_ROOT/elementify-${VERSION}-clean.zip"
+echo "  - $PROJECT_ROOT/elementeer-${VERSION}-clean.zip"
 echo ""
-echo "Größe: $(du -h "$PROJECT_ROOT/elementify-${VERSION}-clean.zip" | cut -f1)"
+echo "Größe: $(du -h "$PROJECT_ROOT/elementeer-${VERSION}-clean.zip" | cut -f1)"
 echo ""
 echo "Diese ZIP:"
 echo "✅ Enthält nur benötigte Dateien (keine Tests)"
@@ -130,8 +130,8 @@ echo "✅ Enthält vollständigen vendor/ Ordner"
 echo "✅ Plug & Play Installation"
 echo ""
 echo "Installation:"
-echo "1. Deaktiviere alte Elementify Version (v0.5.0)"
+echo "1. Deaktiviere alte Elementeer Version (v0.5.0)"
 echo "2. Lösche das Plugin (optional, für sauberes Update)"
 echo "3. Lade diese ZIP in WordPress hoch"
 echo "4. Aktiviere das Plugin"
-echo "5. Teste REST API: /wp-json/elementify/v1/health"
+echo "5. Teste REST API: /wp-json/elementeer/v1/health"

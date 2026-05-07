@@ -5,17 +5,17 @@
 This document defines the architectural distinction between:
 
 - the local Elementor Library
-- the Elementify Premium Library
-- the future Elementify Cloud Library
+- the Elementeer Premium Library
+- the future Elementeer Cloud Library
 
 It closes the gap identified in `ARCH-FA-004`: these three concepts must not remain only product language. They need explicit provider roles so `Advanced` can introduce a premium library without semantically collapsing into `Studio`.
 
 Relevant implementation points:
 
-- [library-providers.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/library-providers.ts)
-- [library.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/shared/src/types/library.ts)
-- [advanced-product-surface.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/advanced-product-surface.md)
-- [free-product-surface.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-product-surface.md)
+- [library-providers.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/library-providers.ts)
+- [library.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/shared/src/types/library.ts)
+- [advanced-product-surface.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/advanced-product-surface.md)
+- [free-product-surface.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-product-surface.md)
 
 ## Provider Roles
 
@@ -38,20 +38,20 @@ Properties:
 Interpretation:
 
 - This remains the default library context.
-- Elementify strengthens it, fills it, customizes it, and assembles around it.
+- Elementeer strengthens it, fills it, customizes it, and assembles around it.
 
-### 2. Elementify Premium Library
+### 2. Elementeer Premium Library
 
 Role:
 
 - curated premium asset catalog
 - Advanced-only browse / inspect / plan surface
-- first visible `Elementify Library` experience in Advanced
+- first visible `Elementeer Library` experience in Advanced
 - local-site operational premium layer
 
 Properties:
 
-- `kind`: `elementify-premium`
+- `kind`: `elementeer-premium`
 - `scope`: `catalog`
 - `availability`: `gated` in Free, `active` in Advanced
 - `storageModel`: `curated-catalog`
@@ -64,7 +64,7 @@ Interpretation:
 - The execution seam for local import is the dedicated `library/import` route, not generic template CRUD.
 - This is explicitly not cloud storage and not cross-site sync.
 
-### 3. Elementify Cloud Library
+### 3. Elementeer Cloud Library
 
 Role:
 
@@ -73,7 +73,7 @@ Role:
 
 Properties:
 
-- `kind`: `elementify-cloud`
+- `kind`: `elementeer-cloud`
 - `scope`: `workspace`
 - `availability`: `planned`
 - `storageModel`: `cloud-sync`

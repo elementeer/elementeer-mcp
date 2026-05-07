@@ -30,11 +30,11 @@ export interface CapabilityResolution {
 function buildNativeOption(capability: Capability): CapabilityResolutionOption {
   const labelMap: Record<CapabilityId, string> = {
     'global-styles': 'Elementor Kit global styles',
-    'page-composition': 'Elementify page composition on Elementor data',
+    'page-composition': 'Elementeer page composition on Elementor data',
     'theme-builder': 'Elementor Theme Builder',
     'woocommerce-templates': 'Elementor WooCommerce templates',
     'multilingual-workflows': 'Current multilingual plugin workflow',
-    'change-review': 'Elementify change review queue',
+    'change-review': 'Elementeer change review queue',
   };
 
   return {

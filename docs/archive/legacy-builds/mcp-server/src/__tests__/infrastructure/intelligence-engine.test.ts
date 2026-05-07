@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { IntelligenceEngine } from '../../intelligence-engine.js';
-import type { ElementifyClient } from '../../client.js';
+import type { ElementeerClient } from '../../client.js';
 
-function makeClient(): ElementifyClient {
+function makeClient(): ElementeerClient {
   return {
     // Mock client methods needed by IntelligenceEngine
     getPageData: vi.fn().mockResolvedValue({
@@ -46,11 +46,11 @@ function makeClient(): ElementifyClient {
       performance_indicators: {},
       issues: [],
     }),
-  } as unknown as ElementifyClient;
+  } as unknown as ElementeerClient;
 }
 
 describe('Intelligence Engine (INFRA-004)', () => {
-  let client: ElementifyClient;
+  let client: ElementeerClient;
   let engine: IntelligenceEngine;
 
   beforeEach(() => {

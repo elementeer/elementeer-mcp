@@ -1,9 +1,9 @@
-# Elementify Free Runtime Wizard Handoff Tightening Execution Report
+# Elementeer Free Runtime Wizard Handoff Tightening Execution Report
 
 ## Batch Summary
 
 - batch_id: `BATCH-FREE-RUNTIME-HANDOFFS-001`
-- sequence: [free-runtime-wizard-handoffs-sequence.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-runtime-wizard-handoffs-sequence.md)
+- sequence: [free-runtime-wizard-handoffs-sequence.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-runtime-wizard-handoffs-sequence.md)
 - sequence_type: `build`
 - execution_mode: `ralph_attended`
 - gate_result: `continue`
@@ -11,7 +11,7 @@
 ## Steps Completed
 
 - `S1`
-  - extended [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/free-runtime-wizards.ts) with structured operative handoffs per wizard family
+  - extended [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/free-runtime-wizards.ts) with structured operative handoffs per wizard family
   - added explicit tool, timing, reason, and example call shape for bootstrap, optimization-lite, and relaunch-lite follow-on steps
 
 - `S2`
@@ -22,10 +22,10 @@
   - translated profiles into practical downstream behavior instead of keeping them as descriptive labels only
 
 - `S3`
-  - rendered the new operative handoff and profile-application sections in [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/free-runtime-wizards.ts)
+  - rendered the new operative handoff and profile-application sections in [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/free-runtime-wizards.ts)
   - updated tests in:
-    - [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/free-runtime-wizards.test.ts)
-    - [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/tools/free-runtime-wizards.test.ts)
+    - [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/free-runtime-wizards.test.ts)
+    - [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/tools/free-runtime-wizards.test.ts)
 
 ## Verification Commands
 

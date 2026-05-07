@@ -1,8 +1,8 @@
-# Elementify Free + Advanced Remaining Work Plan
+# Elementeer Free + Advanced Remaining Work Plan
 
 ## 1. Executive Summary
 
-This document turns the existing Elementify launch blueprint into a concrete remaining-work plan for the last meaningful gaps before:
+This document turns the existing Elementeer launch blueprint into a concrete remaining-work plan for the last meaningful gaps before:
 
 - `Free` is launch-ready as a public GitHub mirror surface
 - `Advanced` is functionally complete enough to feel like a real paid productivity tier
@@ -10,13 +10,13 @@ This document turns the existing Elementify launch blueprint into a concrete rem
 
 It is grounded in:
 
-- [free-advanced-launch-prd.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-advanced-launch-prd.md)
-- [free-advanced-launch-prd.json](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-advanced-launch-prd.json)
-- [tier-capability-map.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/tier-capability-map.md)
-- [free-product-surface.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-product-surface.md)
-- [advanced-product-surface.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/advanced-product-surface.md)
-- [free-mirror-export.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/architecture/free-mirror-export.md)
-- [forgejo-github-free-mirror-runbook.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/release/forgejo-github-free-mirror-runbook.md)
+- [free-advanced-launch-prd.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-advanced-launch-prd.md)
+- [free-advanced-launch-prd.json](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-advanced-launch-prd.json)
+- [tier-capability-map.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/tier-capability-map.md)
+- [free-product-surface.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-product-surface.md)
+- [advanced-product-surface.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/advanced-product-surface.md)
+- [free-mirror-export.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/architecture/free-mirror-export.md)
+- [forgejo-github-free-mirror-runbook.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/release/forgejo-github-free-mirror-runbook.md)
 
 Current working assessment:
 

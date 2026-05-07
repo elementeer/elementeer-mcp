@@ -78,7 +78,7 @@ function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> 
       imported: true,
       import_mode: 'manual-import',
       source: {
-        kind: 'elementify-premium',
+        kind: 'elementeer-premium',
         asset_id: 'premium-service-section-stack',
         asset_title: 'Premium Service Section Stack',
         reference: 'premium-catalog:premium-service-section-stack',

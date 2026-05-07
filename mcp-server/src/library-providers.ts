@@ -2,8 +2,8 @@ import { getProductTierProfile } from './product-entitlements.js';
 
 export type LibraryProviderKind =
   | 'local-elementor'
-  | 'elementify-premium'
-  | 'elementify-cloud';
+  | 'elementeer-premium'
+  | 'elementeer-cloud';
 
 export type LibraryProviderScope =
   | 'site'
@@ -54,17 +54,17 @@ export function getLocalElementorLibraryProvider(): LibraryProviderDescriptor {
     targetSystem: 'elementor_library on the current WordPress site',
     notes: [
       'Primary target system for current Free and Advanced workflows.',
-      'Elementify should strengthen this local system rather than replace it.',
+      'Elementeer should strengthen this local system rather than replace it.',
     ],
   };
 }
 
-export function getElementifyPremiumLibraryProvider(
+export function getElementeerPremiumLibraryProvider(
   tier: LibraryBoundaryReport['tier'],
 ): LibraryProviderDescriptor {
   return {
-    kind: 'elementify-premium',
-    label: 'Elementify Premium Library',
+    kind: 'elementeer-premium',
+    label: 'Elementeer Premium Library',
     scope: 'catalog',
     availability: tier === 'advanced' ? 'active' : 'gated',
     storageModel: 'curated-catalog',
@@ -74,21 +74,21 @@ export function getElementifyPremiumLibraryProvider(
       'Curated premium templates and reusable structures.',
       'This is not cloud storage and does not imply cross-site sync.',
       tier === 'advanced'
-        ? 'Visible in Advanced as the first Elementify Library experience.'
+        ? 'Visible in Advanced as the first Elementeer Library experience.'
         : 'Not available in Free and not exposed in the public mirror.',
     ],
   };
 }
 
-export function getElementifyCloudLibraryProvider(): LibraryProviderDescriptor {
+export function getElementeerCloudLibraryProvider(): LibraryProviderDescriptor {
   return {
-    kind: 'elementify-cloud',
-    label: 'Elementify Cloud Library',
+    kind: 'elementeer-cloud',
+    label: 'Elementeer Cloud Library',
     scope: 'workspace',
     availability: 'planned',
     storageModel: 'cloud-sync',
     syncMode: 'cloud-sync',
-    targetSystem: 'Future cross-site Elementify workspace and delivery layer',
+    targetSystem: 'Future cross-site Elementeer workspace and delivery layer',
     notes: [
       'Reserved for later Studio cloud-library and cross-site reuse workflows.',
       'Not part of the current Free or Advanced runtime surface.',
@@ -106,8 +106,8 @@ export function buildLibraryBoundaryReport(
     defaultProvider: 'local-elementor',
     providers: [
       getLocalElementorLibraryProvider(),
-      getElementifyPremiumLibraryProvider(tier),
-      getElementifyCloudLibraryProvider(),
+      getElementeerPremiumLibraryProvider(tier),
+      getElementeerCloudLibraryProvider(),
     ],
     usageRules: [
       'The local Elementor Library remains the default operational target system.',

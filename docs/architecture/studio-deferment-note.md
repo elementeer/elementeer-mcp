@@ -12,10 +12,10 @@ It exists so that:
 
 Relevant current seams:
 
-- [library-provider-boundary.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/architecture/library-provider-boundary.md)
-- [phase-2-foundation.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/architecture/phase-2-foundation.md)
-- [free-advanced-launch-prd.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-advanced-launch-prd.md)
-- [product-entitlements.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/product-entitlements.ts)
+- [library-provider-boundary.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/architecture/library-provider-boundary.md)
+- [phase-2-foundation.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/architecture/phase-2-foundation.md)
+- [free-advanced-launch-prd.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-advanced-launch-prd.md)
+- [product-entitlements.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/product-entitlements.ts)
 
 ## Explicitly Deferred To Studio
 

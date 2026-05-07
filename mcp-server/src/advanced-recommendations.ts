@@ -23,7 +23,7 @@ export type AdvancedUpgradeTarget =
   | 'keep-current-stack'
   | 'baseline-correction'
   | 'elementor-pro'
-  | 'elementify-advanced'
+  | 'elementeer-advanced'
   | 'supported-pro-addon-profile';
 
 export interface AdvancedUpgradePlan {
@@ -320,7 +320,7 @@ export function buildAdvancedUpgradePlan(params: {
       recommendedStackProfile,
       recommendedAddonProfile,
       isUpgradeNeeded: true,
-      recommendedUpgradeTarget: 'elementify-advanced',
+      recommendedUpgradeTarget: 'elementeer-advanced',
       reason: 'The current scenario benefits more from workflow reduction, critique depth, and guided execution than from adding isolated builder features alone.',
       lighterAlternativeConsidered: 'Stay in Free and use narrower manual steps, but that keeps more orchestration work on the operator.',
       complexityTradeoff: 'Adds a deeper workflow layer with more structured guidance, but keeps the stack more focused than broad addon inflation.',

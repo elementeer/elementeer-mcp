@@ -1,4 +1,4 @@
-# Elementify Free Completion Batch B Execution Report
+# Elementeer Free Completion Batch B Execution Report
 
 ## Batch Summary
 
@@ -6,7 +6,7 @@
 - items:
   - `FREE-COMP-003`
   - `FREE-COMP-004`
-- sequence: [free-comp-b-sequence.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-comp-b-sequence.md)
+- sequence: [free-comp-b-sequence.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-comp-b-sequence.md)
 - sequence_type: `build`
 - execution_mode: `ralph_attended`
 - gate_result: `continue`
@@ -14,25 +14,25 @@
 ## Steps Completed
 
 - `S1`
-  - made Free runtime presets more profile-aware in [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/free-runtime-wizards.ts)
+  - made Free runtime presets more profile-aware in [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/free-runtime-wizards.ts)
   - stack profiles now affect brand-setup focus and conservative baseline notes
   - skill profiles now affect context defaults, operator posture notes, and creator defaults
   - addon profiles now affect creator sections, preset titles, and follow-up guidance for curated extension paths
-  - strengthened tests in [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/free-runtime-wizards.test.ts)
+  - strengthened tests in [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/free-runtime-wizards.test.ts)
 
 - `S2`
-  - aligned the public Free quickstart in [free.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/quickstart/free.md)
-  - aligned the public Free includes/excludes summary in [free-includes-excludes.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/public/free-includes-excludes.md)
-  - aligned the public README Free workflow summary in [README.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/README.md)
-  - aligned the public Free product surface note in [free-product-surface.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-product-surface.md)
-  - tightened the release verifier in [verify-free-release.mjs](/Users/andrelange/Documents/repositories/github/elementify-mcp/scripts/verify-free-release.mjs) so the public docs must continue to reflect the scenario-first runtime story
+  - aligned the public Free quickstart in [free.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/quickstart/free.md)
+  - aligned the public Free includes/excludes summary in [free-includes-excludes.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/public/free-includes-excludes.md)
+  - aligned the public README Free workflow summary in [README.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/README.md)
+  - aligned the public Free product surface note in [free-product-surface.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-product-surface.md)
+  - tightened the release verifier in [verify-free-release.mjs](/Users/andrelange/Documents/repositories/github/elementeer-mcp/scripts/verify-free-release.mjs) so the public docs must continue to reflect the scenario-first runtime story
 
 - `S3`
   - ran targeted runtime and surface verification
   - ran Free mirror verification
   - rebuilt the deterministic Free staging artifact
   - reran the Free release verifier successfully after staging
-  - hardened the TypeScript wrapper in [run-mcp-tsc.mjs](/Users/andrelange/Documents/repositories/github/elementify-mcp/scripts/run-mcp-tsc.mjs) so the build/typecheck path completes more reliably through synchronous compiler execution
+  - hardened the TypeScript wrapper in [run-mcp-tsc.mjs](/Users/andrelange/Documents/repositories/github/elementeer-mcp/scripts/run-mcp-tsc.mjs) so the build/typecheck path completes more reliably through synchronous compiler execution
 
 ## Verification Commands
 

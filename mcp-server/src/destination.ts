@@ -70,7 +70,7 @@ export function buildCapabilityMatrix(
       available: fingerprint.elementorDetected,
       source: fingerprint.elementorDetected ? 'core' : 'unknown',
       notes: fingerprint.elementorDetected
-        ? ['Elementify composition workflows can target Elementor page data.']
+        ? ['Elementeer composition workflows can target Elementor page data.']
         : ['Page composition requires Elementor-managed content.'],
     },
     {
@@ -113,7 +113,7 @@ export function buildCapabilityMatrix(
       id: 'change-review',
       available: true,
       source: 'core',
-      notes: ['The Elementify change review queue is available independently of the destination profile.'],
+      notes: ['The Elementeer change review queue is available independently of the destination profile.'],
     },
   ];
 
@@ -134,7 +134,7 @@ export function buildCapabilityMatrix(
   }
 
   const compatibilitySummary = availableCount >= 5
-    ? 'Destination supports most current Elementify workflows with minimal fallback.'
+    ? 'Destination supports most current Elementeer workflows with minimal fallback.'
     : availableCount >= 3
       ? 'Destination supports the core Elementor workflows, with some advanced capabilities limited.'
       : 'Destination support is partial and should be handled conservatively.';

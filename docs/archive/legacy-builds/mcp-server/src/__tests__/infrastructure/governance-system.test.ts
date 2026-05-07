@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { GovernanceSystem } from '../../governance-system.js';
-import type { ElementifyClient } from '../../client.js';
+import type { ElementeerClient } from '../../client.js';
 
 // Mock the underlying client
 const mockClient = {
@@ -8,7 +8,7 @@ const mockClient = {
   listChanges: vi.fn(),
   getChange: vi.fn(),
   updateChangeStatus: vi.fn(),
-} as unknown as ElementifyClient;
+} as unknown as ElementeerClient;
 
 describe('Governance System (INFRA-005)', () => {
   let governance: GovernanceSystem;

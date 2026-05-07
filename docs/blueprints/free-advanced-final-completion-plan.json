@@ -1,5 +1,5 @@
 {
-  "title": "Elementify Free + Advanced Final Completion Plan",
+  "title": "Elementeer Free + Advanced Final Completion Plan",
   "sequence_type": "build",
   "execution_mode": "ralph_attended",
   "current_runtime_completion": {
@@ -112,7 +112,7 @@
       "goal": "Operationalize Advanced upgrade guidance and stack shaping.",
       "acceptance": [
         "Upgrade-path behavior is scenario-driven at runtime.",
-        "Elementor Pro, Elementify Advanced, and pro-addon guidance is explicit and honest."
+        "Elementor Pro, Elementeer Advanced, and pro-addon guidance is explicit and honest."
       ]
     },
     {

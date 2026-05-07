@@ -161,6 +161,30 @@ export function registerModuleWizards(
       description: 'PHP version → memory → DB bloat → cache → hosting recommendation',
       requiredCapability: 'plugin-stack-context:read',
     },
+    {
+      id: 'forms',
+      label: 'Forms',
+      description: 'Detect form plugins (CF7, WPForms, Gravity Forms) → form inventory → migration recommendations',
+      requiredCapability: 'plugin-stack-context:read',
+    },
+    {
+      id: 'ally',
+      label: 'Accessibility',
+      description: 'Detect accessibility plugins (Elementor Ally) → scan results → fix recommendations',
+      requiredCapability: 'plugin-stack-context:read',
+    },
+    {
+      id: 'lms',
+      label: 'LMS',
+      description: 'Detect LMS plugins (LearnDash, Tutor LMS, LifterLMS) → course inventory → integration recommendations',
+      requiredCapability: 'plugin-stack-context:read',
+    },
+    {
+      id: 'charity',
+      label: 'Charity',
+      description: 'Detect donation plugins (GiveWP, Charitable) → form inventory → campaign recommendations',
+      requiredCapability: 'plugin-stack-context:read',
+    },
   ];
 
   for (const def of wizardDefinitions) {

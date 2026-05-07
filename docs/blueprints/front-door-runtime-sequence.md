@@ -1,8 +1,8 @@
-# Elementify Front Door Runtime Sequence
+# Elementeer Front Door Runtime Sequence
 
 ## 1. Metadata
 
-- title: Elementify Free Front Door Runtime
+- title: Elementeer Free Front Door Runtime
 - domain: software
 - intent: build
 - sequence_type: mixed
@@ -34,12 +34,12 @@ Turn the scenario-first, wizard-first blueprint into the first runtime front doo
 
 ## 5. Inputs Required
 
-- [free-advanced-scenario-wizard-prd-v2.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-advanced-scenario-wizard-prd-v2.md)
-- [bootstrap-scenarios.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/bootstrap-scenarios.md)
-- [intent-wizard-contract.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/intent-wizard-contract.md)
-- [stack-profiles.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/stack-profiles.md)
-- [skill-addon-architecture.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/skill-addon-architecture.md)
-- [free-advanced-full-scope-gap-map.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-advanced-full-scope-gap-map.md)
+- [free-advanced-scenario-wizard-prd-v2.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-advanced-scenario-wizard-prd-v2.md)
+- [bootstrap-scenarios.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/bootstrap-scenarios.md)
+- [intent-wizard-contract.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/intent-wizard-contract.md)
+- [stack-profiles.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/stack-profiles.md)
+- [skill-addon-architecture.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/skill-addon-architecture.md)
+- [free-advanced-full-scope-gap-map.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-advanced-full-scope-gap-map.md)
 
 ## 6. Outputs Required
 
@@ -60,9 +60,9 @@ Introduce a typed contract for origin, intent, depth, user posture, stack readin
 
 Write scope:
 
-- [wizard.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/shared/src/types/wizard.ts)
-- [index.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/shared/src/index.ts)
-- [client.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/client.ts)
+- [wizard.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/shared/src/types/wizard.ts)
+- [index.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/shared/src/index.ts)
+- [client.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/client.ts)
 
 ### S2 — Runtime Front Door Engine
 
@@ -72,8 +72,8 @@ Implement deterministic routing from runtime inputs into scenario, wizard, tier,
 
 Write scope:
 
-- [intent-wizard.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/intent-wizard.ts)
-- [intent-wizard.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/intent-wizard.ts)
+- [intent-wizard.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/intent-wizard.ts)
+- [intent-wizard.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/intent-wizard.ts)
 
 ### S3 — Product Surface Realignment
 
@@ -83,9 +83,9 @@ Register the new front-door tools as Free and reflect them in the current surfac
 
 Write scope:
 
-- [index.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/index.ts)
-- [product-tiers.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/product-tiers.ts)
-- [product-surfaces.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/product-surfaces.ts)
+- [index.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/index.ts)
+- [product-tiers.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/product-tiers.ts)
+- [product-surfaces.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/product-surfaces.ts)
 
 ### GATE A — Front Door Runtime Gate
 

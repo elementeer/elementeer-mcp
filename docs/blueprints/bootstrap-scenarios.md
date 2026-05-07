@@ -1,15 +1,15 @@
-# Elementify Bootstrap Scenario Map
+# Elementeer Bootstrap Scenario Map
 
 ## Purpose
 
-This document defines the canonical bootstrap-aware scenario map for Elementify.
+This document defines the canonical bootstrap-aware scenario map for Elementeer.
 
 It complements:
 
-- [free-advanced-scenario-wizard-prd-v2.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-advanced-scenario-wizard-prd-v2.md)
-- [usp-foundation.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/usp-foundation.md)
+- [free-advanced-scenario-wizard-prd-v2.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-advanced-scenario-wizard-prd-v2.md)
+- [usp-foundation.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/usp-foundation.md)
 
-Its job is to ensure that Elementify can support users not only after Elementor is already present, but also while they are still choosing or completing the right stack.
+Its job is to ensure that Elementeer can support users not only after Elementor is already present, but also while they are still choosing or completing the right stack.
 
 ## Scenario Axes
 

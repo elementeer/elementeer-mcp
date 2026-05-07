@@ -1,8 +1,8 @@
-# Elementify CAP-RESET-001 + SURFACE-REALIGN-002 Execution Sequence
+# Elementeer CAP-RESET-001 + SURFACE-REALIGN-002 Execution Sequence
 
 ## 1. Metadata
 
-- title: Elementify Capability Reset and Surface Realignment
+- title: Elementeer Capability Reset and Surface Realignment
 - domain: software
 - intent: plan
 - sequence_type: mixed
@@ -28,8 +28,8 @@ Reset the capability model so it becomes a technical safety layer beneath the sc
 
 ## 4. Assumptions
 
-- [free-advanced-scenario-wizard-prd-v2.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-advanced-scenario-wizard-prd-v2.md) is the current source of truth for upper-layer product design.
-- The current capability vocabulary in [auth.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/shared/src/types/auth.ts) should be treated as transitional and not as final product truth.
+- [free-advanced-scenario-wizard-prd-v2.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-advanced-scenario-wizard-prd-v2.md) is the current source of truth for upper-layer product design.
+- The current capability vocabulary in [auth.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/shared/src/types/auth.ts) should be treated as transitional and not as final product truth.
 - This batch is documentation-first and does not yet rewrite runtime capability code.
 
 ## 5. Usage Notes
@@ -41,19 +41,19 @@ Reset the capability model so it becomes a technical safety layer beneath the sc
 
 ## 6. Inputs Required
 
-- [free-advanced-scenario-wizard-prd-v2.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-advanced-scenario-wizard-prd-v2.md)
-- [free-product-surface.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-product-surface.md)
-- [advanced-product-surface.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/advanced-product-surface.md)
-- [tier-capability-map.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/tier-capability-map.md)
-- [auth.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/shared/src/types/auth.ts)
+- [free-advanced-scenario-wizard-prd-v2.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-advanced-scenario-wizard-prd-v2.md)
+- [free-product-surface.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-product-surface.md)
+- [advanced-product-surface.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/advanced-product-surface.md)
+- [tier-capability-map.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/tier-capability-map.md)
+- [auth.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/shared/src/types/auth.ts)
 
 ## 7. Outputs Required
 
-- [capability-reset.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/capability-reset.md)
-- updated [free-product-surface.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-product-surface.md)
-- updated [advanced-product-surface.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/advanced-product-surface.md)
-- updated [tier-capability-map.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/tier-capability-map.md)
-- updated [free-advanced-scenario-wizard-prd-v2.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-advanced-scenario-wizard-prd-v2.md)
+- [capability-reset.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/capability-reset.md)
+- updated [free-product-surface.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-product-surface.md)
+- updated [advanced-product-surface.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/advanced-product-surface.md)
+- updated [tier-capability-map.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/tier-capability-map.md)
+- updated [free-advanced-scenario-wizard-prd-v2.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-advanced-scenario-wizard-prd-v2.md)
 
 ## 8. Sequence Steps
 
@@ -65,8 +65,8 @@ Document the new capability model as a technical substrate rather than the prima
 
 Write scope:
 
-- [capability-reset.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/capability-reset.md)
-- [tier-capability-map.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/tier-capability-map.md)
+- [capability-reset.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/capability-reset.md)
+- [tier-capability-map.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/tier-capability-map.md)
 
 Verification:
 
@@ -81,7 +81,7 @@ Realign Free to the new 360-degree, bootstrap-aware scenario model.
 
 Write scope:
 
-- [free-product-surface.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-product-surface.md)
+- [free-product-surface.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-product-surface.md)
 
 Verification:
 
@@ -96,7 +96,7 @@ Realign Advanced to the same scenario universe as Free, but with deeper workflow
 
 Write scope:
 
-- [advanced-product-surface.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/advanced-product-surface.md)
+- [advanced-product-surface.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/advanced-product-surface.md)
 
 Verification:
 
@@ -111,7 +111,7 @@ Check that the reset and surface docs are coherent with the v2 blueprint and cur
 
 Write scope:
 
-- [free-advanced-scenario-wizard-prd-v2.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-advanced-scenario-wizard-prd-v2.md)
+- [free-advanced-scenario-wizard-prd-v2.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-advanced-scenario-wizard-prd-v2.md)
 
 Verification:
 

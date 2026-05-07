@@ -1,14 +1,14 @@
 /**
  * Integration tests: full request/response cycle using MSW to mock HTTP.
  * Tests that each API method hits the correct endpoint, sends correct headers,
- * and maps error responses to the right ElementifyErrorCode.
+ * and maps error responses to the right ElementeerErrorCode.
  */
 import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
 import { setupServer } from 'msw/node';
 import { http, HttpResponse } from 'msw';
-import { ElementeerClient, ElementifyApiError } from '../../client.js';
+import { ElementeerClient, ElementeerApiError } from '../../client.js';
 
-const BASE = 'https://test.example.com/wp-json/elementify/v1';
+const BASE = 'https://test.example.com/wp-json/elementeer/v1';
 const API_KEY = 'ek_integration_test_key';
 
 const mswServer = setupServer();
@@ -51,7 +51,7 @@ describe('ElementeerClient integration — happy paths', () => {
     const client = makeClient();
     await client.listTemplates();
 
-    expect(receivedHeaders?.get('x-elementify-key')).toBe(API_KEY);
+    expect(receivedHeaders?.get('x-elementeer-key')).toBe(API_KEY);
     expect(receivedHeaders?.get('authorization')).toBe(`Bearer ${API_KEY}`);
   });
 
@@ -149,7 +149,7 @@ describe('ElementeerClient integration — happy paths', () => {
             imported: true,
             import_mode: 'manual-import',
             source: {
-              kind: 'elementify-premium',
+              kind: 'elementeer-premium',
               asset_id: 'premium-hero-01',
             },
             template: templateFixture({ id: 101, title: 'Imported Hero' }),
@@ -164,7 +164,7 @@ describe('ElementeerClient integration — happy paths', () => {
       title: 'Imported Hero',
       type: 'section',
       elementor_data: [{ id: 'hero', elType: 'section', elements: [] }],
-      source: { kind: 'elementify-premium', asset_id: 'premium-hero-01' },
+      source: { kind: 'elementeer-premium', asset_id: 'premium-hero-01' },
     });
 
     const body = requestBody as Record<string, unknown>;
@@ -226,11 +226,11 @@ describe('ElementeerClient integration — happy paths', () => {
 describe('ElementeerClient integration — error mapping', () => {
   // The core Respira bug fix: scope errors must not surface as auth_invalid_key
 
-  it('401 + elementify_insufficient_scope → auth_insufficient_scope (NOT auth_invalid_key)', async () => {
+  it('401 + elementeer_insufficient_scope → auth_insufficient_scope (NOT auth_invalid_key)', async () => {
     mswServer.use(
       http.get(`${BASE}/templates`, () => {
         return HttpResponse.json(
-          { code: 'elementify_insufficient_scope', message: 'Key lacks library-operations:read capability.', status: 401 },
+          { code: 'elementeer_insufficient_scope', message: 'Key lacks library-operations:read capability.', status: 401 },
           { status: 401 },
         );
       }),
@@ -239,16 +239,16 @@ describe('ElementeerClient integration — error mapping', () => {
     const client = makeClient();
     const err = await client.listTemplates().catch((e) => e);
 
-    expect(err).toBeInstanceOf(ElementifyApiError);
+    expect(err).toBeInstanceOf(ElementeerApiError);
     expect(err.code).toBe('auth_insufficient_scope');
     expect(err.code).not.toBe('auth_invalid_key');
   });
 
-  it('401 + elementify_invalid_key → auth_invalid_key', async () => {
+  it('401 + elementeer_invalid_key → auth_invalid_key', async () => {
     mswServer.use(
       http.get(`${BASE}/templates`, () => {
         return HttpResponse.json(
-          { code: 'elementify_invalid_key', message: 'Invalid API key.' },
+          { code: 'elementeer_invalid_key', message: 'Invalid API key.' },
           { status: 401 },
         );
       }),
@@ -259,11 +259,11 @@ describe('ElementeerClient integration — error mapping', () => {
     expect(err.code).toBe('auth_invalid_key');
   });
 
-  it('403 + elementify_governance_blocked → governance_blocked', async () => {
+  it('403 + elementeer_governance_blocked → governance_blocked', async () => {
     mswServer.use(
       http.get(`${BASE}/templates`, () => {
         return HttpResponse.json(
-          { code: 'elementify_governance_blocked', message: 'Blocked by governance.' },
+          { code: 'elementeer_governance_blocked', message: 'Blocked by governance.' },
           { status: 403 },
         );
       }),
@@ -333,7 +333,7 @@ describe('ElementeerClient integration — error mapping', () => {
     mswServer.use(
       http.get(`${BASE}/templates`, () => {
         return HttpResponse.json(
-          { code: 'elementify_invalid_key', message: 'Key revoked on 2025-03-01.' },
+          { code: 'elementeer_invalid_key', message: 'Key revoked on 2025-03-01.' },
           { status: 401 },
         );
       }),

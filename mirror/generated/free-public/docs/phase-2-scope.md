@@ -1,7 +1,7 @@
-# Elementify Studio Phase 2 Scope
+# Elementeer Studio Phase 2 Scope
 
 ## Purpose
-Elementify Studio phase 2 extends the current Elementify foundation toward a more intelligent, destination-aware, and modular product without destabilizing the deterministic pipeline that already works.
+Elementeer Studio phase 2 extends the current Elementeer foundation toward a more intelligent, destination-aware, and modular product without destabilizing the deterministic pipeline that already works.
 
 This phase should stay operational, slice-based, and conservative in scope. The goal is not a broad rewrite. The goal is to prepare the system for stronger intelligence, stronger validation, and cleaner extensibility.
 
@@ -22,7 +22,7 @@ This phase should stay operational, slice-based, and conservative in scope. The 
 - Prefer capability-based modeling where it improves reuse and avoids direct widget assumptions.
 
 ## AI Direction
-Phase 2 moves Elementify from AI-enabled toward AI-native, but it must do so in controlled stages.
+Phase 2 moves Elementeer from AI-enabled toward AI-native, but it must do so in controlled stages.
 
 - Do not jump straight into broad AI generation.
 - Do not let AI replace the deterministic safety anchor prematurely.

@@ -1,7 +1,7 @@
-# Elementify Studio Phase 2 Baseline Alignment
+# Elementeer Studio Phase 2 Baseline Alignment
 
 ## Purpose
-This document reconciles the generic Elementify Studio phase-2 execution sequence with the actual current baseline of the `elementify-mcp` repository.
+This document reconciles the generic Elementeer Studio phase-2 execution sequence with the actual current baseline of the `elementeer-mcp` repository.
 
 The original sequence assumes a Studio-style generation pipeline with a web UI, a `/api/generate` route, fixture-backed generation inputs, and a deterministic analyzer -> mapper -> builder flow. This repository does not currently expose that baseline. It is a WordPress plugin plus MCP server monorepo with a materially different capability surface.
 
@@ -25,14 +25,14 @@ The current codebase already contains a meaningful intelligence and workflow lay
 
 Representative implementation points:
 
-- [mcp-server/src/tools/assessment.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/assessment.ts)
-- [mcp-server/src/tools/recommendations.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/recommendations.ts)
-- [mcp-server/src/tools/wizard.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/wizard.ts)
-- [mcp-server/src/tools/pages.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/pages.ts)
-- [plugin/includes/Api/Assessment.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/Assessment.php)
-- [plugin/includes/Api/Router.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Api/Router.php)
-- [mcp-server/src/client.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/client.ts)
-- [ROADMAP.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/ROADMAP.md)
+- [mcp-server/src/tools/assessment.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/assessment.ts)
+- [mcp-server/src/tools/recommendations.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/recommendations.ts)
+- [mcp-server/src/tools/wizard.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/wizard.ts)
+- [mcp-server/src/tools/pages.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/pages.ts)
+- [plugin/includes/Api/Assessment.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/Assessment.php)
+- [plugin/includes/Api/Router.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Api/Router.php)
+- [mcp-server/src/client.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/client.ts)
+- [ROADMAP.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/ROADMAP.md)
 
 ## Sequence Mismatches
 
@@ -142,8 +142,8 @@ Status:
 - completed
 
 Artifacts:
-- [docs/phase-2-scope.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/phase-2-scope.md)
-- [docs/architecture/phase-2-foundation.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/architecture/phase-2-foundation.md)
+- [docs/phase-2-scope.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/phase-2-scope.md)
+- [docs/architecture/phase-2-foundation.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/architecture/phase-2-foundation.md)
 
 ### A1 — Shared contracts for current intelligence layer
 Goal:

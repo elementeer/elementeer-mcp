@@ -15,7 +15,7 @@ Complete the last major Advanced runtime gaps by making upgrade guidance scenari
 2. Distinguish:
    - keep current stack
    - Elementor Pro for structural / builder gaps
-   - Elementify Advanced for workflow depth
+   - Elementeer Advanced for workflow depth
    - one curated supported pro-addon profile when justified
 3. Expand Advanced recommendation tracks to include:
    - upgrade guidance

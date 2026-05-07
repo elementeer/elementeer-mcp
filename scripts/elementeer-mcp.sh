@@ -1764,20 +1764,20 @@ show_agent_usage() {
     echo "The Elementeer MCP Installer supports full non-interactive operation for AI agents."
     echo ""
     echo "Environment variables for non-interactive setup:"
-    echo "  ELEMENTIFY_SITE_ID      Site identifier (e.g., 'my-site')"
-    echo "  ELEMENTIFY_SITE_NAME    Site display name"
-    echo "  ELEMENTIFY_SITE_URL     WordPress site URL"
-    echo "  ELEMENTIFY_API_KEY      API key starting with 'ek_'"
+    echo "  ELEMENTEER_SITE_ID      Site identifier (e.g., 'my-site')"
+    echo "  ELEMENTEER_SITE_NAME    Site display name"
+    echo "  ELEMENTEER_SITE_URL     WordPress site URL"
+    echo "  ELEMENTEER_API_KEY      API key starting with 'ek_'"
     echo ""
     echo "Examples for agents:"
     echo "  1. Install Elementeer MCP:"
     echo "     $0 install --quiet"
     echo ""
     echo "  2. Setup with environment variables:"
-    echo "     export ELEMENTIFY_SITE_ID='my-site'"
-    echo "     export ELEMENTIFY_SITE_NAME='My Site'"
-    echo "     export ELEMENTIFY_SITE_URL='https://example.com'"
-    echo "     export ELEMENTIFY_API_KEY='ek_your_key'"
+    echo "     export ELEMENTEER_SITE_ID='my-site'"
+    echo "     export ELEMENTEER_SITE_NAME='My Site'"
+    echo "     export ELEMENTEER_SITE_URL='https://example.com'"
+    echo "     export ELEMENTEER_API_KEY='ek_your_key'"
     echo "     $0 setup --yes"
     echo ""
     echo "  3. Configure all MCP clients non-interactively:"
@@ -2102,10 +2102,10 @@ setup_config() {
     # Non-interactive mode (for agents)
     if [ -n "$AUTO_YES" ]; then
         # Try environment variables first
-        site_id="${ELEMENTIFY_SITE_ID}"
-        site_name="${ELEMENTIFY_SITE_NAME}"
-        site_url="${ELEMENTIFY_SITE_URL}"
-        api_key="${ELEMENTIFY_API_KEY}"
+        site_id="${ELEMENTEER_SITE_ID}"
+        site_name="${ELEMENTEER_SITE_NAME}"
+        site_url="${ELEMENTEER_SITE_URL}"
+        api_key="${ELEMENTEER_API_KEY}"
         
         # Generate defaults if not provided
         if [ -z "$site_id" ]; then

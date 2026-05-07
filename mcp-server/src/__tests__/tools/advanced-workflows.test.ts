@@ -60,7 +60,7 @@ function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> 
       imported: true,
       import_mode: 'manual-import',
       source: {
-        kind: 'elementify-premium',
+        kind: 'elementeer-premium',
         asset_id: 'premium-theme-foundation-header',
         asset_title: 'Premium Theme Foundation Header',
         reference: 'premium-catalog:premium-theme-foundation-header',

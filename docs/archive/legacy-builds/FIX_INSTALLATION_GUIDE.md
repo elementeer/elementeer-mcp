@@ -1,4 +1,4 @@
-# 🔧 Elementify v1.0.0 Installation Fix Guide
+# 🔧 Elementeer v1.0.0 Installation Fix Guide
 
 ## ❌ Problem
 - WordPress erkennt v1.0.0 nicht als Update von v0.5.0
@@ -8,10 +8,10 @@
 ## ✅ Lösung
 
 ### Schritt 1: Komplette Clean Installation
-**ZIP-Datei:** `elementify-1.0.0-clean.zip` (144 KB)
+**ZIP-Datei:** `elementeer-1.0.0-clean.zip` (144 KB)
 
 Diese ZIP hat:
-- ✅ Korrekte WordPress Verzeichnisstruktur (`elementify/` Root)
+- ✅ Korrekte WordPress Verzeichnisstruktur (`elementeer/` Root)
 - ✅ Vollständiger `vendor/` Ordner mit Autoloader
 - ✅ Keine Test-Dateien
 - ✅ Plug & Play (kein Composer/SSH nötig)
@@ -19,12 +19,12 @@ Diese ZIP hat:
 ### Schritt 2: Manuelles Update-Procedure
 
 #### Option A: WordPress Admin (empfohlen)
-1. **Deaktiviere** alte Elementify Version (v0.5.0)
-2. **Lösche** das Plugin komplett (Plugins → Elementify → Delete)
+1. **Deaktiviere** alte Elementeer Version (v0.5.0)
+2. **Lösche** das Plugin komplett (Plugins → Elementeer → Delete)
 3. **Gehe zu** Plugins → Add New → Upload Plugin
-4. **Wähle** `elementify-1.0.0-clean.zip`
+4. **Wähle** `elementeer-1.0.0-clean.zip`
 5. **Installiere** und **aktiviere** das Plugin
-6. **Teste** REST API: `https://marcus-urban.de/wp-json/elementify/v1/health`
+6. **Teste** REST API: `https://marcus-urban.de/wp-json/elementeer/v1/health`
 
 #### Option B: Direktes Deployment (falls SSH verfügbar)
 ```bash
@@ -83,22 +83,22 @@ tail -50 /var/www/html/wp-content/debug.log
 ### Fehler 3: "Real Cookie Banner Fehlerblock"
 **Ursache:** REST API ist kaputt wegen PHP-Fehler
 **Lösung:**
-1. Elementify Plugin deaktivieren
+1. Elementeer Plugin deaktivieren
 2. Real Cookie Banner neu laden (deaktivieren/aktivieren)
-3. Elementify Plugin mit korrigierter Version neu installieren
+3. Elementeer Plugin mit korrigierter Version neu installieren
 
 ## 📦 Verfügbare ZIP-Dateien
 
-1. **`elementify-1.0.0-clean.zip`** (144 KB) - **EMPFEHLUNG**
+1. **`elementeer-1.0.0-clean.zip`** (144 KB) - **EMPFEHLUNG**
    - Saubere Installation
    - Korrekte WordPress-Struktur
    - Vollständiger Autoloader
 
-2. `elementify-1.0.0-wordpress.zip` (189 KB)
+2. `elementeer-1.0.0-wordpress.zip` (189 KB)
    - Ältere Version mit Test-Dateien
    - Nicht empfohlen
 
-3. `elementify-mcp-1.0.0-standalone-fixed.zip` (140 KB)
+3. `elementeer-mcp-1.0.0-standalone-fixed.zip` (140 KB)
    - Falsche Struktur (kein Plugin-Verzeichnis)
    - Nicht für WordPress Upload geeignet
 
@@ -106,8 +106,8 @@ tail -50 /var/www/html/wp-content/debug.log
 
 Nach erfolgreicher Installation:
 - [ ] Kein "Cookie Banner Fehlerblock" mehr
-- [ ] REST API erreichbar: `/wp-json/elementify/v1/health`
-- [ ] WordPress Admin: Elementify Menu sichtbar
+- [ ] REST API erreichbar: `/wp-json/elementeer/v1/health`
+- [ ] WordPress Admin: Elementeer Menu sichtbar
 - [ ] API Keys können erstellt werden
 - [ ] MCP Verbindung funktioniert
 
@@ -116,6 +116,6 @@ Nach erfolgreicher Installation:
 Bei weiterhin bestehenden Problemen:
 1. Debug-Output von `debug-plugin-errors.php` teilen
 2. Inhalt von `/wp-content/debug.log` teilen
-3. GitHub Issue erstellen: https://github.com/elementify/elementify-mcp/issues
+3. GitHub Issue erstellen: https://github.com/elementeer/elementeer-mcp/issues
 
 **Wichtig:** Die v1.0.0 Version ist Plug & Play - keine zusätzlichen Tools wie Composer oder SSH-Zugang nötig!

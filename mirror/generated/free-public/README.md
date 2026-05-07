@@ -1,4 +1,4 @@
-# Elementify Free Public Mirror Staging
+# Elementeer Free Public Mirror Staging
 
 This directory is a generated staging artifact for the public Free mirror.
 The dry-run output is deterministic and starts from a clean staging directory.
@@ -7,7 +7,7 @@ Advanced remains private in the Forgejo primary repository.
 Studio stays a future seam, not a public promise.
 
 Public tool entrypoint: `registerFreeTools`
-Free tool count: 47
+Free tool count: 128
 Free product surface: Free
 
 Public quickstart:

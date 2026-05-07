@@ -14,9 +14,9 @@ echo ""
 # Verzeichnisse
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLUGIN_SRC="$PROJECT_ROOT/plugin"
-PLUGIN_NAME="elementify"
+PLUGIN_NAME="elementeer"
 VERSION="2.0.0"
-TEMP_DIR="/tmp/elementify-build-$(date +%s)"
+TEMP_DIR="/tmp/elementeer-build-$(date +%s)"
 DIST_DIR="$PROJECT_ROOT/dist"
 
 # Farben
@@ -67,7 +67,7 @@ fi
 # Erstelle ZIP mit korrekter Struktur
 log "Erstelle WordPress-kompatible ZIP..."
 cd "$TEMP_DIR"
-ZIP_NAME="elementify-${VERSION}-wordpress.zip"
+ZIP_NAME="elementeer-${VERSION}-wordpress.zip"
 zip -ry "$ZIP_NAME" "$PLUGIN_NAME/" \
     -x "*.git*" \
     -x "node_modules/*" \
@@ -85,7 +85,7 @@ zip -ry "$ZIP_NAME" "$PLUGIN_NAME/" \
 
 # Kopiere ZIPs
 cp "$ZIP_NAME" "$DIST_DIR/"
-cp "$ZIP_NAME" "$PROJECT_ROOT/elementify-${VERSION}-wordpress.zip"
+cp "$ZIP_NAME" "$PROJECT_ROOT/elementeer-${VERSION}-wordpress.zip"
 
 # Validiere ZIP
 log "Validiere ZIP-Struktur..."
@@ -94,11 +94,11 @@ mkdir -p "$VALID_TEMP"
 cd "$VALID_TEMP"
 unzip -q "$TEMP_DIR/$ZIP_NAME"
 
-if [ -d "$PLUGIN_NAME" ] && [ -f "$PLUGIN_NAME/elementify-mcp.php" ]; then
-    PLUGIN_HEADER=$(head -20 "$PLUGIN_NAME/elementify-mcp.php" | grep "Version:")
+if [ -d "$PLUGIN_NAME" ] && [ -f "$PLUGIN_NAME/elementeer-mcp.php" ]; then
+    PLUGIN_HEADER=$(head -20 "$PLUGIN_NAME/elementeer-mcp.php" | grep "Version:")
     echo "✅ ZIP-Struktur korrekt:"
     echo "   - Plugin-Verzeichnis: $PLUGIN_NAME/"
-    echo "   - Hauptdatei: elementify-mcp.php"
+    echo "   - Hauptdatei: elementeer-mcp.php"
     echo "   - Version: $PLUGIN_HEADER"
     
     if [ -f "$PLUGIN_NAME/vendor/autoload.php" ]; then
@@ -119,7 +119,7 @@ success "✅ WordPress Plugin ZIP erstellt!"
 echo ""
 echo "Erstellte Dateien:"
 echo "  - $DIST_DIR/$ZIP_NAME"
-echo "  - $PROJECT_ROOT/elementify-${VERSION}-wordpress.zip"
+echo "  - $PROJECT_ROOT/elementeer-${VERSION}-wordpress.zip"
 echo ""
 echo "Installation in WordPress:"
 echo "1. Gehe zu Plugins → Add New → Upload Plugin"

@@ -2,7 +2,7 @@
 
 ## Overview
 
-Phase 5 extends Elementify MCP with three key domains:
+Phase 5 extends Elementeer MCP with three key domains:
 
 1. **WooCommerce** – manage products, orders, store settings.
 2. **Form Management** – integrate with popular WordPress form plugins.
@@ -36,7 +36,7 @@ Phase 5 extends Elementify MCP with three key domains:
 ### Dependencies
 
 - WooCommerce plugin active.
-- Elementify plugin capability `woocommerce-operations:read` / `:write`.
+- Elementeer plugin capability `woocommerce-operations:read` / `:write`.
 
 ## 2. Form Management
 

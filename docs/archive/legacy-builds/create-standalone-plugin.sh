@@ -2,7 +2,7 @@
 set -e
 
 # ============================================
-# CREATE STANDALONE ELEMENTIFY PLUGIN v1.0.0
+# CREATE STANDALONE ELEMENTEER PLUGIN v1.0.0
 # ============================================
 # Erstellt eine komplette "Plug & Play" Version
 # mit allen Abhängigkeiten für Endanwender
@@ -12,7 +12,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$SCRIPT_DIR"
 PLUGIN_DIR="$PROJECT_ROOT/plugin"
 DIST_DIR="$PROJECT_ROOT/dist"
-PLUGIN_NAME="elementify-mcp"
+PLUGIN_NAME="elementeer-mcp"
 VERSION="1.0.0"
 
 # Colors
@@ -30,7 +30,7 @@ success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
 print_banner() {
     echo -e "${BLUE}"
     echo "╔══════════════════════════════════════════════════════════╗"
-    echo "║       ELEMENTIFY v1.0.0 - STANDALONE BUILDER             ║"
+    echo "║       ELEMENTEER v1.0.0 - STANDALONE BUILDER             ║"
     echo "║          Plug & Play für Endanwender                     ║"
     echo "╚══════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
@@ -91,8 +91,8 @@ create_enduser_readme() {
     log "Erstelle Endanwender-Dokumentation..."
     
     cat > "$PLUGIN_DIR/readme-enduser.txt" << 'README'
-=== Elementify MCP ===
-Contributors: elementify
+=== Elementeer MCP ===
+Contributors: elementeer
 Tags: elementor, mcp, ai, automation, templates, library
 Requires at least: 6.0
 Tested up to: 6.5
@@ -107,7 +107,7 @@ AI-native REST API for Elementor template management. Exposes the Elementor libr
 
 **Plug & Play Installation - Keine zusätzlichen Tools nötig!**
 
-Elementify MCP ist eine komplette "Plug & Play" Lösung für WordPress + Elementor. Diese Version enthält bereits alle notwendigen Abhängigkeiten - **kein Composer, kein SSH, keine Kommandozeile erforderlich**.
+Elementeer MCP ist eine komplette "Plug & Play" Lösung für WordPress + Elementor. Diese Version enthält bereits alle notwendigen Abhängigkeiten - **kein Composer, kein SSH, keine Kommandozeile erforderlich**.
 
 **Features:**
 ✅ Komplette Addon-Ökosystem Integration (11 Elementor Addons)
@@ -125,20 +125,20 @@ Elementify MCP ist eine komplette "Plug & Play" Lösung für WordPress + Element
 3. Fertig!
 
 **Für AI Agents & MCP Server:**
-- REST API verfügbar unter: /wp-json/elementify/v1/
+- REST API verfügbar unter: /wp-json/elementeer/v1/
 - API Keys über WordPress Admin erstellen
-- Vollständige Dokumentation: https://github.com/elementify/elementify-mcp
+- Vollständige Dokumentation: https://github.com/elementeer/elementeer-mcp
 
 == Installation ==
 
 1. **Standard Installation** (empfohlen):
    - Lade die ZIP-Datei in WordPress hoch (Plugins → Add New → Upload Plugin)
    - Aktiviere das Plugin
-   - Gehe zu Elementify → Settings um API Keys zu erstellen
+   - Gehe zu Elementeer → Settings um API Keys zu erstellen
 
 2. **Manuelle Installation:**
    - Entpacke die ZIP-Datei in /wp-content/plugins/
-   - Benenne den Ordner in "elementify" um
+   - Benenne den Ordner in "elementeer" um
    - Aktiviere das Plugin in WordPress Admin
 
 == Häufig gestellte Fragen ==
@@ -185,9 +185,9 @@ A: Konfiguriere deinen MCP Client mit der WordPress URL und API Key.
 
 == Support ==
 
-* GitHub: https://github.com/elementify/elementify-mcp
-* Issues: https://github.com/elementify/elementify-mcp/issues
-* Dokumentation: https://github.com/elementify/elementify-mcp/docs
+* GitHub: https://github.com/elementeer/elementeer-mcp
+* Issues: https://github.com/elementeer/elementeer-mcp/issues
+* Dokumentation: https://github.com/elementeer/elementeer-mcp/docs
 
 **Wichtiger Hinweis:** Diese Version ist für Endanwender optimiert. Für Entwickler: Quellcode und volle Dokumentation auf GitHub.
 README
@@ -203,7 +203,7 @@ create_standalone_zip() {
     mkdir -p "$DIST_DIR"
     
     # ZIP Dateiname
-    ZIP_NAME="elementify-mcp-${VERSION}-standalone.zip"
+    ZIP_NAME="elementeer-mcp-${VERSION}-standalone.zip"
     ZIP_PATH="$DIST_DIR/$ZIP_NAME"
     
     cd "$PLUGIN_DIR"
@@ -248,7 +248,7 @@ create_standalone_zip() {
 validate_zip() {
     log "Validiere ZIP-Datei..."
     
-    ZIP_PATH="$DIST_DIR/elementify-mcp-${VERSION}-standalone.zip"
+    ZIP_PATH="$DIST_DIR/elementeer-mcp-${VERSION}-standalone.zip"
     
     if [ ! -f "$ZIP_PATH" ]; then
         error "ZIP-Datei nicht gefunden: $ZIP_PATH"
@@ -257,13 +257,13 @@ validate_zip() {
     
     # Prüfe wichtige Dateien in der ZIP
     log "Prüfe ZIP-Inhalt..."
-    TEMP_DIR="/tmp/elementify-validate-$(date +%s)"
+    TEMP_DIR="/tmp/elementeer-validate-$(date +%s)"
     mkdir -p "$TEMP_DIR"
     unzip -q "$ZIP_PATH" -d "$TEMP_DIR"
     
     echo "Wichtige Dateien in ZIP:"
     IMPORTANT_FILES=(
-        "elementify-mcp.php"
+        "elementeer-mcp.php"
         "vendor/autoload.php"
         "readme.txt"
         "composer.json"
@@ -273,12 +273,12 @@ validate_zip() {
     
     all_ok=true
     for file in "${IMPORTANT_FILES[@]}"; do
-        if [ -f "$TEMP_DIR/elementify-mcp/$file" ]; then
+        if [ -f "$TEMP_DIR/elementeer-mcp/$file" ]; then
             echo "  ✅ $file"
             
             # Spezielle Checks
-            if [ "$file" = "elementify-mcp.php" ]; then
-                if grep -q "Version:     1.0.0" "$TEMP_DIR/elementify-mcp/$file"; then
+            if [ "$file" = "elementeer-mcp.php" ]; then
+                if grep -q "Version:     1.0.0" "$TEMP_DIR/elementeer-mcp/$file"; then
                     echo "    → Version: 1.0.0 korrekt"
                 else
                     echo "    ❌ Falsche Version"
@@ -297,8 +297,8 @@ validate_zip() {
     done
     
     # Prüfe vendor/ Ordner Größe
-    if [ -d "$TEMP_DIR/elementify-mcp/vendor" ]; then
-        VENDOR_SIZE=$(du -sh "$TEMP_DIR/elementify-mcp/vendor" | cut -f1)
+    if [ -d "$TEMP_DIR/elementeer-mcp/vendor" ]; then
+        VENDOR_SIZE=$(du -sh "$TEMP_DIR/elementeer-mcp/vendor" | cut -f1)
         echo "  📦 vendor/ Ordner: $VENDOR_SIZE"
     fi
     
@@ -317,23 +317,23 @@ validate_zip() {
 create_installation_script() {
     log "Erstelle Installations-Skript..."
     
-    cat > "$DIST_DIR/install-elementify.sh" << 'INSTALLSCRIPT'
+    cat > "$DIST_DIR/install-elementeer.sh" << 'INSTALLSCRIPT'
 #!/bin/bash
 set -e
 
 # ============================================
-# ELEMENTIFY v1.0.0 - INSTALLATION SCRIPT
+# ELEMENTEER v1.0.0 - INSTALLATION SCRIPT
 # ============================================
 # Für manuelle Installation auf Server
 # ============================================
 
-echo "=== Elementify v1.0.0 Installation ==="
+echo "=== Elementeer v1.0.0 Installation ==="
 echo ""
 
 # Prüfe ob wir im richtigen Verzeichnis sind
-if [ ! -f "elementify-mcp.php" ]; then
-    echo "❌ Nicht im Elementify Plugin-Verzeichnis"
-    echo "Wechsle in: /wp-content/plugins/elementify/"
+if [ ! -f "elementeer-mcp.php" ]; then
+    echo "❌ Nicht im Elementeer Plugin-Verzeichnis"
+    echo "Wechsle in: /wp-content/plugins/elementeer/"
     exit 1
 fi
 
@@ -378,9 +378,9 @@ echo "=== INSTALLATION FERTIG ==="
 echo ""
 echo "Nächste Schritte in WordPress:"
 echo "1. Gehe zu Plugins → Installierte Plugins"
-echo "2. Aktiviere 'Elementify MCP Plugin'"
-echo "3. Gehe zu Elementify → Settings für API Keys"
-echo "4. Teste REST API: /wp-json/elementify/v1/health"
+echo "2. Aktiviere 'Elementeer MCP Plugin'"
+echo "3. Gehe zu Elementeer → Settings für API Keys"
+echo "4. Teste REST API: /wp-json/elementeer/v1/health"
 echo ""
 echo "Bei Problemen:"
 echo "- Prüfe /wp-content/debug.log"
@@ -388,15 +388,15 @@ echo "- Erhöhe PHP memory_limit auf 256M"
 echo "- Deaktiviere andere Plugins für Konflikt-Test"
 INSTALLSCRIPT
 
-    chmod +x "$DIST_DIR/install-elementify.sh"
-    success "Installations-Skript erstellt: $DIST_DIR/install-elementify.sh"
+    chmod +x "$DIST_DIR/install-elementeer.sh"
+    success "Installations-Skript erstellt: $DIST_DIR/install-elementeer.sh"
 }
 
 # Main Funktion
 main() {
     print_banner
     
-    log "Erstelle Plug & Play Elementify v$VERSION..."
+    log "Erstelle Plug & Play Elementeer v$VERSION..."
     echo ""
     
     # 1. Voraussetzungen prüfen
@@ -427,9 +427,9 @@ main() {
     success "🎉 PLUG & PLAY VERSION FERTIG!"
     echo ""
     echo "Erstellte Dateien:"
-    echo "✅ $DIST_DIR/elementify-mcp-${VERSION}-standalone.zip  (Haupt-ZIP)"
-    echo "✅ $PROJECT_ROOT/elementify-mcp-${VERSION}-standalone.zip  (Kopie)"
-    echo "✅ $DIST_DIR/install-elementify.sh  (Installations-Skript)"
+    echo "✅ $DIST_DIR/elementeer-mcp-${VERSION}-standalone.zip  (Haupt-ZIP)"
+    echo "✅ $PROJECT_ROOT/elementeer-mcp-${VERSION}-standalone.zip  (Kopie)"
+    echo "✅ $DIST_DIR/install-elementeer.sh  (Installations-Skript)"
     echo ""
     echo "Für Endanwender:"
     echo "1. ZIP in WordPress hochladen (Plugins → Add New → Upload)"
@@ -437,8 +437,8 @@ main() {
     echo "3. Fertig! Kein Composer, kein SSH nötig"
     echo ""
     echo "Für marcus-urban.de:"
-    echo "scp elementify-mcp-${VERSION}-standalone.zip marcus-urban.de:/var/www/html/wp-content/plugins/"
-    echo "ssh marcus-urban.de 'cd /var/www/html/wp-content/plugins && unzip -o elementify-mcp-${VERSION}-standalone.zip -d elementify'"
+    echo "scp elementeer-mcp-${VERSION}-standalone.zip marcus-urban.de:/var/www/html/wp-content/plugins/"
+    echo "ssh marcus-urban.de 'cd /var/www/html/wp-content/plugins && unzip -o elementeer-mcp-${VERSION}-standalone.zip -d elementeer'"
     echo ""
     echo "Wichtiger Hinweis:"
     echo "Diese Version enthält bereits alle Abhängigkeiten im vendor/ Ordner."

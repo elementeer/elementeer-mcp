@@ -443,7 +443,7 @@ export function registerWizardTools(
   // ---------------------------------------------------------------- //
     server.tool(
     'creator_mode',
-    'Compose a new page or set of sections by intelligently selecting templates from your library that match the requested section types. For each requested section, the best-matching template is selected using title/tag/category scoring. The composed layout is then saved as a new template and/or written directly to a target page.\n\nThis is the "build from brief" workflow: provide a list of section types (e.g. ["hero", "features", "pricing", "cta"]) and Elementify assembles a coherent layout from your own template library — respecting global colors, typography, and brand context already configured.',
+    'Compose a new page or set of sections by intelligently selecting templates from your library that match the requested section types. For each requested section, the best-matching template is selected using title/tag/category scoring. The composed layout is then saved as a new template and/or written directly to a target page.\n\nThis is the "build from brief" workflow: provide a list of section types (e.g. ["hero", "features", "pricing", "cta"]) and Elementeer assembles a coherent layout from your own template library — respecting global colors, typography, and brand context already configured.',
     {
       site_id: z.string().optional(),
       sections: z.array(z.string()).min(1).max(20)

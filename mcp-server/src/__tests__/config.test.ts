@@ -7,12 +7,12 @@ import path from 'node:path';
 let tmpDir: string;
 
 beforeEach(() => {
-  tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'elementify-test-'));
-  process.env['ELEMENTIFY_CONFIG_PATH'] = path.join(tmpDir, 'config.json');
+  tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'elementeer-test-'));
+  process.env['ELEMENTEER_CONFIG_PATH'] = path.join(tmpDir, 'config.json');
 });
 
 afterEach(() => {
-  delete process.env['ELEMENTIFY_CONFIG_PATH'];
+  delete process.env['ELEMENTEER_CONFIG_PATH'];
   fs.rmSync(tmpDir, { recursive: true, force: true });
   // Clear module cache so config re-reads the file
   vi.resetModules();
@@ -47,7 +47,7 @@ const sampleConfig = {
 
 function writeConfig(obj: unknown): void {
   fs.writeFileSync(
-    process.env['ELEMENTIFY_CONFIG_PATH']!,
+    process.env['ELEMENTEER_CONFIG_PATH']!,
     JSON.stringify(obj, null, 2),
     'utf-8',
   );
@@ -60,14 +60,14 @@ describe('loadConfig', () => {
 
     // Example config should have been written
     const written = JSON.parse(
-      fs.readFileSync(process.env['ELEMENTIFY_CONFIG_PATH']!, 'utf-8'),
+      fs.readFileSync(process.env['ELEMENTEER_CONFIG_PATH']!, 'utf-8'),
     );
     expect(written).toHaveProperty('sites');
     expect(Array.isArray(written.sites)).toBe(true);
   });
 
   it('throws on malformed JSON', async () => {
-    fs.writeFileSync(process.env['ELEMENTIFY_CONFIG_PATH']!, '{not valid json}', 'utf-8');
+    fs.writeFileSync(process.env['ELEMENTEER_CONFIG_PATH']!, '{not valid json}', 'utf-8');
     const { loadConfig } = await importConfig();
     expect(() => loadConfig()).toThrow();
   });

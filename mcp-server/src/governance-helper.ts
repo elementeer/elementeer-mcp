@@ -41,7 +41,7 @@ export interface GovernanceExecuteResult {
  * - L2: Automatically queues for review regardless of write_mode
  * - L3: Requires explicit consent (consent: true) to queue
  * 
- * @param client Elementify client
+ * @param client Elementeer client
  * @param executor Function that executes the tool (for L0/L1)
  * @param options Execution options
  * @returns GovernanceExecuteResult

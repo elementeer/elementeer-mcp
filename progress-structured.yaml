@@ -1,6 +1,6 @@
-# ReleaseChain Progress - Elementify MCP Creator v0.5.0
+# ReleaseChain Progress - Elementeer MCP Creator v0.5.0
 version: 1
-project: elementify-mcp
+project: elementeer-mcp
 release_version: 0.5.0
 iteration: 1
 status: completed

@@ -2,13 +2,13 @@
 set -e
 
 # ============================================
-# Fix Elementify v1.0.0 Update Problem
+# Fix Elementeer v1.0.0 Update Problem
 # ============================================
 # Behebt das "Nichterkennen" des Plugin-Updates
 # und den REST API 500 Error
 # ============================================
 
-echo "=== ELEMENTIFY v1.0.0 UPDATE FIX ==="
+echo "=== ELEMENTEER v1.0.0 UPDATE FIX ==="
 echo ""
 
 # Prüfe ob wir auf dem Server sind
@@ -22,16 +22,16 @@ if [ ! -f "/var/www/html/wp-config.php" ] && [ ! -f "wp-config.php" ]; then
     fi
 fi
 
-# 1. Finde alte Elementify Plugin-Version
-echo "1. Suche alte Elementify Plugin-Version..."
+# 1. Finde alte Elementeer Plugin-Version
+echo "1. Suche alte Elementeer Plugin-Version..."
 OLD_PLUGIN_DIR=""
 PLUGIN_DIRS=(
-    "/var/www/html/wp-content/plugins/elementify"
-    "/var/www/html/wp-content/plugins/elementify-mcp" 
-    "wp-content/plugins/elementify"
-    "wp-content/plugins/elementify-mcp"
-    "./wp-content/plugins/elementify"
-    "./wp-content/plugins/elementify-mcp"
+    "/var/www/html/wp-content/plugins/elementeer"
+    "/var/www/html/wp-content/plugins/elementeer-mcp" 
+    "wp-content/plugins/elementeer"
+    "wp-content/plugins/elementeer-mcp"
+    "./wp-content/plugins/elementeer"
+    "./wp-content/plugins/elementeer-mcp"
 )
 
 for dir in "${PLUGIN_DIRS[@]}"; do
@@ -43,12 +43,12 @@ for dir in "${PLUGIN_DIRS[@]}"; do
 done
 
 if [ -z "$OLD_PLUGIN_DIR" ]; then
-    echo "   ⚠️  Keine alte Elementify Version gefunden"
+    echo "   ⚠️  Keine alte Elementeer Version gefunden"
     echo "   Neue Installation wird durchgeführt"
 else
     # Prüfe Version der alten Installation
-    if [ -f "$OLD_PLUGIN_DIR/elementify-mcp.php" ]; then
-        OLD_VERSION=$(grep "Version:" "$OLD_PLUGIN_DIR/elementify-mcp.php" | head -1 | sed 's/.*Version:[[:space:]]*//' | sed "s/'//g" | sed 's/"//g' | tr -d ' ')
+    if [ -f "$OLD_PLUGIN_DIR/elementeer-mcp.php" ]; then
+        OLD_VERSION=$(grep "Version:" "$OLD_PLUGIN_DIR/elementeer-mcp.php" | head -1 | sed 's/.*Version:[[:space:]]*//' | sed "s/'//g" | sed 's/"//g' | tr -d ' ')
         echo "   Alte Version: $OLD_VERSION"
     fi
 fi
@@ -76,9 +76,9 @@ if [ -n "$OLD_PLUGIN_DIR" ] && [[ ! $REPLY =~ ^[Yy]$ ]]; then
     TARGET_DIR="$OLD_PLUGIN_DIR"
 else
     # Neue Installation
-    TARGET_DIR="/var/www/html/wp-content/plugins/elementify"
+    TARGET_DIR="/var/www/html/wp-content/plugins/elementeer"
     if [ ! -d "/var/www/html" ]; then
-        TARGET_DIR="wp-content/plugins/elementify"
+        TARGET_DIR="wp-content/plugins/elementeer"
     fi
 fi
 
@@ -86,14 +86,14 @@ echo "   Ziel: $TARGET_DIR"
 
 # 4. Frage nach ZIP-Datei
 echo ""
-echo "4. Elementify v1.0.0 ZIP-Datei auswählen..."
-DEFAULT_ZIP="elementify-mcp-1.0.0-standalone-fixed.zip"
+echo "4. Elementeer v1.0.0 ZIP-Datei auswählen..."
+DEFAULT_ZIP="elementeer-mcp-1.0.0-standalone-fixed.zip"
 if [ -f "$DEFAULT_ZIP" ]; then
     ZIP_FILE="$DEFAULT_ZIP"
     echo "   ✅ Verwende: $ZIP_FILE"
 else
     echo "   Verfügbare ZIP-Dateien:"
-    ls -la *.zip 2>/dev/null | grep -i elementify || echo "   Keine ZIP-Dateien gefunden"
+    ls -la *.zip 2>/dev/null | grep -i elementeer || echo "   Keine ZIP-Dateien gefunden"
     read -p "   ZIP Dateipfad: " ZIP_FILE
     if [ ! -f "$ZIP_FILE" ]; then
         echo "❌ ZIP-Datei nicht gefunden: $ZIP_FILE"
@@ -103,7 +103,7 @@ fi
 
 # 5. Installiere neue Version
 echo ""
-echo "5. Installiere Elementify v1.0.0..."
+echo "5. Installiere Elementeer v1.0.0..."
 mkdir -p "$TARGET_DIR"
 cd "$(dirname "$TARGET_DIR")"
 
@@ -162,22 +162,22 @@ fi
 
 # 9. Plugin aktivieren
 echo ""
-echo "9. Aktiviere Elementify Plugin..."
+echo "9. Aktiviere Elementeer Plugin..."
 if command -v wp &> /dev/null; then
-    wp plugin deactivate elementify --quiet 2>/dev/null || true
-    wp plugin activate elementify --quiet 2>/dev/null || true
+    wp plugin deactivate elementeer --quiet 2>/dev/null || true
+    wp plugin activate elementeer --quiet 2>/dev/null || true
     echo "   ✅ Plugin aktiviert"
 else
     echo "   ℹ️  Aktiviere Plugin manuell in WordPress Admin:"
     echo "   - Gehe zu Plugins → Installierte Plugins"
-    echo "   - Aktiviere 'Elementify MCP Plugin'"
+    echo "   - Aktiviere 'Elementeer MCP Plugin'"
 fi
 
 # 10. Teste REST API
 echo ""
 echo "10. Teste REST API..."
 if command -v wp &> /dev/null; then
-    API_TEST=$(wp rest post /elementify/v1/health --quiet 2>&1 || true)
+    API_TEST=$(wp rest post /elementeer/v1/health --quiet 2>&1 || true)
     if echo "$API_TEST" | grep -q "status.*ok\|200\|success"; then
         echo "   ✅ REST API funktioniert"
     else
@@ -191,7 +191,7 @@ if command -v wp &> /dev/null; then
     fi
 else
     echo "   ℹ️  Teste REST API manuell:"
-    echo "   - Besuche: https://deine-domain.de/wp-json/elementify/v1/health"
+    echo "   - Besuche: https://deine-domain.de/wp-json/elementeer/v1/health"
     echo "   - Erwarte JSON mit {'status':'ok'}"
 fi
 
@@ -207,7 +207,7 @@ echo ""
 echo "Bei weiteren Problemen:"
 echo "1. Prüfe /wp-content/debug.log"
 echo "2. Deaktiviere alle anderen Plugins temporär"
-echo "3. Kontaktiere Support: https://github.com/elementify/elementify-mcp"
+echo "3. Kontaktiere Support: https://github.com/elementeer/elementeer-mcp"
 echo ""
 echo "Wichtiger Hinweis:"
 echo "Diese Version ist Plug & Play - kein Composer oder SSH nötig!"

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ElementifyClient } from '../client.js';
+import type { ElementeerClient } from '../client.js';
 
 type Addon = {
   active: boolean;
@@ -26,7 +26,7 @@ function findCrocoblock(addons: Array<Addon>) {
 
 export function registerCrocoblockFreeTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   // ------------------------------------------------------------------ //
   // detect_crocoblock (Free)
@@ -182,7 +182,7 @@ export function registerCrocoblockFreeTools(
 
 export function registerCrocoblockAdvancedTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   // ------------------------------------------------------------------ //
   // analyze_jet_usage (Advanced)

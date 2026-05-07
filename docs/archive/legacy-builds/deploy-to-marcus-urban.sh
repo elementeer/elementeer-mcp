@@ -2,12 +2,12 @@
 set -e
 
 # ============================================
-# Deploy Elementify to marcus-urban.de
+# Deploy Elementeer to marcus-urban.de
 # ============================================
 # Direktes Deployment per SCP/SSH
 # ============================================
 
-echo "=== Elementify v1.0.0 Deployment ==="
+echo "=== Elementeer v1.0.0 Deployment ==="
 echo "Target: marcus-urban.de"
 echo ""
 
@@ -15,8 +15,8 @@ echo ""
 SERVER="marcus-urban.de"
 SSH_USER="$(whoami)"  # Anpassen falls nötig
 WP_PATH="/var/www/html"
-PLUGIN_DIR="$WP_PATH/wp-content/plugins/elementify"
-ZIP_FILE="elementify-1.0.0-clean.zip"
+PLUGIN_DIR="$WP_PATH/wp-content/plugins/elementeer"
+ZIP_FILE="elementeer-1.0.0-clean.zip"
 
 # Farben
 RED='\033[0;31m'
@@ -33,7 +33,7 @@ success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
 if [ ! -f "$ZIP_FILE" ]; then
     error "ZIP-Datei nicht gefunden: $ZIP_FILE"
     echo "Verfügbare ZIPs:"
-    ls -la *.zip 2>/dev/null | grep elementify || echo "Keine ZIPs gefunden"
+    ls -la *.zip 2>/dev/null | grep elementeer || echo "Keine ZIPs gefunden"
     exit 1
 fi
 
@@ -42,7 +42,7 @@ log "1. Sichere alte Version (optional)..."
 read -p "   Alte Version sichern? (y/N): " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    BACKUP_CMD="ssh $SSH_USER@$SERVER \"cd $WP_PATH && tar czf /tmp/elementify-backup-$(date +%Y%m%d).tar.gz wp-content/plugins/elementify/ 2>/dev/null || true\""
+    BACKUP_CMD="ssh $SSH_USER@$SERVER \"cd $WP_PATH && tar czf /tmp/elementeer-backup-$(date +%Y%m%d).tar.gz wp-content/plugins/elementeer/ 2>/dev/null || true\""
     echo "   Befehl: $BACKUP_CMD"
     eval "$BACKUP_CMD"
     echo "   ✅ Backup erstellt"
@@ -50,7 +50,7 @@ fi
 
 # 2. Altes Plugin deaktivieren
 log "2. Deaktiviere alte Plugin-Version..."
-DEACTIVATE_CMD="ssh $SSH_USER@$SERVER \"cd $WP_PATH && wp plugin deactivate elementify --quiet 2>/dev/null || true\""
+DEACTIVATE_CMD="ssh $SSH_USER@$SERVER \"cd $WP_PATH && wp plugin deactivate elementeer --quiet 2>/dev/null || true\""
 echo "   Befehl: $DEACTIVATE_CMD"
 eval "$DEACTIVATE_CMD"
 echo "   ✅ Plugin deaktiviert"
@@ -85,7 +85,7 @@ echo "   ✅ Berechtigungen gesetzt"
 
 # 7. Plugin aktivieren
 log "7. Aktiviere Plugin..."
-ACTIVATE_CMD="ssh $SSH_USER@$SERVER \"cd $WP_PATH && wp plugin activate elementify --quiet\""
+ACTIVATE_CMD="ssh $SSH_USER@$SERVER \"cd $WP_PATH && wp plugin activate elementeer --quiet\""
 echo "   Befehl: $ACTIVATE_CMD"
 eval "$ACTIVATE_CMD"
 echo "   ✅ Plugin aktiviert"
@@ -99,7 +99,7 @@ echo "   ✅ Cache geleert"
 
 # 9. REST API testen
 log "9. Teste REST API..."
-API_CMD="ssh $SSH_USER@$SERVER \"cd $WP_PATH && wp rest post /elementify/v1/health --quiet 2>&1 || echo 'API Test fehlgeschlagen'\""
+API_CMD="ssh $SSH_USER@$SERVER \"cd $WP_PATH && wp rest post /elementeer/v1/health --quiet 2>&1 || echo 'API Test fehlgeschlagen'\""
 echo "   Befehl: $API_CMD"
 API_RESULT=$(eval "$API_CMD")
 echo "   API Antwort: $API_RESULT"
@@ -130,19 +130,19 @@ echo "- Real Cookie Banner neu geladen"
 echo ""
 echo "Nächste Schritte:"
 echo "1. Besuche https://marcus-urban.de/wp-admin/"
-echo "2. Gehe zu Elementify → Settings"
+echo "2. Gehe zu Elementeer → Settings"
 echo "3. Erstelle API Keys falls nötig"
 echo "4. Teste MCP Verbindung"
 echo ""
 echo "Bei Problemen:"
 echo "1. Prüfe /wp-content/debug.log"
 echo "2. Deaktiviere andere Plugins für Konflikt-Test"
-echo "3. Kontaktiere Support: https://github.com/elementify/elementify-mcp"
+echo "3. Kontaktiere Support: https://github.com/elementeer/elementeer-mcp"
 
 # Hinweis zu SSH Zugang
 echo ""
 warn "HINWEIS: Dieses Skript benötigt SSH-Zugang zum Server."
 echo "Falls SSH nicht konfiguriert ist, führe die Schritte manuell aus:"
-echo "1. Lade elementify-1.0.0-clean.zip in WordPress hoch"
+echo "1. Lade elementeer-1.0.0-clean.zip in WordPress hoch"
 echo "2. Aktiviere das Plugin"
 echo "3. Bei Fehlern: Prüfe debug.log"

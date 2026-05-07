@@ -1,4 +1,4 @@
-# Elementify Free Includes / Excludes
+# Elementeer Free Includes / Excludes
 
 This page is the short public summary for the mirror-safe Free surface.
 
@@ -32,6 +32,6 @@ It must also remain a credible 360-degree starting point for users who are not y
 
 ## Canonical docs
 
-- [Free quickstart](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/quickstart/free.md)
-- [Free product surface](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-product-surface.md)
-- [Free public release checklist](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/release/free-public-release-checklist.md)
+- [Free quickstart](../quickstart/free.md)
+- [Free product surface](../blueprints/free-product-surface.md)
+- [Free public release checklist](../release/free-public-release-checklist.md)

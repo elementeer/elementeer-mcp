@@ -1,4 +1,4 @@
-# Elementify Free + Advanced Full-Scope Gap Map
+# Elementeer Free + Advanced Full-Scope Gap Map
 
 ## Purpose
 
@@ -83,13 +83,13 @@ Status:
 
 Key documents:
 
-- [free-advanced-scenario-wizard-prd-v2.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-advanced-scenario-wizard-prd-v2.md)
-- [usp-foundation.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/usp-foundation.md)
-- [bootstrap-scenarios.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/bootstrap-scenarios.md)
-- [intent-wizard-contract.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/intent-wizard-contract.md)
-- [stack-profiles.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/stack-profiles.md)
-- [skill-addon-architecture.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/skill-addon-architecture.md)
-- [upgrade-guidance.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/upgrade-guidance.md)
+- [free-advanced-scenario-wizard-prd-v2.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-advanced-scenario-wizard-prd-v2.md)
+- [usp-foundation.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/usp-foundation.md)
+- [bootstrap-scenarios.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/bootstrap-scenarios.md)
+- [intent-wizard-contract.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/intent-wizard-contract.md)
+- [stack-profiles.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/stack-profiles.md)
+- [skill-addon-architecture.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/skill-addon-architecture.md)
+- [upgrade-guidance.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/upgrade-guidance.md)
 
 ## 2. Surface and packaging layer
 
@@ -100,9 +100,9 @@ Status:
 
 Key documents:
 
-- [free-product-surface.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-product-surface.md)
-- [advanced-product-surface.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/advanced-product-surface.md)
-- [tier-capability-map.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/tier-capability-map.md)
+- [free-product-surface.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-product-surface.md)
+- [advanced-product-surface.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/advanced-product-surface.md)
+- [tier-capability-map.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/tier-capability-map.md)
 
 ## 3. Capability and enforcement layer
 
@@ -114,10 +114,10 @@ Status:
 
 Key artifacts:
 
-- [capability-reset.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/capability-reset.md)
-- [capability-domain-remap-execution-report.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/capability-domain-remap-execution-report.md)
-- [auth.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/shared/src/types/auth.ts)
-- [Capabilities.php](/Users/andrelange/Documents/repositories/github/elementify-mcp/plugin/includes/Auth/Capabilities.php)
+- [capability-reset.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/capability-reset.md)
+- [capability-domain-remap-execution-report.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/capability-domain-remap-execution-report.md)
+- [auth.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/shared/src/types/auth.ts)
+- [Capabilities.php](/Users/andrelange/Documents/repositories/github/elementeer-mcp/plugin/includes/Auth/Capabilities.php)
 
 ## 4. Runtime product behavior layer
 

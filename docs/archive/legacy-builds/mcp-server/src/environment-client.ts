@@ -1,4 +1,4 @@
-import type { ElementifyClient } from './client.js';
+import type { ElementeerClient } from './client.js';
 import type { EnvironmentType, EnvironmentConfig } from './environment-config.js';
 import { getEnvironmentByType } from './environment-config.js';
 
@@ -19,15 +19,15 @@ export interface EnvironmentData {
 }
 
 /**
- * Environment-aware client that wraps the base ElementifyClient
+ * Environment-aware client that wraps the base ElementeerClient
  * with environment-specific behavior
  */
 export class EnvironmentClient {
-  private baseClient: ElementifyClient;
+  private baseClient: ElementeerClient;
   private context: EnvironmentContext;
   
   constructor(
-    baseClient: ElementifyClient,
+    baseClient: ElementeerClient,
     initialEnvironment: EnvironmentType = 'production'
   ) {
     this.baseClient = baseClient;
@@ -179,7 +179,7 @@ export class EnvironmentClient {
    * Proxy method calls to base client with environment context
    */
   async callWithEnvironment<T>(
-    method: keyof ElementifyClient,
+    method: keyof ElementeerClient,
     args: any[] = []
   ): Promise<T> {
     // Check environment permissions
@@ -361,7 +361,7 @@ export class EnvironmentClient {
  * Create environment-aware client wrapper
  */
 export function createEnvironmentClient(
-  baseClient: ElementifyClient,
+  baseClient: ElementeerClient,
   initialEnvironment: EnvironmentType = 'production'
 ): EnvironmentClient {
   return new EnvironmentClient(baseClient, initialEnvironment);

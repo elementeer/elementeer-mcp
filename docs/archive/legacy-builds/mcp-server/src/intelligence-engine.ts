@@ -2,7 +2,7 @@
  * INFRA-004: Intelligence Layer Engine
  * 
  * Advanced AI engine for intelligent content recommendations, composition suggestions,
- * and predictive analytics for Elementify v2.
+ * and predictive analytics for Elementeer v2.
  * 
  * This module provides:
  * 1. Template recommendation engine
@@ -12,7 +12,7 @@
  * 5. Predictive analytics for user behavior
  */
 
-import type { ElementifyClient } from './client.js';
+import type { ElementeerClient } from './client.js';
 import type { TemplateWithVersions } from './tools/template-management.js';
 
 export interface IntelligenceContext {
@@ -91,13 +91,13 @@ export interface PerformanceAnalysis {
 }
 
 /**
- * Intelligence Engine for Elementify v2
+ * Intelligence Engine for Elementeer v2
  */
 export class IntelligenceEngine {
-  private client: ElementifyClient;
+  private client: ElementeerClient;
   private context: IntelligenceContext;
 
-  constructor(client: ElementifyClient, context: IntelligenceContext) {
+  constructor(client: ElementeerClient, context: IntelligenceContext) {
     this.client = client;
     this.context = context;
   }
@@ -432,7 +432,7 @@ export class IntelligenceEngine {
  * Factory function to create intelligence engine
  */
 export function createIntelligenceEngine(
-  client: ElementifyClient,
+  client: ElementeerClient,
   context: IntelligenceContext
 ): IntelligenceEngine {
   return new IntelligenceEngine(client, context);

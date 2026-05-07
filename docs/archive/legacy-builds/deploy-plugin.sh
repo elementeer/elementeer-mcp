@@ -1,14 +1,14 @@
 #!/bin/bash
 set -e
 
-echo "=== Deploy Elementify Plugin ==="
+echo "=== Deploy Elementeer Plugin ==="
 echo ""
 
 # Default configuration
 SERVER="${1:-marcus-urban.de}"
 SSH_USER="${2:-$(whoami)}"
 WP_PATH="${3:-/var/www/html}"
-ZIP_FILE="${4:-elementify-2.0.0-final-fixed.zip}"
+ZIP_FILE="${4:-elementeer-2.0.0-final-fixed.zip}"
 
 # Colors
 RED='\033[0;31m'
@@ -25,7 +25,7 @@ success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
 if [ ! -f "$ZIP_FILE" ]; then
     error "ZIP file not found: $ZIP_FILE"
     echo "Available ZIP files:"
-    ls -la *.zip 2>/dev/null | grep elementify || echo "No elementify ZIPs found"
+    ls -la *.zip 2>/dev/null | grep elementeer || echo "No elementeer ZIPs found"
     exit 1
 fi
 
@@ -41,10 +41,10 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     exit 0
 fi
 
-PLUGIN_DIR="$WP_PATH/wp-content/plugins/elementify"
+PLUGIN_DIR="$WP_PATH/wp-content/plugins/elementeer"
 
 log "1. Deactivating old plugin..."
-ssh "$SSH_USER@$SERVER" "cd $WP_PATH && wp plugin deactivate elementify --quiet 2>/dev/null || true"
+ssh "$SSH_USER@$SERVER" "cd $WP_PATH && wp plugin deactivate elementeer --quiet 2>/dev/null || true"
 
 log "2. Removing old plugin files..."
 ssh "$SSH_USER@$SERVER" "rm -rf $PLUGIN_DIR 2>/dev/null || true"
@@ -60,14 +60,14 @@ ssh "$SSH_USER@$SERVER" "find $PLUGIN_DIR -type d -exec chmod 755 {} \; 2>/dev/n
 ssh "$SSH_USER@$SERVER" "find $PLUGIN_DIR -type f -exec chmod 644 {} \; 2>/dev/null || true"
 
 log "6. Activating plugin..."
-ssh "$SSH_USER@$SERVER" "cd $WP_PATH && wp plugin activate elementify --quiet"
+ssh "$SSH_USER@$SERVER" "cd $WP_PATH && wp plugin activate elementeer --quiet"
 
 log "7. Clearing cache..."
 ssh "$SSH_USER@$SERVER" "cd $WP_PATH && wp transient delete --all --quiet 2>/dev/null || true"
 ssh "$SSH_USER@$SERVER" "cd $WP_PATH && wp cache flush --quiet 2>/dev/null || true"
 
 log "8. Testing REST API..."
-API_RESPONSE=$(ssh "$SSH_USER@$SERVER" "cd $WP_PATH && wp rest post /elementify/v1/health --quiet 2>&1 || echo 'API_TEST_FAILED'")
+API_RESPONSE=$(ssh "$SSH_USER@$SERVER" "cd $WP_PATH && wp rest post /elementeer/v1/health --quiet 2>&1 || echo 'API_TEST_FAILED'")
 
 if [[ "$API_RESPONSE" == *"API_TEST_FAILED"* ]] || [[ "$API_RESPONSE" == *"Error"* ]]; then
     warn "REST API test failed: $API_RESPONSE"
@@ -86,7 +86,7 @@ success "✅ DEPLOYMENT COMPLETE!"
 echo ""
 echo "Next steps:"
 echo "1. Visit https://$SERVER/wp-admin/"
-echo "2. Go to Elementify → Settings"
+echo "2. Go to Elementeer → Settings"
 echo "3. Create API keys if needed"
 echo "4. Test MCP connection"
 echo ""

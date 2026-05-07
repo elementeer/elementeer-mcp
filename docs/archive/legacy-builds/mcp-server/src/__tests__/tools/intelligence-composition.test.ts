@@ -2,10 +2,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { registerIntelligenceCompositionTools } from '../../tools/intelligence-composition.js';
-import type { ElementifyClient } from '../../client.js';
+import type { ElementeerClient } from '../../client.js';
 
 // Mock the config module that capability-middleware imports
-let mockClient: ElementifyClient;
+let mockClient: ElementeerClient;
 vi.mock('../../config.js', () => ({
   getClient: vi.fn().mockImplementation((siteId?: string) => {
     // Return the mock client for testing
@@ -66,7 +66,7 @@ vi.mock('../../capability-middleware.js', async (importOriginal) => {
   };
 });
 
-function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> = {}): ElementifyClient {
+function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> = {}): ElementeerClient {
   return {
     // Site assessment for capability middleware
     assessSite: vi.fn().mockResolvedValue({
@@ -174,13 +174,13 @@ function makeClient(overrides: Partial<Record<keyof ElementifyClient, unknown>> 
     setLogo: vi.fn().mockResolvedValue({ logo_id: 1, logo_url: null, updated: true }),
     setSiteContext: vi.fn().mockResolvedValue({ user_role: 'site-owner', site_purpose: null, brand_notes: null, target_audience: null, primary_language: null, set_at: '' }),
     ...overrides,
-  } as unknown as ElementifyClient;
+  } as unknown as ElementeerClient;
 }
 
 describe('Intelligence Composition Tools (API-005, API-006)', () => {
   let server: McpServer;
-  let client: ElementifyClient;
-  let getClient: (siteId?: string) => ElementifyClient;
+  let client: ElementeerClient;
+  let getClient: (siteId?: string) => ElementeerClient;
   let toolHandlers: Map<string, (args: Record<string, unknown>) => Promise<unknown>>;
 
   beforeEach(() => {

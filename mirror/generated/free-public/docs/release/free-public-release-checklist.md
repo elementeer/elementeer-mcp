@@ -1,4 +1,4 @@
-# Elementify Free Public Release Checklist
+# Elementeer Free Public Release Checklist
 
 ## Purpose
 

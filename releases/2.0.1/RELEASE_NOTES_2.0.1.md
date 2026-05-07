@@ -1,7 +1,7 @@
-# Elementify MCP Plugin Release Notes - Version 2.0.1
+# Elementeer MCP Plugin Release Notes - Version 2.0.1
 
 ## Overview
-Elementify MCP Plugin 2.0.1 introduces five advanced feature domains that significantly expand the plugin's capabilities for WordPress site management, Elementor integration, and AI-assisted content creation. This release represents a major milestone in the plugin's evolution, with comprehensive validation across all new features.
+Elementeer MCP Plugin 2.0.1 introduces five advanced feature domains that significantly expand the plugin's capabilities for WordPress site management, Elementor integration, and AI-assisted content creation. This release represents a major milestone in the plugin's evolution, with comprehensive validation across all new features.
 
 ## Release Validation Summary
 All eight validation tasks from the ReleaseChain PRD (`release-validation-2.0.1.json`) have been successfully completed:
@@ -101,8 +101,8 @@ All eight validation tasks from the ReleaseChain PRD (`release-validation-2.0.1.
 
 ### Plugin Structure & Compatibility
 - Consistent versioning (2.0.1 across all files)
-- Correct folder structure (`elementify/` not `elementify-mcp/`)
-- Proper main file naming (`elementify.php` not `elementify-mcp.php`)
+- Correct folder structure (`elementeer/` not `elementeer-mcp/`)
+- Proper main file naming (`elementeer.php` not `elementeer-mcp.php`)
 - Full compatibility with Elementor 3.x and WordPress 6.x
 
 ### ReleaseChain Integration
@@ -114,9 +114,9 @@ All eight validation tasks from the ReleaseChain PRD (`release-validation-2.0.1.
 ## Release Artifacts
 
 ### Plugin ZIP
-- **File**: `elementify.2.0.1.zip`
+- **File**: `elementeer.2.0.1.zip`
 - **Size**: 201.6 KB
-- **Structure**: `elementify/` folder with proper main file
+- **Structure**: `elementeer/` folder with proper main file
 - **SHA256**: `b64640a9e1251272ca63944ce3941ca298a99c4f75eeae8a843a60a7dc91f664`
 
 ### Documentation
@@ -133,14 +133,14 @@ All eight validation tasks from the ReleaseChain PRD (`release-validation-2.0.1.
 ## Installation & Upgrade
 
 ### New Installation
-1. Upload `elementify.2.0.1.zip` via WordPress admin
+1. Upload `elementeer.2.0.1.zip` via WordPress admin
 2. Activate the plugin
-3. Generate API key from Elementify → Dashboard
+3. Generate API key from Elementeer → Dashboard
 4. Configure permissions and capabilities as needed
 
 ### Upgrade from 2.0.0
 1. Deactivate current version (optional but recommended)
-2. Upload and overwrite with `elementify.2.0.1.zip`
+2. Upload and overwrite with `elementeer.2.0.1.zip`
 3. Reactivate plugin
 4. Verify all five feature domains are functional
 
@@ -158,7 +158,7 @@ All eight validation tasks from the ReleaseChain PRD (`release-validation-2.0.1.
 - Performance analysis requires site to be publicly accessible or local network
 
 ## Support & Resources
-- **GitHub Repository**: https://github.com/anomalyco/elementify-mcp
+- **GitHub Repository**: https://github.com/anomalyco/elementeer-mcp
 - **Documentation**: Included in plugin (`TESTING_WORKFLOW.md`)
 - **Issue Tracking**: GitHub Issues
 - **Release Validation**: PRD-driven ReleaseChain integration

@@ -252,7 +252,7 @@ const PREMIUM_LIBRARY_RUNTIME_DETAILS: Record<string, PremiumLibraryAssetRuntime
         ],
       },
     ],
-    defaultCategories: ['elementify-premium', 'hero'],
+    defaultCategories: ['elementeer-premium', 'hero'],
     defaultTags: ['premium', 'hero', 'starter'],
   },
   'premium-service-section-stack': {
@@ -316,7 +316,7 @@ const PREMIUM_LIBRARY_RUNTIME_DETAILS: Record<string, PremiumLibraryAssetRuntime
         ],
       },
     ],
-    defaultCategories: ['elementify-premium', 'services'],
+    defaultCategories: ['elementeer-premium', 'services'],
     defaultTags: ['premium', 'services', 'section'],
   },
   'premium-proof-component-rail': {
@@ -359,7 +359,7 @@ const PREMIUM_LIBRARY_RUNTIME_DETAILS: Record<string, PremiumLibraryAssetRuntime
         ],
       },
     ],
-    defaultCategories: ['elementify-premium', 'proof'],
+    defaultCategories: ['elementeer-premium', 'proof'],
     defaultTags: ['premium', 'proof', 'component'],
   },
   'premium-theme-foundation-header': {
@@ -410,7 +410,7 @@ const PREMIUM_LIBRARY_RUNTIME_DETAILS: Record<string, PremiumLibraryAssetRuntime
         ],
       },
     ],
-    defaultCategories: ['elementify-premium', 'theme-builder'],
+    defaultCategories: ['elementeer-premium', 'theme-builder'],
     defaultTags: ['premium', 'header', 'theme-builder'],
   },
   'premium-faq-objection-stack': {
@@ -474,7 +474,7 @@ const PREMIUM_LIBRARY_RUNTIME_DETAILS: Record<string, PremiumLibraryAssetRuntime
         ],
       },
     ],
-    defaultCategories: ['elementify-premium', 'trust-components'],
+    defaultCategories: ['elementeer-premium', 'trust-components'],
     defaultTags: ['premium', 'faq', 'trust'],
   },
   'premium-footer-credibility-stack': {
@@ -547,14 +547,14 @@ const PREMIUM_LIBRARY_RUNTIME_DETAILS: Record<string, PremiumLibraryAssetRuntime
         ],
       },
     ],
-    defaultCategories: ['elementify-premium', 'theme-builder'],
+    defaultCategories: ['elementeer-premium', 'theme-builder'],
     defaultTags: ['premium', 'footer', 'theme-builder'],
   },
 };
 
 function getPremiumProviderAvailability(): 'active' | 'gated' {
   const report = buildLibraryBoundaryReport('advanced');
-  const premiumProvider = report.providers.find((provider) => provider.kind === 'elementify-premium');
+  const premiumProvider = report.providers.find((provider) => provider.kind === 'elementeer-premium');
   return premiumProvider?.availability === 'active' ? 'active' : 'gated';
 }
 
@@ -641,7 +641,7 @@ export function buildPremiumLibraryImportInput(params: {
   categories: string[];
   tags: string[];
   source: {
-    kind: 'elementify-premium';
+    kind: 'elementeer-premium';
     asset_id: string;
     asset_title: string;
     reference: string;
@@ -657,7 +657,7 @@ export function buildPremiumLibraryImportInput(params: {
     categories: params.categories ?? asset.defaultCategories,
     tags: params.tags ?? asset.defaultTags,
     source: {
-      kind: 'elementify-premium',
+      kind: 'elementeer-premium',
       asset_id: asset.id,
       asset_title: asset.title,
       reference: `premium-catalog:${asset.id}`,
@@ -701,7 +701,7 @@ export function listPremiumLibraryAssets(params: {
   }
 
   return {
-    provider: 'elementify-premium',
+    provider: 'elementeer-premium',
     availability,
     assetCount: assets.length,
     assets: assets.map(summarizeAsset),
@@ -718,7 +718,7 @@ export function inspectPremiumLibraryAsset(params: {
   const availability = getPremiumProviderAvailability();
   const asset = findAsset(params.assetId);
   const recommendedWorkflow = [
-    `Review the ${asset.title} details from the curated Elementify Premium Library.`,
+    `Review the ${asset.title} details from the curated Elementeer Premium Library.`,
     'Import the asset into the local Elementor Library on the current site.',
     'Adapt the imported structure to the current brand and destination capabilities before rollout.',
   ];
@@ -748,7 +748,7 @@ export function inspectPremiumLibraryAsset(params: {
   }
 
   return {
-    provider: 'elementify-premium',
+    provider: 'elementeer-premium',
     availability,
     asset,
     importMode: 'manual-import',
@@ -765,7 +765,7 @@ export function buildPremiumLibraryUsagePlan(params: {
   capabilityMatrix: CapabilityMatrix;
 }): PremiumLibraryUsagePlan {
   const report = buildLibraryBoundaryReport('advanced');
-  const premiumProvider = report.providers.find((provider) => provider.kind === 'elementify-premium');
+  const premiumProvider = report.providers.find((provider) => provider.kind === 'elementeer-premium');
   const themeBuilderCapability = params.capabilityMatrix.capabilities.find(
     (capability) => capability.id === 'theme-builder',
   );
@@ -775,7 +775,7 @@ export function buildPremiumLibraryUsagePlan(params: {
   const resolvedTargetType = params.assetId ? asset.type : params.targetType;
 
   const recommendedWorkflow = [
-    `Select the curated premium asset ${asset.title} from the Elementify Library.`,
+    `Select the curated premium asset ${asset.title} from the Elementeer Library.`,
     'Import it into or stage it alongside the local Elementor Library.',
     'Adapt the imported structure to the current site context, brand setup, and destination capabilities before rollout.',
   ];

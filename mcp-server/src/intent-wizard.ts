@@ -178,7 +178,7 @@ function resolveStackProfile(input: IntentWizardInput, tier: IntentWizardTierRec
         'WordPress',
         input.stackReadiness.elementorInstalled ? 'Current Elementor baseline' : 'Elementor Free or Pro (scenario-fit)',
         wantsNoThemeChange ? 'Retained compatible theme baseline' : 'Hello Theme or retained compatible baseline',
-        'Elementify Advanced',
+        'Elementeer Advanced',
       ],
       addonProfile: 'content-system-pro',
       addonRationale: 'Deeper relaunch and migration work benefits from a curated, support-aware premium addon profile only when the structure demands it.',
@@ -200,7 +200,7 @@ function resolveStackProfile(input: IntentWizardInput, tier: IntentWizardTierRec
         'WordPress',
         wantsNoThemeChange ? 'Retained compatible theme baseline' : 'Hello Theme',
         input.stackReadiness.elementorProInstalled ? 'Elementor Pro' : 'Elementor Free or Pro (scenario-fit)',
-        'Elementify Advanced',
+        'Elementeer Advanced',
       ],
       addonProfile: wantsFewPlugins ? 'none' : 'conversion-pro',
       addonRationale: wantsFewPlugins
@@ -224,7 +224,7 @@ function resolveStackProfile(input: IntentWizardInput, tier: IntentWizardTierRec
       ],
       addonProfile: 'none',
       addonRationale: 'Start with the cleanest staged transition before adding addon complexity.',
-      upgradePath: ['Elementify Advanced only if the migration or relaunch path becomes deeper than a staged transition'],
+      upgradePath: ['Elementeer Advanced only if the migration or relaunch path becomes deeper than a staged transition'],
       supportConfidence: 'high',
     };
   }

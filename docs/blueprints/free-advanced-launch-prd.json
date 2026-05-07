@@ -1,5 +1,5 @@
 {
-  "projectName": "Elementify Free + Advanced Launch Packaging",
+  "projectName": "Elementeer Free + Advanced Launch Packaging",
   "version": "1.0",
   "status": "draft",
   "execution_recommendation": {
@@ -108,7 +108,7 @@
       "acceptanceCriteria": [
         "An Advanced product surface document exists and is distinct from Free.",
         "Advanced is described as a productivity and workflow upgrade rather than Free plus minor extras.",
-        "The Elementify Library is clearly described as a curated premium library, not a cloud library.",
+        "The Elementeer Library is clearly described as a curated premium library, not a cloud library.",
         "No Advanced requirement introduces a mandatory Studio dependency."
       ],
       "priority": "high",

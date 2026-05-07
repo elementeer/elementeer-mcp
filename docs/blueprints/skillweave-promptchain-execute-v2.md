@@ -16,7 +16,7 @@ It sharpens the skill around:
 It is based on:
 
 - the current execute skill behavior
-- the actual execution history in this Elementify repo
+- the actual execution history in this Elementeer repo
 - the `skillweave-blueprint` expectations for executable PRD-driven delivery
 
 ## Recommended v2 SKILL.md

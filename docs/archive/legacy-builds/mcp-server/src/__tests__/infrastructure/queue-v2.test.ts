@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { QueueV2 } from '../../queue-v2.js';
-import type { ElementifyClient } from '../../client.js';
+import type { ElementeerClient } from '../../client.js';
 
 // Mock the underlying client
 const mockClient = {
@@ -25,7 +25,7 @@ const mockClient = {
   setGlobalTypography: vi.fn(),
   setLogo: vi.fn(),
   setSiteContext: vi.fn(),
-} as unknown as ElementifyClient;
+} as unknown as ElementeerClient;
 
 describe('Queue 2.0 System (INFRA-003)', () => {
   let queue: QueueV2;

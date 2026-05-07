@@ -1,5 +1,5 @@
-import type { ElementifyClient } from './client.js';
-import type { CapabilityId } from '@elementify/shared';
+import type { ElementeerClient } from './client.js';
+import type { CapabilityId } from '@elementeer/shared';
 
 export interface GovernanceRule {
   /** Minimum governance level required */
@@ -77,12 +77,12 @@ export interface PermissionCheck {
  * based on governance levels and user capabilities.
  */
 export class GovernanceSystem {
-  private client: ElementifyClient;
+  private client: ElementeerClient;
   private config: GovernanceConfig;
   private siteId: string;
 
   constructor(
-    client: ElementifyClient,
+    client: ElementeerClient,
     siteId: string,
     config?: Partial<GovernanceConfig>
   ) {

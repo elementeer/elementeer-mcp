@@ -43,9 +43,9 @@ A research candidate may move into a curated product policy layer only if:
 ## Current Implementation
 The current codebase uses an opt-in experimental preview in:
 
-- [mcp-server/src/tools/destination.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/destination.ts)
+- [mcp-server/src/tools/destination.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/destination.ts)
 
 The research modules remain isolated in:
 
-- [mcp-server/src/research/registry.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/research/registry.ts)
-- [mcp-server/src/research/resolver.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/research/resolver.ts)
+- [mcp-server/src/research/registry.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/research/registry.ts)
+- [mcp-server/src/research/resolver.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/research/resolver.ts)

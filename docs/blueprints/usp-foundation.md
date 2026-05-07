@@ -1,8 +1,8 @@
-# Elementify USP Foundation
+# Elementeer USP Foundation
 
 ## Purpose
 
-This document locks the strategic positioning of Elementify so later scenario, wizard, stack, and capability work all point in the same direction.
+This document locks the strategic positioning of Elementeer so later scenario, wizard, stack, and capability work all point in the same direction.
 
 It is the source of truth for:
 
@@ -14,7 +14,7 @@ It is the source of truth for:
 
 ## Core Position
 
-Elementify is:
+Elementeer is:
 
 - the user-first guidance and operating layer for the WordPress + Elementor ecosystem
 - intent-led instead of tool-led
@@ -22,7 +22,7 @@ Elementify is:
 - ecosystem-aware instead of vendor-blind
 - commercially aware, but not commercially captured
 
-Elementify is not:
+Elementeer is not:
 
 - just another Elementor addon
 - a thin AI wrapper around existing Elementor actions
@@ -33,7 +33,7 @@ Elementify is not:
 
 ### User-first 360-degree guidance
 
-Elementify should help users across the full practical lifecycle:
+Elementeer should help users across the full practical lifecycle:
 
 - starting from an idea
 - starting from a WordPress site without Elementor
@@ -64,23 +64,23 @@ Examples:
 - relaunch
 - migration
 
-Elementify should route according to intention first, not according to what tool happens to exist.
+Elementeer should route according to intention first, not according to what tool happens to exist.
 
 ### Ecosystem honesty
 
-Elementify should be able to recommend:
+Elementeer should be able to recommend:
 
 - WordPress baseline choices
 - Elementor Free
 - Hello Theme
 - supported free addon profiles
 - Elementor Pro
-- Elementify Advanced
+- Elementeer Advanced
 - selected supported pro plugin profiles
 
 But it should recommend them only when they are genuinely appropriate.
 
-This means Elementify must be able to say:
+This means Elementeer must be able to say:
 
 - “You do not need this yet.”
 - “Free is enough for your current scope.”
@@ -109,7 +109,7 @@ Recommendations should follow:
 
 ### 3. Whole-stack thinking
 
-Elementify must think beyond Elementor internals.
+Elementeer must think beyond Elementor internals.
 
 The relevant working stack includes:
 
@@ -144,7 +144,7 @@ The product should always be able to explain:
 
 ### 6. Modular and extensible by design
 
-Elementify should not hard-code all value into one fixed monolith.
+Elementeer should not hard-code all value into one fixed monolith.
 
 It should expose curated extension surfaces around:
 
@@ -159,7 +159,7 @@ These extension surfaces should remain:
 - support-aware
 - user-interest-first
 
-That means Elementify may recommend or activate:
+That means Elementeer may recommend or activate:
 
 - a skill profile
 - an addon profile
@@ -208,7 +208,7 @@ Upgrade guidance must remain:
 - proportional
 - non-coercive
 
-Elementify should avoid:
+Elementeer should avoid:
 
 - generic “buy more” nudges
 - suggesting heavier stacks by default
@@ -218,12 +218,12 @@ Instead it should model:
 
 - when Free is enough
 - when Elementor Pro is justified
-- when Elementify Advanced is justified
+- when Elementeer Advanced is justified
 - when a supported addon profile is justified
 
 ## Supported Ecosystem Stance
 
-Elementify should treat the surrounding ecosystem as:
+Elementeer should treat the surrounding ecosystem as:
 
 - a set of possible building blocks
 - not a forced direction
@@ -246,7 +246,7 @@ The constant should be:
 
 ## Extension Surface Principle
 
-Elementify should treat modularity as a user-facing strength, not only as an internal engineering concern.
+Elementeer should treat modularity as a user-facing strength, not only as an internal engineering concern.
 
 ### Skills
 
@@ -288,13 +288,13 @@ They should be recommended only when:
 
 ## Bridge to Vamerli
 
-Elementify should remain fully coherent as a standalone product layer.
+Elementeer should remain fully coherent as a standalone product layer.
 
 That is what makes the future bridge to Vamerli credible.
 
 ### Near-term role
 
-Elementify:
+Elementeer:
 
 - stack guidance
 - workflow guidance
@@ -307,7 +307,7 @@ Vamerli can become:
 
 - the broader brand presence and intelligence platform
 
-with Elementify contributing:
+with Elementeer contributing:
 
 - stack intelligence
 - site operating guidance
@@ -315,7 +315,7 @@ with Elementify contributing:
 
 The relationship should feel natural:
 
-- Elementify first proves value at the operational stack level
+- Elementeer first proves value at the operational stack level
 - Vamerli later expands the brand and intelligence scope around it
 
 ## Guardrails
@@ -324,7 +324,7 @@ The relationship should feel natural:
 - Do not let commercial incentives outrank scenario fit.
 - Do not let Advanced become “Free plus extra tools”.
 - Do not let Studio distort current product truth.
-- Do not position Elementify as an Elementor-only micro-utility.
+- Do not position Elementeer as an Elementor-only micro-utility.
 
 ## Binary Success Criteria
 

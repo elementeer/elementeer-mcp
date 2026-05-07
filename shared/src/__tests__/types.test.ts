@@ -860,7 +860,7 @@ describe('shared intelligence contracts', () => {
         localProvider,
         {
           kind: 'elementeer-premium',
-          label: 'Elementify Premium Library',
+          label: 'Elementeer Premium Library',
           scope: 'catalog',
           availability: 'active',
           storageModel: 'curated-catalog',

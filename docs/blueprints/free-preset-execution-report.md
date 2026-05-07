@@ -1,9 +1,9 @@
-# Elementify Free Preset Execution Execution Report
+# Elementeer Free Preset Execution Execution Report
 
 ## Batch Summary
 
 - batch_id: `BATCH-FREE-PRESET-EXECUTION-001`
-- sequence: [free-preset-execution-sequence.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-preset-execution-sequence.md)
+- sequence: [free-preset-execution-sequence.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-preset-execution-sequence.md)
 - sequence_type: `build`
 - execution_mode: `ralph_attended`
 - gate_result: `continue`
@@ -11,7 +11,7 @@
 ## Steps Completed
 
 - `S1`
-  - extended Free runtime action presets in [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/free-runtime-wizards.ts) with:
+  - extended Free runtime action presets in [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/free-runtime-wizards.ts) with:
     - `executionMode`
     - `executionNotes`
   - marked:
@@ -22,20 +22,20 @@
   - kept relaunch preservation, recommendation explanation, and Advanced boundary checks as `preview_only`
 
 - `S2`
-  - added `run_free_wizard_preset` in [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/free-runtime-wizards.ts)
+  - added `run_free_wizard_preset` in [free-runtime-wizards.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/free-runtime-wizards.ts)
   - implemented preview and controlled execution paths for safe presets
-  - reused real internal helper logic from [wizard.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/wizard.ts) for:
+  - reused real internal helper logic from [wizard.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/wizard.ts) for:
     - Brand Setup Wizard dry run
     - Creator Mode dry run
 
 - `S3`
   - mapped the new helper into Free product boundaries in:
-    - [product-tiers.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/product-tiers.ts)
-    - [product-surfaces.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/product-surfaces.ts)
+    - [product-tiers.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/product-tiers.ts)
+    - [product-surfaces.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/product-surfaces.ts)
   - updated tests in:
-    - [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/tools/free-runtime-wizards.test.ts)
-    - [product-tiers.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/product-tiers.test.ts)
-    - [product-surfaces.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/product-surfaces.test.ts)
+    - [free-runtime-wizards.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/tools/free-runtime-wizards.test.ts)
+    - [product-tiers.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/product-tiers.test.ts)
+    - [product-surfaces.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/product-surfaces.test.ts)
 
 ## Verification Commands
 

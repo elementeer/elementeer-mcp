@@ -1,9 +1,9 @@
-# Elementify Front Door Runtime Execution Report
+# Elementeer Front Door Runtime Execution Report
 
 ## Batch Summary
 
 - batch_id: `BATCH-FRONT-DOOR-001`
-- sequence: [front-door-runtime-sequence.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/front-door-runtime-sequence.md)
+- sequence: [front-door-runtime-sequence.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/front-door-runtime-sequence.md)
 - sequence_type: `mixed`
 - execution_mode: `ralph_attended`
 - gate_result: `continue`
@@ -11,19 +11,19 @@
 ## Steps Completed
 
 - `S1`
-  - introduced intent-wizard, stack-profile, skill-profile, addon-profile, and stack-readiness contracts in [wizard.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/shared/src/types/wizard.ts)
-  - exported the new contracts from [index.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/shared/src/index.ts)
-  - exposed the types through [client.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/client.ts)
+  - introduced intent-wizard, stack-profile, skill-profile, addon-profile, and stack-readiness contracts in [wizard.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/shared/src/types/wizard.ts)
+  - exported the new contracts from [index.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/shared/src/index.ts)
+  - exposed the types through [client.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/client.ts)
 
 - `S2`
-  - implemented deterministic routing in [intent-wizard.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/intent-wizard.ts)
-  - added the Free-facing tools `route_intent_wizard` and `plan_stack_bootstrap` in [intent-wizard.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/intent-wizard.ts)
+  - implemented deterministic routing in [intent-wizard.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/intent-wizard.ts)
+  - added the Free-facing tools `route_intent_wizard` and `plan_stack_bootstrap` in [intent-wizard.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/intent-wizard.ts)
   - ensured routing outputs include scenario, tier, wizard, stack profile, skill profile, addon profile, rationale, guardrails, suggested tools, and next decision
 
 - `S3`
-  - registered the new tools in [index.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/index.ts)
-  - mapped them to the Free tier in [product-tiers.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/product-tiers.ts)
-  - added a dedicated Free front-door workflow to [product-surfaces.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/product-surfaces.ts)
+  - registered the new tools in [index.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/index.ts)
+  - mapped them to the Free tier in [product-tiers.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/product-tiers.ts)
+  - added a dedicated Free front-door workflow to [product-surfaces.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/product-surfaces.ts)
 
 ## Verification Commands
 
@@ -41,18 +41,18 @@
 
 ## Files Changed
 
-- [wizard.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/shared/src/types/wizard.ts)
-- [index.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/shared/src/index.ts)
-- [client.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/client.ts)
-- [intent-wizard.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/intent-wizard.ts)
-- [intent-wizard.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/intent-wizard.ts)
-- [index.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/tools/index.ts)
-- [product-tiers.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/product-tiers.ts)
-- [product-surfaces.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/product-surfaces.ts)
-- [intent-wizard.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/intent-wizard.test.ts)
-- [intent-wizard.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/tools/intent-wizard.test.ts)
-- [index.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/tools/index.test.ts)
-- [product-tiers.test.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/__tests__/product-tiers.test.ts)
+- [wizard.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/shared/src/types/wizard.ts)
+- [index.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/shared/src/index.ts)
+- [client.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/client.ts)
+- [intent-wizard.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/intent-wizard.ts)
+- [intent-wizard.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/intent-wizard.ts)
+- [index.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/index.ts)
+- [product-tiers.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/product-tiers.ts)
+- [product-surfaces.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/product-surfaces.ts)
+- [intent-wizard.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/intent-wizard.test.ts)
+- [intent-wizard.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/tools/intent-wizard.test.ts)
+- [index.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/tools/index.test.ts)
+- [product-tiers.test.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/__tests__/product-tiers.test.ts)
 
 ## Review Result
 

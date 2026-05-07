@@ -1,28 +1,28 @@
 #!/bin/bash
-# build-elementify-v2-assets-fixed.sh
+# build-elementeer-v2-assets-fixed.sh
 # ==============================================
 # 🛠️  OPTIMIERTE VERSION - Inkludiert Assets intelligent
 # ✅ Kopiert nur Unterverzeichnisse mit Dateien
 # ✅ Keine leeren Ordner im ZIP
-# ✅ Einfacher Plugin-Name "Elementify"
+# ✅ Einfacher Plugin-Name "Elementeer"
 # ==============================================
 
 set -e  # Bei Fehler abbrechen
 set -u  # Undefinierte Variablen als Fehler behandeln
 
 echo ""
-echo "🚀 ELEMENTIFY v2 PLUGIN-ZIP ERSTELLUNG (ASSETS OPTIMIERT)"
+echo "🚀 ELEMENTEER v2 PLUGIN-ZIP ERSTELLUNG (ASSETS OPTIMIERT)"
 echo "=========================================================="
 echo ""
 
 # ===================== KONFIGURATION =====================
-PLUGIN_SLUG="elementify"
+PLUGIN_SLUG="elementeer"
 PLUGIN_VERSION="2.0.0"
-PLUGIN_DISPLAY_NAME="Elementify"
+PLUGIN_DISPLAY_NAME="Elementeer"
 PLUGIN_DESCRIPTION="Complete WordPress/Elementor AI development platform with enhanced API, intelligent composition, workflow staging, governance systems, and MCP integration."
 
 # Verzeichnispfade
-REPO_ROOT="/Users/andrelange/Documents/repositories/github/elementify-mcp"
+REPO_ROOT="/Users/andrelange/Documents/repositories/github/elementeer-mcp"
 PLUGIN_SOURCE_DIR="$REPO_ROOT/plugin"
 BUILD_DIR="$REPO_ROOT/build-temp-$PLUGIN_VERSION-assets"
 OUTPUT_ZIP="$REPO_ROOT/$PLUGIN_SLUG-$PLUGIN_VERSION-wordpress-assets-fixed.zip"
@@ -57,7 +57,7 @@ echo "📁 DATEIEN KOPIEREN"
 echo "  • Kopiere Plugin-Dateien..."
 
 # 1. Haupt-Plugin-Datei und Includes
-cp "$PLUGIN_SOURCE_DIR/elementify-mcp.php" "$BUILD_DIR/$PLUGIN_SLUG/"
+cp "$PLUGIN_SOURCE_DIR/elementeer-mcp.php" "$BUILD_DIR/$PLUGIN_SLUG/"
 echo "    ✅ Haupt-Plugin-Datei kopiert"
 
 if [ -d "$PLUGIN_SOURCE_DIR/includes" ]; then
@@ -158,7 +158,7 @@ echo ""
 
 # ===================== PLUGIN METADATEN AKTUALISIEREN =====================
 echo "✏️  PLUGIN METADATEN AKTUALISIEREN"
-MAIN_PLUGIN_FILE="$BUILD_DIR/$PLUGIN_SLUG/elementify-mcp.php"
+MAIN_PLUGIN_FILE="$BUILD_DIR/$PLUGIN_SLUG/elementeer-mcp.php"
 
 if [ -f "$MAIN_PLUGIN_FILE" ]; then
     # Backup der Originaldatei
@@ -166,9 +166,9 @@ if [ -f "$MAIN_PLUGIN_FILE" ]; then
     
     echo "  • Aktualisiere Plugin-Header..."
     
-    # Plugin-Name auf "Elementify" vereinfachen
-    sed -i '' "s/Plugin Name: Elementify v2 - WordPress\/Elementor AI Development Platform/Plugin Name: $PLUGIN_DISPLAY_NAME/" "$MAIN_PLUGIN_FILE"
-    sed -i '' "s/Title: Elementify v2 - WordPress\/Elementor AI Development Platform/Title: $PLUGIN_DISPLAY_NAME/" "$MAIN_PLUGIN_FILE"
+    # Plugin-Name auf "Elementeer" vereinfachen
+    sed -i '' "s/Plugin Name: Elementeer v2 - WordPress\/Elementor AI Development Platform/Plugin Name: $PLUGIN_DISPLAY_NAME/" "$MAIN_PLUGIN_FILE"
+    sed -i '' "s/Title: Elementeer v2 - WordPress\/Elementor AI Development Platform/Title: $PLUGIN_DISPLAY_NAME/" "$MAIN_PLUGIN_FILE"
     
     # Description aktualisieren (falls anders)
     CURRENT_DESC=$(grep -o 'Description: .*' "$MAIN_PLUGIN_FILE" | head -1)
@@ -191,7 +191,7 @@ echo "  • Überprüfe, ob alle essentiellen Dateien vorhanden sind..."
 
 # Kritische Dateien für v2 Funktion
 CRITICAL_FILES=(
-    "elementify-mcp.php"
+    "elementeer-mcp.php"
     "vendor/autoload.php"
     "includes/Plugin.php"
     "includes/Auth/Manager.php"
@@ -228,7 +228,7 @@ EXPECTED_ICONS=(
     "assets/images/icon.svg"
     "assets/images/icon-128x128.png"
     "assets/images/icon-256x256.png"
-    "assets/images/elementify.ico"
+    "assets/images/elementeer.ico"
 )
 
 ICONS_OK=true
@@ -260,8 +260,8 @@ else
 \/\/ Activation hook\
 register_activation_hook(__FILE__, function() {\
     // Initialize plugin on activation\
-    if (class_exists(\"Elementify\\\\MCP\\\\Plugin\")) {\
-        Elementify\\\\MCP\\\\Plugin::get_instance()->activate();\
+    if (class_exists(\"Elementeer\\\\MCP\\\\Plugin\")) {\
+        Elementeer\\\\MCP\\\\Plugin::get_instance()->activate();\
     }\
 });' "$MAIN_PLUGIN_FILE"
     
@@ -305,7 +305,7 @@ done
 echo ""
 echo "  • Wichtige Dateien im ZIP:"
 IMPORTANT_FILES=(
-    "$PLUGIN_SLUG/elementify-mcp.php"
+    "$PLUGIN_SLUG/elementeer-mcp.php"
     "$PLUGIN_SLUG/vendor/autoload.php"
     "$PLUGIN_SLUG/includes/Plugin.php"
     "$PLUGIN_SLUG/includes/Auth/Manager.php"
@@ -360,14 +360,14 @@ echo "   3. Lade die ZIP-Datei hoch: $OUTPUT_ZIP"
 echo "   4. Aktiviere das Plugin"
 echo "   5. Teste die REST API mit:"
 echo "      curl -H \"X-API-Key: ek_8eb2088d7da2d9e9b2088cf90e09e4d214bbe456c16bf672\" \\"
-echo "           https://www.marcus-urban.de/wp-json/elementify/v1"
+echo "           https://www.marcus-urban.de/wp-json/elementeer/v1"
 echo ""
 echo "🎨 ASSETS HINWEIS:"
 echo "   Icons sind im Plugin enthalten:"
 echo "   • SVG: assets/images/icon.svg"
 echo "   • PNG: assets/images/icon-128x128.png"
 echo "   • PNG: assets/images/icon-256x256.png"
-echo "   • ICO: assets/images/elementify.ico"
+echo "   • ICO: assets/images/elementeer.ico"
 echo ""
 echo "📝 HINWEIS:"
 echo "   Dieses Skript kopiert nur Unterverzeichnisse mit Dateien,"

@@ -1,4 +1,4 @@
-# Elementify Capability Reset
+# Elementeer Capability Reset
 
 ## Purpose
 
@@ -17,7 +17,7 @@ and not as:
 
 ## Reset Principle
 
-Elementify should be described to users through:
+Elementeer should be described to users through:
 
 - scenarios
 - wizard families

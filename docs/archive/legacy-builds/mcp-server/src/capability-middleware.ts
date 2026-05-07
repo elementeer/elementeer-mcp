@@ -1,5 +1,5 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ElementifyClient, CapabilityId, CapabilityMatrix } from './client.js';
+import type { ElementeerClient, CapabilityId, CapabilityMatrix } from './client.js';
 import { 
   getCapabilityRequirement, 
   checkOperationAllowed,
@@ -22,7 +22,7 @@ export interface CapabilityContext {
  * Build capability context from site assessment and fingerprint
  */
 export async function buildCapabilityContext(
-  client: ElementifyClient,
+  client: ElementeerClient,
   siteId?: string
 ): Promise<CapabilityContext> {
   try {
@@ -75,7 +75,7 @@ export function withCapabilityCheck<
   Result
 >(
   operation: string,
-  handler: (args: Args, client: ElementifyClient, siteId?: string) => Promise<Result>
+  handler: (args: Args, client: ElementeerClient, siteId?: string) => Promise<Result>
 ): (args: Args & { site_id?: string }) => Promise<Result> {
   return async (args) => {
     const { site_id, ...restArgs } = args;

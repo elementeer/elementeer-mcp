@@ -1,8 +1,8 @@
-# Elementify Free + Advanced Scenario/Wizard Blueprint
+# Elementeer Free + Advanced Scenario/Wizard Blueprint
 
 ## 1. Executive Summary
 
-This blueprint refines the current Elementify launch model around the actual product promise:
+This blueprint refines the current Elementeer launch model around the actual product promise:
 
 - `Free` is a real lift-up layer for WordPress + Elementor Free/Essentials
 - `Advanced` is a real workflow and productivity upgrade for deeper Elementor work
@@ -14,11 +14,11 @@ The key correction is:
 - workflow design must be `wizard-first`
 - technical permissions must remain a lower safety layer, not the primary product abstraction
 
-Elementify should therefore be modeled as an intelligent operational layer over:
+Elementeer should therefore be modeled as an intelligent operational layer over:
 
 - WordPress
 - Elementor
-- Hello Theme or a future Elementify Theme layer
+- Hello Theme or a future Elementeer Theme layer
 - relevant supporting plugins
 - agent-native and human-guided workflows
 
@@ -34,11 +34,11 @@ The actual user expectation is not:
 
 It is:
 
-- “Elementify helps me relaunch an existing site”
-- “Elementify helps me build a new site from scratch”
-- “Elementify helps me use WordPress + Elementor + theme + plugins more intelligently”
+- “Elementeer helps me relaunch an existing site”
+- “Elementeer helps me build a new site from scratch”
+- “Elementeer helps me use WordPress + Elementor + theme + plugins more intelligently”
 
-If Elementify is modeled too narrowly around internal resources such as templates, pages, or raw permissions, then:
+If Elementeer is modeled too narrowly around internal resources such as templates, pages, or raw permissions, then:
 
 - Free becomes too weak and too technical
 - Advanced risks feeling like locked extras rather than a productivity upgrade
@@ -52,7 +52,7 @@ If Elementify is modeled too narrowly around internal resources such as template
 - Make `Advanced` feel like a workflow and productivity upgrade rather than an upsell bundle
 - Keep `Studio` architecturally anticipated but strategically deferred
 - Preserve the Forgejo-primary / GitHub-Free-mirror split
-- Differentiate Elementify through guided outcomes, not through arbitrary gating
+- Differentiate Elementeer through guided outcomes, not through arbitrary gating
 
 ## 4. Target Users & Personas
 
@@ -77,7 +77,7 @@ If Elementify is modeled too narrowly around internal resources such as template
 
 ## 5. Product Vision
 
-Elementify should be experienced as:
+Elementeer should be experienced as:
 
 - an intelligent layer over the existing WordPress + Elementor stack
 - a guided builder companion for both non-technical and technical users
@@ -315,14 +315,14 @@ Important rule:
 
 ## 11. Theme and Stack Model
 
-Elementify must think beyond “Elementor only”.
+Elementeer must think beyond “Elementor only”.
 
 The effective stack is:
 
 - WordPress
 - Elementor
 - Hello Theme as current reliable baseline
-- possibly a future `Elementify Theme` or stronger Hello-derived uplift layer
+- possibly a future `Elementeer Theme` or stronger Hello-derived uplift layer
 - supporting plugins relevant to the site
 
 ### Theme decision guidance
@@ -333,7 +333,7 @@ Short term:
 
 Mid term:
 
-- define whether `Elementify Theme` should be:
+- define whether `Elementeer Theme` should be:
   - a Hello child theme
   - a Hello-compatible replacement
   - or a theme system layered above Hello conventions
@@ -379,7 +379,7 @@ Free shall consider not only Elementor but also relevant WordPress, theme, and p
 Acceptance:
 
 - site analysis and recommendations include stack-aware interpretation
-- Free documentation does not position Elementify as Elementor-only CRUD
+- Free documentation does not position Elementeer as Elementor-only CRUD
 
 ## 12.2 Advanced requirements
 
@@ -441,7 +441,7 @@ Acceptance:
 ### Out of scope
 
 - implementing Studio cloud behavior
-- finalizing a full Elementify Theme implementation
+- finalizing a full Elementeer Theme implementation
 - marketplace rollout
 - enterprise delivery orchestration
 
@@ -465,7 +465,7 @@ Acceptance:
    Replace the resource-first capability model with a lower-layer technical substrate model.
 
 4. `THEME-STACK-001`
-   Clarify Hello Theme vs future Elementify Theme / theme-system role.
+   Clarify Hello Theme vs future Elementeer Theme / theme-system role.
 
 5. `SURFACE-REALIGN-001`
    Re-map existing tools, docs, and workflows to the new scenario/wizard blueprint.

@@ -1,5 +1,5 @@
 {
-  "title": "Elementify Project Profile, Sensorik, and Approval Hardening Plan",
+  "title": "Elementeer Project Profile, Sensorik, and Approval Hardening Plan",
   "sequence_type": "mixed",
   "execution_mode": "ralph_attended",
   "reason": "Live-site pilot feedback revealed expectation capture, layout-risk sensing, and approval-mode gaps that now sit on the critical path for trustworthy agency usage.",
@@ -23,7 +23,7 @@
       "id": "PROJECT-PROFILE-001",
       "title": "Project-specific operating profile",
       "type": "product-hardening",
-      "goal": "Define and implement a lightweight per-project Elementify profile that shapes editing posture, copy density, layout-vs-copy preference, and approval defaults.",
+      "goal": "Define and implement a lightweight per-project Elementeer profile that shapes editing posture, copy density, layout-vs-copy preference, and approval defaults.",
       "acceptance": [
         "A typed project profile contract exists for at least editingMode, copyDensity, layoutPriority, changeStyle, and questionPolicy.",
         "Runtime flows can read a project profile and reflect its choices in observable output.",
@@ -47,7 +47,7 @@
       "id": "APPROVAL-FLOW-001",
       "title": "Direct, draft, and approval write modes",
       "type": "workflow-hardening",
-      "goal": "Add explicit write-mode routing so Elementify can operate in direct-edit, draft-first, or approval-first mode.",
+      "goal": "Add explicit write-mode routing so Elementeer can operate in direct-edit, draft-first, or approval-first mode.",
       "acceptance": [
         "Runtime flows can declare direct-edit, draft-first, or approval-first behavior.",
         "Draft-first can stage a change without immediate live publication.",

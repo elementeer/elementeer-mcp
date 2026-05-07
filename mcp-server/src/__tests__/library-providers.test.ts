@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildLibraryBoundaryReport,
-  getElementifyCloudLibraryProvider,
-  getElementifyPremiumLibraryProvider,
+  getElementeerCloudLibraryProvider,
+  getElementeerPremiumLibraryProvider,
   getLocalElementorLibraryProvider,
 } from '../library-providers.js';
 
@@ -16,15 +16,15 @@ describe('library providers', () => {
   });
 
   it('treats premium library as active only for Advanced', () => {
-    expect(getElementifyPremiumLibraryProvider('free').availability).toBe('gated');
-    expect(getElementifyPremiumLibraryProvider('advanced').availability).toBe('active');
-    expect(getElementifyPremiumLibraryProvider('advanced').syncMode).toBe('manual-import');
+    expect(getElementeerPremiumLibraryProvider('free').availability).toBe('gated');
+    expect(getElementeerPremiumLibraryProvider('advanced').availability).toBe('active');
+    expect(getElementeerPremiumLibraryProvider('advanced').syncMode).toBe('manual-import');
   });
 
   it('keeps cloud library planned and deferred', () => {
-    const provider = getElementifyCloudLibraryProvider();
+    const provider = getElementeerCloudLibraryProvider();
 
-    expect(provider.kind).toBe('elementify-cloud');
+    expect(provider.kind).toBe('elementeer-cloud');
     expect(provider.availability).toBe('planned');
     expect(provider.syncMode).toBe('cloud-sync');
   });

@@ -46,8 +46,8 @@ describe('Site tools', () => {
 
   beforeEach(() => {
     // Set up temp config for tests that call listSites / setDefaultSite
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'elementify-site-tools-test-'));
-    process.env['ELEMENTIFY_CONFIG_PATH'] = path.join(tmpDir, 'config.json');
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'elementeer-site-tools-test-'));
+    process.env['ELEMENTEER_CONFIG_PATH'] = path.join(tmpDir, 'config.json');
 
     const sampleConfig = {
       sites: [
@@ -68,7 +68,7 @@ describe('Site tools', () => {
       ],
     };
     fs.writeFileSync(
-      process.env['ELEMENTIFY_CONFIG_PATH']!,
+      process.env['ELEMENTEER_CONFIG_PATH']!,
       JSON.stringify(sampleConfig, null, 2),
       'utf-8',
     );
@@ -90,7 +90,7 @@ describe('Site tools', () => {
   });
 
   afterEach(() => {
-    delete process.env['ELEMENTIFY_CONFIG_PATH'];
+    delete process.env['ELEMENTEER_CONFIG_PATH'];
     fs.rmSync(tmpDir, { recursive: true, force: true });
     vi.resetModules();
   });
@@ -170,7 +170,7 @@ describe('Site tools', () => {
     it('updates the default site in config', async () => {
       await callTool('switch_site', { site_id: 'site-b' });
 
-      const saved = JSON.parse(fs.readFileSync(process.env['ELEMENTIFY_CONFIG_PATH']!, 'utf-8'));
+      const saved = JSON.parse(fs.readFileSync(process.env['ELEMENTEER_CONFIG_PATH']!, 'utf-8'));
       const siteA = saved.sites.find((s: { id: string }) => s.id === 'site-a');
       const siteB = saved.sites.find((s: { id: string }) => s.id === 'site-b');
 

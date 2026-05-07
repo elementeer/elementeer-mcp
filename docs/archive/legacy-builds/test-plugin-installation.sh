@@ -2,18 +2,18 @@
 set -e
 
 # ============================================
-# Test Elementify Plugin Installation
+# Test Elementeer Plugin Installation
 # ============================================
 # Simuliert die WordPress Installation
 # ============================================
 
-echo "=== Elementify Plugin Installation Test ==="
+echo "=== Elementeer Plugin Installation Test ==="
 echo ""
 
 # Temporäres WordPress Verzeichnis
 TEST_DIR="/tmp/wp-test-$(date +%s)"
-PLUGIN_DIR="$TEST_DIR/wp-content/plugins/elementify"
-ZIP_FILE="elementify-1.0.0-wordpress.zip"
+PLUGIN_DIR="$TEST_DIR/wp-content/plugins/elementeer"
+ZIP_FILE="elementeer-1.0.0-wordpress.zip"
 
 mkdir -p "$PLUGIN_DIR"
 mkdir -p "$TEST_DIR"
@@ -21,19 +21,19 @@ mkdir -p "$TEST_DIR"
 # ZIP extrahieren
 echo "1. Extrahiere Plugin ZIP..."
 cd "$TEST_DIR"
-if [ -f "/Users/andrelange/Documents/repositories/github/elementify-mcp/$ZIP_FILE" ]; then
-    unzip -q "/Users/andrelange/Documents/repositories/github/elementify-mcp/$ZIP_FILE"
+if [ -f "/Users/andrelange/Documents/repositories/github/elementeer-mcp/$ZIP_FILE" ]; then
+    unzip -q "/Users/andrelange/Documents/repositories/github/elementeer-mcp/$ZIP_FILE"
 else
-    unzip -q "/Users/andrelange/Documents/repositories/github/elementify-mcp/dist/$ZIP_FILE"
+    unzip -q "/Users/andrelange/Documents/repositories/github/elementeer-mcp/dist/$ZIP_FILE"
 fi
 
 # Prüfe Plugin-Struktur
 echo "2. Prüfe Plugin-Struktur..."
-if [ -f "$PLUGIN_DIR/elementify-mcp.php" ]; then
-    echo "✅ Hauptdatei gefunden: elementify-mcp.php"
+if [ -f "$PLUGIN_DIR/elementeer-mcp.php" ]; then
+    echo "✅ Hauptdatei gefunden: elementeer-mcp.php"
     
     # Prüfe Version
-    VERSION=$(grep "Version:" "$PLUGIN_DIR/elementify-mcp.php" | head -1 | sed 's/.*Version:[[:space:]]*//' | sed "s/'//g" | sed 's/"//g' | tr -d ' ')
+    VERSION=$(grep "Version:" "$PLUGIN_DIR/elementeer-mcp.php" | head -1 | sed 's/.*Version:[[:space:]]*//' | sed "s/'//g" | sed 's/"//g' | tr -d ' ')
     echo "✅ Version: $VERSION"
     
     # Prüfe Autoloader
@@ -45,13 +45,13 @@ if [ -f "$PLUGIN_DIR/elementify-mcp.php" ]; then
 <?php
 // Simuliere WordPress Umgebung
 define('ABSPATH', '/tmp/test');
-define('ELEMENTIFY_MCP_DIR', __DIR__ . '/');
+define('ELEMENTEER_MCP_DIR', __DIR__ . '/');
 
 // Teste Autoloader
 require_once __DIR__ . '/vendor/autoload.php';
 
 // Teste Plugin-Klassen
-if (class_exists('Elementify\\MCP\\Plugin')) {
+if (class_exists('Elementeer\\MCP\\Plugin')) {
     echo "✅ Plugin-Klasse lädt\n";
 } else {
     echo "❌ Plugin-Klasse lädt nicht\n";
@@ -104,7 +104,7 @@ echo "✅ Test abgeschlossen"
 
 echo ""
 echo "=== EMPFEHLUNGEN ==="
-echo "1. Verwende 'elementify-1.0.0-wordpress.zip' für WordPress Upload"
+echo "1. Verwende 'elementeer-1.0.0-wordpress.zip' für WordPress Upload"
 echo "2. Stelle sicher, dass PHP 8.0+ auf dem Server läuft"
 echo "3. Aktiviere WordPress Debug Log für Fehleranalyse"
 echo "4. Bei REST API Fehlern: Prüfe /wp-content/debug.log"

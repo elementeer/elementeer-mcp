@@ -1,4 +1,4 @@
-# Elementify Project Profile, Sensorik, and Approval Hardening PRD
+# Elementeer Project Profile, Sensorik, and Approval Hardening PRD
 
 ## Purpose
 
@@ -10,11 +10,11 @@ It is based on real pilot usage and addresses three gaps that showed up immediat
 - weak layout-risk sensing around text length and section geometry
 - missing review-first approval modes for real client and agency usage
 
-These are not isolated UX fixes. Together they define the next trust layer for Elementify.
+These are not isolated UX fixes. Together they define the next trust layer for Elementeer.
 
 ## Why This Matters
 
-Elementify is no longer only proving that it can technically read and write Elementor content.
+Elementeer is no longer only proving that it can technically read and write Elementor content.
 
 It now needs to prove that it can:
 
@@ -51,11 +51,11 @@ That means:
 
 ## Goal
 
-Introduce a lightweight, project-specific operating profile that can shape how Elementify behaves before it writes or recommends changes.
+Introduce a lightweight, project-specific operating profile that can shape how Elementeer behaves before it writes or recommends changes.
 
 ## Core Idea
 
-Each site or project should be able to carry a small Elementify-native profile, conceptually similar to a project-local `AGENTS.md`, but focused on delivery behavior rather than coding rules.
+Each site or project should be able to carry a small Elementeer-native profile, conceptually similar to a project-local `AGENTS.md`, but focused on delivery behavior rather than coding rules.
 
 This profile should capture:
 
@@ -102,14 +102,14 @@ Project profiles should shape:
 
 - wizard defaults
 - preset defaults
-- whether Elementify trims, condenses, or asks
+- whether Elementeer trims, condenses, or asks
 - whether direct write is allowed
 - whether review queue is required
 - whether a preview/draft path is preferred
 
 ## Binary Success Criteria
 
-- Elementify can store and read a project profile per site.
+- Elementeer can store and read a project profile per site.
 - The profile changes runtime behavior in observable ways.
 - Free and Advanced can both use the profile without breaking surface boundaries.
 - A conservative default exists when no profile has been defined yet.
@@ -122,7 +122,7 @@ Add a lightweight sensing layer that identifies likely layout/content risks befo
 
 ## Core Idea
 
-Elementify should not wait for manual visual inspection to catch obvious problems such as:
+Elementeer should not wait for manual visual inspection to catch obvious problems such as:
 
 - text overflow risk
 - card height imbalance
@@ -167,7 +167,7 @@ Return warnings such as:
 
 ## Decision Behavior
 
-If the risk crosses a threshold, Elementify should:
+If the risk crosses a threshold, Elementeer should:
 
 - ask a question
 - choose a conservative default based on project profile
@@ -179,7 +179,7 @@ It should not silently discard content unless the project profile explicitly all
 
 - Runtime outputs can emit deterministic layout-risk warnings.
 - Briefing and profile preferences can influence how risk is resolved.
-- Elementify can distinguish low-risk direct writes from medium/high-risk review candidates.
+- Elementeer can distinguish low-risk direct writes from medium/high-risk review candidates.
 - The system no longer silently drops likely-overflow content as an implicit default.
 
 ## 3. APPROVAL-FLOW-001
@@ -192,7 +192,7 @@ Add a review-oriented editing mode that supports draft and approval workflows fo
 
 For real agency and stakeholder work, not every change should go directly live.
 
-Elementify should support three operating modes:
+Elementeer should support three operating modes:
 
 - `direct-edit`
 - `draft-first`
@@ -235,7 +235,7 @@ The approval model should borrow the good parts of a translation dashboard:
 - apply only what is approved
 - track status across staged work
 
-But it should remain Elementify-native and apply to:
+But it should remain Elementeer-native and apply to:
 
 - page edits
 - section edits
@@ -255,7 +255,7 @@ Approval mode should influence:
 
 ## Binary Success Criteria
 
-- Elementify supports explicit `direct-edit`, `draft-first`, and `approval-first` modes.
+- Elementeer supports explicit `direct-edit`, `draft-first`, and `approval-first` modes.
 - A change can be staged without going live immediately.
 - Approval-first produces a reviewable queue item or draft artifact with enough context for human review.
 - The chosen approval mode can be set by project profile and overridden per workflow.

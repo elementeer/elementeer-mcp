@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { ElementifyClient } from '../client.js';
+import type { ElementeerClient } from '../client.js';
 
 type Addon = {
   active: boolean;
@@ -26,7 +26,7 @@ function findUltimateAddons(addons: Array<Addon>) {
 
 export function registerUltimateAddonsFreeTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   // ------------------------------------------------------------------ //
   // detect_uae (Free)
@@ -155,7 +155,7 @@ export function registerUltimateAddonsFreeTools(
 
 export function registerUltimateAddonsAdvancedTools(
   server: McpServer,
-  getClient: (siteId?: string) => ElementifyClient,
+  getClient: (siteId?: string) => ElementeerClient,
 ): void {
   // ------------------------------------------------------------------ //
   // analyze_uae_usage (Advanced)

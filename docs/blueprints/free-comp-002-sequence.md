@@ -1,4 +1,4 @@
-# Elementify FREE-COMP-002 Sequence
+# Elementeer FREE-COMP-002 Sequence
 
 ## Metadata
 

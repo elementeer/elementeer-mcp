@@ -12,7 +12,7 @@ export function registerSiteTools(
   // ------------------------------------------------------------------ //
   server.tool(
     'get_site_info',
-    'Get information about a WordPress site running the Elementify plugin: WP version, Elementor version, activation mode, template count, and available capabilities.',
+    'Get information about a WordPress site running the Elementeer plugin: WP version, Elementor version, activation mode, template count, and available capabilities.',
     {
       site_id: z.string().optional().describe('Site ID from config (defaults to active site)'),
     },

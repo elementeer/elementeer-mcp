@@ -1,12 +1,12 @@
-# Elementify Pre-Release Workflow
+# Elementeer Pre-Release Workflow
 
 ## Goal
-Establish a strict, repeatable process for testing, reviewing, and releasing Elementify plugin updates to production environments.
+Establish a strict, repeatable process for testing, reviewing, and releasing Elementeer plugin updates to production environments.
 
 ## Prerequisites
 - Local WordPress testing environment (`wp-testing-env`) with Docker.
 - Access to production WordPress sites (marcus-urban.de, preview.fusionaize.com) via admin dashboard (no SSH).
-- Elementify plugin source code with version bumped.
+- Elementeer plugin source code with version bumped.
 
 ## Workflow Steps
 
@@ -20,32 +20,32 @@ Establish a strict, repeatable process for testing, reviewing, and releasing Ele
    docker-compose up -d
    ```
 2. Install/update the plugin in the test environment:
-   - Copy the plugin files to `wp-testing-env/plugins/elementify/` or use the distribution ZIP.
+   - Copy the plugin files to `wp-testing-env/plugins/elementeer/` or use the distribution ZIP.
    - Activate the plugin via WP-CLI:
      ```bash
-     docker-compose exec wp-cli wp plugin activate elementify
+     docker-compose exec wp-cli wp plugin activate elementeer
      ```
 3. Run the comprehensive test suite:
    ```bash
-   ./tests/test-elementify-comprehensive.sh
+   ./tests/test-elementeer-comprehensive.sh
    ```
 4. Generate test report (JSON) and review console output.
 5. Verify that all **core endpoints** (templates, site management, global styles, authentication) return expected HTTP 200.
 6. Confirm that known bugs (e.g., addon-related endpoints returning 500) are documented and acceptable for this release.
 
-**Deliverable:** Test report (`reports/elementify-api-test-*.json`) and a summary of passing/failing endpoints.
+**Deliverable:** Test report (`reports/elementeer-api-test-*.json`) and a summary of passing/failing endpoints.
 
 ### 2. Review Phase
 **Objective:** Assess production readiness and decide whether to proceed.
 
 **Checklist:**
-- [ ] Plugin naming: Name **"Elementify"**, slug `elementify`, text-domain `elementify`.
+- [ ] Plugin naming: Name **"Elementeer"**, slug `elementeer`, text-domain `elementeer`.
 - [ ] Menu placement: Plugin appears as a top‑level menu item directly after Elementor (position 59).
 - [ ] No new critical bugs (excluding previously accepted issues).
 - [ ] API key authentication works with explicit capabilities list (46 capabilities, no wildcards).
 - [ ] All required capabilities are documented.
 - [ ] Plugin version number updated (e.g., `2.0.0`).
-- [ ] Distribution ZIP (`elementify-<version>.zip`) builds successfully.
+- [ ] Distribution ZIP (`elementeer-<version>.zip`) builds successfully.
 
 **If any check fails:** Return to development and repeat Testing Phase.
 
@@ -55,16 +55,16 @@ Establish a strict, repeatable process for testing, reviewing, and releasing Ele
 **Actions:**
 1. Create a clean distribution:
    ```bash
-   cd /path/to/elementify-mcp
-   ./scripts/build-dist.sh   # or manually zip the `dist/elementify/` directory
+   cd /path/to/elementeer-mcp
+   ./scripts/build-dist.sh   # or manually zip the `dist/elementeer/` directory
    ```
-2. Name the ZIP file `elementify-<version>.zip` (e.g., `elementify-2.0.0.zip`).
+2. Name the ZIP file `elementeer-<version>.zip` (e.g., `elementeer-2.0.0.zip`).
 3. Optionally create a Git tag for the version:
    ```bash
    git tag v2.0.0
    git push origin v2.0.0
    ```
-4. Store the ZIP in a known location (e.g., `dist/elementify-2.0.0.zip`).
+4. Store the ZIP in a known location (e.g., `dist/elementeer-2.0.0.zip`).
 
 **Deliverable:** Versioned plugin ZIP ready for upload.
 
@@ -75,12 +75,12 @@ Establish a strict, repeatable process for testing, reviewing, and releasing Ele
 1. For each production site (marcus-urban.de, preview.fusionaize.com):
    - Log into WordPress admin dashboard.
    - Navigate to **Plugins → Add New → Upload Plugin**.
-   - Upload `elementify-<version>.zip`.
+   - Upload `elementeer-<version>.zip`.
    - Choose **Replace current version** (if already installed).
    - Activate the plugin if necessary.
 2. Verify activation:
    - No PHP errors on plugin activation.
-   - The Elementify menu appears in the admin sidebar after Elementor.
+   - The Elementeer menu appears in the admin sidebar after Elementor.
 
 **Note:** No SSH access; deployment must be performed via the WordPress admin interface.
 
@@ -90,9 +90,9 @@ Establish a strict, repeatable process for testing, reviewing, and releasing Ele
 **Actions:**
 1. Create a test API key with all 46 capabilities (use the same structure as in testing).
 2. Call a few critical endpoints:
-   - `GET /wp-json/elementify/v1/site`
-   - `GET /wp-json/elementify/v1/templates`
-   - `GET /wp-json/elementify/v1/global-styles`
+   - `GET /wp-json/elementeer/v1/site`
+   - `GET /wp-json/elementeer/v1/templates`
+   - `GET /wp-json/elementeer/v1/global-styles`
 3. Confirm responses are successful (HTTP 200).
 4. Verify the admin menu is visible and correctly positioned.
 
@@ -101,7 +101,7 @@ Establish a strict, repeatable process for testing, reviewing, and releasing Ele
 ## Known Issues & Acceptable Bugs
 The following issues are currently known and may be tolerated in a release if they do not block core functionality:
 
-1. **AddonRegistry abstract class bug** – Endpoints `/elementify/v1/addons` and `/elementify/v1/site/assessment` return 500 errors. Workaround: Avoid using addon‑related features until the plugin is updated.
+1. **AddonRegistry abstract class bug** – Endpoints `/elementeer/v1/addons` and `/elementeer/v1/site/assessment` return 500 errors. Workaround: Avoid using addon‑related features until the plugin is updated.
 2. **Wildcard capabilities not supported** – API keys must list all 46 capabilities explicitly; `["*"]` is rejected.
 3. **Inconsistent error messages** – Some 500 errors lack descriptive details.
 

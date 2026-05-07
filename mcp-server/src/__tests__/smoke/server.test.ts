@@ -47,7 +47,7 @@ describe.skip('MCP server smoke tests', () => {
         importLibraryAsset: async () => ({
           imported: true as const,
           import_mode: 'manual-import' as const,
-          source: { kind: 'elementify-premium' as const, asset_id: 'premium-service-section-stack' },
+          source: { kind: 'elementeer-premium' as const, asset_id: 'premium-service-section-stack' },
           template: { id: 41, title: 'Premium Import', type: 'section', status: 'draft', author: 1, date: '', modified: '', categories: [], tags: [] },
         }),
         assessSite: async () => ({

@@ -1,4 +1,4 @@
-# Elementify Tier Capability Map
+# Elementeer Tier Capability Map
 
 ## Purpose
 
@@ -10,10 +10,10 @@ This document is the executable product boundary for the current repository stat
 
 It is grounded in:
 
-- [elementify_drei_stufen_launchstrategie_finalisierung.md](/Users/andrelange/Library/CloudStorage/GoogleDrive-andre.lange@lange-network.com/Meine%20Ablage/02_Projects/Vamerli_Elementify/05_Go_to_Market/elementify_drei_stufen_launchstrategie_finalisierung.md)
-- [phase-2-baseline-alignment.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/phase-2-baseline-alignment.md)
-- [free-advanced-launch-prd.md](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-advanced-launch-prd.md)
-- [mcp-server/src/product-tiers.ts](/Users/andrelange/Documents/repositories/github/elementify-mcp/mcp-server/src/product-tiers.ts)
+- [elementeer_drei_stufen_launchstrategie_finalisierung.md](/Users/andrelange/Library/CloudStorage/GoogleDrive-andre.lange@lange-network.com/Meine%20Ablage/02_Projects/Vamerli_Elementeer/05_Go_to_Market/elementeer_drei_stufen_launchstrategie_finalisierung.md)
+- [phase-2-baseline-alignment.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/phase-2-baseline-alignment.md)
+- [free-advanced-launch-prd.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-advanced-launch-prd.md)
+- [mcp-server/src/product-tiers.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/product-tiers.ts)
 
 This map is intentionally stricter than marketing language. Its job is to make the future Forgejo-primary and GitHub-Free-mirror split technically enforceable.
 
@@ -27,7 +27,7 @@ This document should therefore be read as:
 
 - a current tool-tier projection
 - an implementation boundary map
-- not the main explanation of what Elementify is
+- not the main explanation of what Elementeer is
 
 That distinction matters because the product is now intentionally:
 

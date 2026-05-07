@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import axios from 'axios';
-import { ElementeerClient, ElementifyApiError } from '../client.js';
+import { ElementeerClient, ElementeerApiError } from '../client.js';
 import type { AxiosError } from 'axios';
 
 vi.mock('axios');
@@ -77,21 +77,21 @@ describe('ElementeerClient', () => {
   });
 
   describe('constructor', () => {
-    it('constructs base URL by stripping trailing slash and appending /wp-json/elementify/v1', () => {
+    it('constructs base URL by stripping trailing slash and appending /wp-json/elementeer/v1', () => {
       new ElementeerClient('https://example.com/', 'ek_abc');
       expect(mockedAxios.create).toHaveBeenCalledWith(
         expect.objectContaining({
-          baseURL: 'https://example.com/wp-json/elementify/v1',
+          baseURL: 'https://example.com/wp-json/elementeer/v1',
         }),
       );
     });
 
-    it('sets X-Elementify-Key header', () => {
+    it('sets X-Elementeer-Key header', () => {
       new ElementeerClient('https://example.com', 'ek_my_secret_key');
       expect(mockedAxios.create).toHaveBeenCalledWith(
         expect.objectContaining({
           headers: expect.objectContaining({
-            'X-Elementify-Key': 'ek_my_secret_key',
+            'X-Elementeer-Key': 'ek_my_secret_key',
           }),
         }),
       );
@@ -121,12 +121,12 @@ describe('ElementeerClient', () => {
     // We call client.handleError() directly — cleanest unit test approach.
     // Interceptor wiring is covered separately in integration tests.
 
-    it('maps elementify_insufficient_scope → auth_insufficient_scope (NOT auth_invalid_key)', () => {
+    it('maps elementeer_insufficient_scope → auth_insufficient_scope (NOT auth_invalid_key)', () => {
       const err = client.handleError(makeAxiosError(401, {
-        code: 'elementify_insufficient_scope',
+        code: 'elementeer_insufficient_scope',
         message: 'Key lacks library-operations:write capability.',
       }));
-      expect(err).toBeInstanceOf(ElementifyApiError);
+      expect(err).toBeInstanceOf(ElementeerApiError);
       expect(err.code).toBe('auth_insufficient_scope');
       expect(err.status).toBe(401);
     });
@@ -136,9 +136,9 @@ describe('ElementeerClient', () => {
       expect(err.code).toBe('auth_insufficient_scope');
     });
 
-    it('maps elementify_invalid_key → auth_invalid_key', () => {
-      const err = client.handleError(makeAxiosError(401, { code: 'elementify_invalid_key', message: 'Invalid API key.' }));
-      expect(err).toBeInstanceOf(ElementifyApiError);
+    it('maps elementeer_invalid_key → auth_invalid_key', () => {
+      const err = client.handleError(makeAxiosError(401, { code: 'elementeer_invalid_key', message: 'Invalid API key.' }));
+      expect(err).toBeInstanceOf(ElementeerApiError);
       expect(err.code).toBe('auth_invalid_key');
     });
 
@@ -147,8 +147,8 @@ describe('ElementeerClient', () => {
       expect(err.code).toBe('auth_invalid_key');
     });
 
-    it('maps elementify_governance_blocked → governance_blocked', () => {
-      const err = client.handleError(makeAxiosError(403, { code: 'elementify_governance_blocked', message: 'Blocked.' }));
+    it('maps elementeer_governance_blocked → governance_blocked', () => {
+      const err = client.handleError(makeAxiosError(403, { code: 'elementeer_governance_blocked', message: 'Blocked.' }));
       expect(err.code).toBe('governance_blocked');
     });
 
@@ -157,8 +157,8 @@ describe('ElementeerClient', () => {
       expect(err.code).toBe('governance_blocked');
     });
 
-    it('maps elementify_key_inactive → auth_key_inactive', () => {
-      const err = client.handleError(makeAxiosError(401, { code: 'elementify_key_inactive', message: 'Key inactive.' }));
+    it('maps elementeer_key_inactive → auth_key_inactive', () => {
+      const err = client.handleError(makeAxiosError(401, { code: 'elementeer_key_inactive', message: 'Key inactive.' }));
       expect(err.code).toBe('auth_key_inactive');
     });
 
@@ -197,7 +197,7 @@ describe('ElementeerClient', () => {
 
     it('network error (no response) → not_found with status 0', () => {
       const err = client.handleError(makeNetworkError('ECONNREFUSED'));
-      expect(err).toBeInstanceOf(ElementifyApiError);
+      expect(err).toBeInstanceOf(ElementeerApiError);
       expect(err.code).toBe('not_found');
       expect(err.status).toBe(0);
       expect(err.message).toContain('Network error');
@@ -205,7 +205,7 @@ describe('ElementeerClient', () => {
 
     it('preserves message from server response', () => {
       const err = client.handleError(makeAxiosError(401, {
-        code: 'elementify_invalid_key',
+        code: 'elementeer_invalid_key',
         message: 'Your key expired on 2025-01-01.',
       }));
       expect(err.message).toBe('Your key expired on 2025-01-01.');
@@ -279,7 +279,7 @@ describe('ElementeerClient', () => {
         data: {
           imported: true,
           import_mode: 'manual-import',
-          source: { kind: 'elementify-premium', asset_id: 'premium-hero-01' },
+          source: { kind: 'elementeer-premium', asset_id: 'premium-hero-01' },
           template: { id: 101, title: 'Imported Hero' },
         },
       });
@@ -288,14 +288,14 @@ describe('ElementeerClient', () => {
         title: 'Imported Hero',
         type: 'section',
         elementor_data: [{ id: 'hero', elType: 'section', elements: [] }],
-        source: { kind: 'elementify-premium', asset_id: 'premium-hero-01' },
+        source: { kind: 'elementeer-premium', asset_id: 'premium-hero-01' },
       });
 
       expect(mockHttp.post).toHaveBeenCalledWith('/library/import', {
         title: 'Imported Hero',
         type: 'section',
         elementor_data: [{ id: 'hero', elType: 'section', elements: [] }],
-        source: { kind: 'elementify-premium', asset_id: 'premium-hero-01' },
+        source: { kind: 'elementeer-premium', asset_id: 'premium-hero-01' },
       });
     });
   });

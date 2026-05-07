@@ -1,5 +1,5 @@
 {
-  "projectName": "Elementify Free + Advanced Scenario/Wizard Realignment v2",
+  "projectName": "Elementeer Free + Advanced Scenario/Wizard Realignment v2",
   "version": "2.0",
   "status": "draft",
   "sequence_type": "mixed",
@@ -14,11 +14,11 @@
     {
       "id": "USP-FOUNDATION-001",
       "title": "Lock user-first ecosystem-honest positioning and Vamerli bridge",
-      "description": "Define Elementify's explicit USP as a user-first, intent-led, ecosystem-honest 360-degree guidance layer for the Elementor stack, and document the future bridge to Vamerli.",
+      "description": "Define Elementeer's explicit USP as a user-first, intent-led, ecosystem-honest 360-degree guidance layer for the Elementor stack, and document the future bridge to Vamerli.",
       "acceptanceCriteria": [
         "The blueprint explicitly states that recommendations follow user interest and scenario fit before vendor or upsell logic",
-        "The positioning distinguishes Elementify from plugin-first or commercially-captured guidance layers",
-        "The relationship between Elementify and a future Vamerli brand presence and intelligence platform is documented clearly but without overclaiming present scope",
+        "The positioning distinguishes Elementeer from plugin-first or commercially-captured guidance layers",
+        "The relationship between Elementeer and a future Vamerli brand presence and intelligence platform is documented clearly but without overclaiming present scope",
         "This positioning becomes a source of truth for later scenario, wizard, and upgrade-guidance work"
       ],
       "priority": "high",
@@ -34,7 +34,7 @@
     {
       "id": "BOOTSTRAP-SCENARIO-001",
       "title": "Define bootstrap scenarios and non-Elementor entry states",
-      "description": "Extend the scenario map so Elementify supports users with only an idea, an existing non-Elementor WordPress site, or a partial stack that needs guided completion.",
+      "description": "Extend the scenario map so Elementeer supports users with only an idea, an existing non-Elementor WordPress site, or a partial stack that needs guided completion.",
       "acceptanceCriteria": [
         "The scenario system includes entry states without Elementor installed",
         "Bootstrap-from-idea, bootstrap-from-existing-WordPress, and stack-completion scenarios are documented",
@@ -125,7 +125,7 @@
     {
       "id": "UPGRADE-GUIDANCE-001",
       "title": "Define scenario-based upgrade guidance",
-      "description": "Model when and how Elementify should recommend Elementor Pro, Elementify Advanced, or selected supported pro plugins as a meaningful next step.",
+      "description": "Model when and how Elementeer should recommend Elementor Pro, Elementeer Advanced, or selected supported pro plugins as a meaningful next step.",
       "acceptanceCriteria": [
         "Upgrade guidance is tied to scenarios, not generic upsell prompts",
         "The blueprint explains when Free is enough and when deeper stack upgrades make sense",

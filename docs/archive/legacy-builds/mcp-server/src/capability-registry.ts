@@ -16,7 +16,7 @@ export interface CapabilityRequirement {
 }
 
 /**
- * Registry mapping all Elementify operations to required capabilities
+ * Registry mapping all Elementeer operations to required capabilities
  * This is used for capability-based routing and permission checks
  */
 export const CAPABILITY_REGISTRY: CapabilityRequirement[] = [

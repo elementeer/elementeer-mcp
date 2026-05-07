@@ -1,12 +1,12 @@
-# Elementify v2 Testing Checklist
+# Elementeer v2 Testing Checklist
 ## Manuelle Tests nach Deployment
 
 ## 📋 Quick Test Checklist - ACTUAL RESULTS (19.04.2026)
 
 ### ✅ 1. Basis-Funktionalität (Beide Sites)
 - [x] **Plugin aktiviert** ohne Fehler ✓ (Site Info funktioniert)
-- [ ] **Health Check** `/wp-json/elementify/v1/health` ✗ (404 - Endpoint existiert nicht in v2)
-- [x] **Template Listing** ✓ (Funktioniert über elementify_list_templates)
+- [ ] **Health Check** `/wp-json/elementeer/v1/health` ✗ (404 - Endpoint existiert nicht in v2)
+- [x] **Template Listing** ✓ (Funktioniert über elementeer_list_templates)
 - [x] **Capabilities** ✓ (Werden in Site Info angezeigt)
 
 ### ✅ 2. marcus-urban.de Spezifisch
@@ -18,9 +18,9 @@
 
 ### ✅ 3. preview.fusionaize.com Spezifisch
 - [ ] **Intelligence Layer** ✗ (Critical Error bei Assessment/Recommendations)
-- [x] **Workflow Staging** ✓ (Queue 2.0 funktioniert über elementify_queue_stats)
+- [x] **Workflow Staging** ✓ (Queue 2.0 funktioniert über elementeer_queue_stats)
 - [x] **Governance System** ✓ (Governance Features verfügbar)
-- [x] **Queue 2.0** ✓ (Funktioniert über elementify_queue_stats)
+- [x] **Queue 2.0** ✓ (Funktioniert über elementeer_queue_stats)
 
 ### ✅ 4. Performance
 - [x] **API Response** < 200ms ✓ (Schnelle Responses bei einfachen Calls)
@@ -44,13 +44,13 @@
 ## 🧪 Detailierte Tests
 
 ### Test 1: Health Check
-**NOTE:** This endpoint doesn't exist in v2. Use `elementify_get_site_info` instead.
+**NOTE:** This endpoint doesn't exist in v2. Use `elementeer_get_site_info` instead.
 ```bash
 # marcus-urban.de
-curl https://marcus-urban.de/wp-json/elementify/v1/health
+curl https://marcus-urban.de/wp-json/elementeer/v1/health
 
 # preview.fusionaize.com  
-curl https://preview.fusionaize.com/wp-json/elementify/v1/health
+curl https://preview.fusionaize.com/wp-json/elementeer/v1/health
 
 # Erwartetes Ergebnis:
 {
@@ -76,7 +76,7 @@ document.querySelectorAll('[data-elementor-action="popup:open"]')[1].click();
 
 ### Test 3: Intelligence Layer (preview.fusionaize.com)
 ```bash
-curl -X POST https://preview.fusionaize.com/wp-json/elementify/v1/intelligence/compose \
+curl -X POST https://preview.fusionaize.com/wp-json/elementeer/v1/intelligence/compose \
   -H "Content-Type: application/json" \
   -d '{
     "sections": ["hero", "features", "testimonials", "cta"],
@@ -89,7 +89,7 @@ curl -X POST https://preview.fusionaize.com/wp-json/elementify/v1/intelligence/c
 
 ### Test 4: Workflow Staging
 ```bash
-curl -X POST https://preview.fusionaize.com/wp-json/elementify/v1/workflow/create \
+curl -X POST https://preview.fusionaize.com/wp-json/elementeer/v1/workflow/create \
   -H "Content-Type: application/json" \
   -d '{
     "content": "Test content for staging",
@@ -103,10 +103,10 @@ curl -X POST https://preview.fusionaize.com/wp-json/elementify/v1/workflow/creat
 ### Test 5: Governance System
 ```bash
 # Settings abrufen
-curl https://preview.fusionaize.com/wp-json/elementify/v1/governance/settings
+curl https://preview.fusionaize.com/wp-json/elementeer/v1/governance/settings
 
 # Permission check
-curl -X POST https://preview.fusionaize.com/wp-json/elementify/v1/governance/check \
+curl -X POST https://preview.fusionaize.com/wp-json/elementeer/v1/governance/check \
   -H "Content-Type: application/json" \
   -d '{
     "operation": "template.create",
@@ -118,7 +118,7 @@ curl -X POST https://preview.fusionaize.com/wp-json/elementify/v1/governance/che
 
 ### WordPress Admin:
 1. **Plugins Seite**
-   - Elementify v2 zeigt Version 2.0.0
+   - Elementeer v2 zeigt Version 2.0.0
    - Keine Aktivierungsfehler
 
 2. **Elementor Editor**
@@ -215,4 +215,4 @@ Nach allen Tests:
 - [ ] Performance ist akzeptabel
 - [ ] Keine regressiven Fehler
 
-**✅ Elementify v2 ist bereit für Produktion!**
+**✅ Elementeer v2 ist bereit für Produktion!**

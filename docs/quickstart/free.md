@@ -1,10 +1,10 @@
-# Elementify Free Quickstart
+# Elementeer Free Quickstart
 
 ## Purpose
 
 This is the canonical public quickstart for the mirror-safe Free surface.
 
-Free is the public entry point for Elementify:
+Free is the public entry point for Elementeer:
 
 - public and mirror-safe
 - local-site focused
@@ -14,9 +14,9 @@ Free is the public entry point for Elementify:
 
 1. Install the WordPress plugin from the repo's `plugin/` directory.
 2. Activate the plugin in WordPress admin.
-3. Generate a site API key in the Elementify MCP settings.
-4. Install the MCP server locally with `npm install -g @elementify/mcp`.
-5. Configure your site in `~/.elementify/config.json`.
+3. Generate a site API key in the Elementeer MCP settings.
+4. Install the MCP server locally with `npm install -g @elementeer/mcp`.
+5. Configure your site in `~/.elementeer/config.json`.
 6. Connect the MCP server to your client.
 
 ## Use
@@ -54,6 +54,6 @@ Free does not include:
 
 ## Canonical docs
 
-- [Free product surface](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/blueprints/free-product-surface.md)
-- [Free includes/excludes summary](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/public/free-includes-excludes.md)
-- [Free public release checklist](/Users/andrelange/Documents/repositories/github/elementify-mcp/docs/release/free-public-release-checklist.md)
+- [Free product surface](../blueprints/free-product-surface.md)
+- [Free includes/excludes summary](../public/free-includes-excludes.md)
+- [Free public release checklist](../release/free-public-release-checklist.md)

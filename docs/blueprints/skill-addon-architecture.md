@@ -1,8 +1,8 @@
-# Elementify Skill and Add-on Architecture
+# Elementeer Skill and Add-on Architecture
 
 ## Purpose
 
-This document defines how Elementify remains modular and extensible without turning into uncontrolled extension sprawl.
+This document defines how Elementeer remains modular and extensible without turning into uncontrolled extension sprawl.
 
 It formalizes two curated extension surfaces:
 
@@ -13,7 +13,7 @@ These extension surfaces should strengthen scenario fit and user outcomes, not d
 
 ## Design Principle
 
-Elementify should be modular in a user-facing way.
+Elementeer should be modular in a user-facing way.
 
 That means:
 
@@ -31,7 +31,7 @@ The product should never feel like:
 
 ## 1. Skill profiles
 
-Skill profiles are curated operating modes that shape how Elementify guides and assists the user.
+Skill profiles are curated operating modes that shape how Elementeer guides and assists the user.
 
 They are not simply internal tool flags.
 
