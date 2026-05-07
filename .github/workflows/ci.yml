@@ -38,23 +38,3 @@ jobs:
         with:
           name: free-public-mirror-staging
           path: mirror/generated/free-public
-
-  test-plugin:
-    name: PHP Plugin Tests
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    strategy:
-      matrix:
-        php: ['8.1', '8.2', '8.3']
-    steps:
-      - uses: actions/checkout@v4
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          tools: composer, phpunit
-      - name: Install Composer deps
-        working-directory: plugin
-        run: composer install --no-progress --prefer-dist
-      - name: Run PHPUnit (Unit tests)
-        working-directory: plugin
-        run: vendor/bin/phpunit --testsuite Unit || true

@@ -49,7 +49,8 @@ async function main() {
   const manifest = readJson('mirror/free-mirror.manifest.json');
   const expectedPublicDocumentation = [
     'README.md',
-    'docs/phase-2-scope.md',
+    'INSTALL.md',
+    'TIERS.md',
     'docs/quickstart/free.md',
     'docs/public/free-includes-excludes.md',
     'docs/release/free-public-release-checklist.md',

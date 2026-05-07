@@ -78,7 +78,6 @@ function main() {
   ensureDocExists('docs/release/free-public-release-checklist.md');
 
   ensureContains(readme, '## Quick Start — Free', 'README.md');
-  ensureContains(readme, 'Public Free quickstart', 'README.md');
   ensureContains(readme, 'Advanced', 'README.md');
   ensureContains(readme, 'Studio', 'README.md');
 

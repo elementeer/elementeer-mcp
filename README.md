@@ -3,45 +3,23 @@
 [![CodeQL](https://github.com/elementeer/elementeer-mcp/actions/workflows/codeql.yml/badge.svg)](https://github.com/elementeer/elementeer-mcp/actions/workflows/codeql.yml)
 [![npm](https://img.shields.io/npm/v/@elementeer/mcp?label=coming+soon&color=lightgrey)](https://www.npmjs.com/package/@elementeer/mcp)
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
-[![WordPress tested](https://img.shields.io/badge/WordPress-6.0%2B-21759b.svg?logo=wordpress)](./plugin/readme.txt)
-[![Elementor tested](https://img.shields.io/badge/Elementor-3.x-92003b.svg)](./plugin/readme.txt)
+[![WordPress tested](https://img.shields.io/badge/WordPress-6.0%2B-21759b.svg?logo=wordpress)](https://github.com/elementeer/elementeer)
+[![Elementor tested](https://img.shields.io/badge/Elementor-3.x-92003b.svg)](https://github.com/elementeer/elementeer)
 [![Node.js](https://img.shields.io/badge/Node.js-20%2B-339933.svg?logo=node.js)](./mcp-server/package.json)
 [![MCP compatible](https://img.shields.io/badge/MCP-compatible-7c3aed.svg)](https://modelcontextprotocol.io)
 [![Elementeer Studio](https://img.shields.io/badge/Elementeer_Studio-embedded-1A56DB.svg)](https://elementeer.studio)
 
 # Elementeer MCP
 
-Elementor-native MCP bridge for the public Free surface. Exposes the full `elementor_library` post type over a typed REST API — no 401 surprises, no empty responses. Ships as a WordPress plugin + Node.js MCP server with fine-grained, governance-controlled API key permissions.
+Elementor-native MCP bridge for the public Free surface. A Node.js MCP server with **128+ Free tools**, fine-grained governance (L0‑L3), and safe AI‑agent operation across brand setup, template composition, forms, translation, site health, LMS, charity, and accessibility workflows.
 
-With **111+ tools** and a granular governance model (L0‑L3), Elementeer enables safe AI‑agent operation across brand setup, template composition, forms, translation, site health, LMS, charity, and accessibility workflows.
-
----
-
-## Product Surfaces
-
-- **`Free`**: Public and mirror-safe. Local-site focused. Covers site intelligence, library management, brand setup, simple assembly, and wizard workflows. [See what Free includes →](TIERS.md)
-- **`Advanced`**: Private in the Forgejo primary repository. Adds Theme Builder, stock images, AI generation, governance queues, WooCommerce, and premium library access. [Full comparison →](TIERS.md)
-- **`Studio`**: Future seam for cloud, cross-site, and delivery orchestration. Not yet active.
-
-The WordPress plugin registers a REST API under `/wp-json/elementeer/v1/` that queries `elementor_library` directly, bypassing the limitations in Elementor's own REST modifications. The MCP server bridges Claude, Cursor, or any MCP-compatible client to any WordPress site running the plugin, with support for multiple sites, capability-scoped API keys, and a site-level governance layer.
-
----
+> **WordPress Plugin**: The companion WordPress plugin lives at [elementeer/elementeer](https://github.com/elementeer/elementeer). It exposes the REST API under `/wp-json/elementeer/v1/` that this MCP server connects to.
 
 ## Quick Start — Free
 
-This is the canonical public quickstart for the mirror-safe Free surface:
+### 1. Install the WordPress plugin
 
-- [Public Free quickstart](docs/quickstart/free.md)
-- [Install guide](INSTALL.md)
-- [Public Free release checklist](docs/release/free-public-release-checklist.md)
-
-### 1. Install the plugin
-
-1. Download or clone this repo
-2. Zip the `/plugin` directory
-3. Upload via WordPress admin: Plugins → Add New → Upload Plugin
-4. Activate **Elementeer MCP Plugin**
-5. Go to Settings → Elementeer MCP → generate your first API key
+Download from [elementeer/elementeer](https://github.com/elementeer/elementeer) → Upload → Activate → Generate API key in Settings → Elementeer MCP.
 
 ### 2. Install and configure the MCP server
 
@@ -217,36 +195,13 @@ Unlike general-purpose WordPress MCP tools, Elementeer understands Elementor's a
 elementeer-mcp/
 ├── .github/
 │   ├── workflows/
-│   │   ├── ci.yml              # Test matrix: Node 20/22, PHP 8.1/8.2/8.3
-│   │   ├── codeql.yml          # CodeQL security analysis
+│   │   ├── ci.yml              # Test matrix: Node 22
+│   │   ├── release.yml         # npm publish on tag
 │   │   ├── repo-safety.yml     # Block committed secrets
-│   │   └── release.yml         # npm publish + plugin ZIP on tag
+│   │   └── verify-mirror-export.yml  # Free mirror gate
 │   ├── dependabot.yml
-│   ├── CODEOWNERS
 │   ├── PULL_REQUEST_TEMPLATE.md
 │   └── SECURITY.md
-│
-├── plugin/                     # WordPress PHP plugin
-│   ├── elementeer-mcp.php      # Plugin bootstrap
-│   ├── includes/
-│   │   ├── Plugin.php          # Singleton main class
-│   │   ├── Auth/Manager.php    # X-Elementeer-Key auth + capability checks
-│   │   ├── Api/Router.php      # REST route registration
-│   │   ├── Api/Templates.php   # Template CRUD controller
-│   │   ├── Api/Site.php        # Site info endpoint
-│   │   ├── Governance/Settings.php
-│   │   └── Activation/Mode.php
-│   ├── tests/
-│   │   ├── bootstrap.php
-│   │   ├── Stubs/              # WordPress class stubs for unit tests
-│   │   ├── Unit/
-│   │   │   ├── Auth/ManagerTest.php
-│   │   │   ├── Governance/SettingsTest.php
-│   │   │   ├── Activation/ModeTest.php
-│   │   │   └── Api/TemplatesTest.php
-│   │   └── Integration/RestApiTest.php
-│   ├── composer.json
-│   └── phpunit.xml
 │
 ├── mcp-server/                 # Node.js/TypeScript MCP server
 │   ├── src/
@@ -254,37 +209,19 @@ elementeer-mcp/
 │   │   ├── cli.ts              # elementeer-mcp binary
 │   │   ├── client.ts           # ElementeerClient (axios + error mapping)
 │   │   ├── config.ts           # ~/.elementeer/config.json
-│   │   └── tools/
-│   │       ├── index.ts
-│   │       ├── library.ts      # list/get/create/update/delete/rename/duplicate/bulk_rename
-│   │       ├── content.ts      # get/update template data, extract sections
-│   │       ├── organization.ts # list_by_type, set_category, set_tags, audit_library
-│   │       └── site.ts         # get_site_info, list_sites, switch_site
-│   ├── src/__tests__/
-│   │   ├── client.test.ts
-│   │   ├── config.test.ts
-│   │   ├── tools/
-│   │   │   ├── library.test.ts
-│   │   │   ├── content.test.ts
-│   │   │   ├── organization.test.ts
-│   │   │   └── site.test.ts
-│   │   ├── integration/client-api.test.ts
-│   │   └── smoke/server.test.ts
+│   │   └── tools/              # 128+ Free tools
+│   ├── __tests__/
 │   ├── vitest.config.ts
 │   └── package.json
 │
-└── shared/                     # Shared TypeScript types
-    ├── src/
-    │   ├── index.ts
-    │   ├── types/
-    │   │   ├── template.ts
-    │   │   ├── auth.ts
-    │   │   ├── config.ts
-    │   │   └── errors.ts
-    │   └── __tests__/types.test.ts
-    ├── vitest.config.ts
-    └── package.json
+├── shared/                     # Shared TypeScript types
+│   ├── src/
+│   └── package.json
+│
+└── mirror/                     # Free mirror staging + scripts
 ```
+
+> **WordPress Plugin**: Lives in [elementeer/elementeer](https://github.com/elementeer/elementeer). Plugin mirror scripts (`prepare-plugin-mirror.mjs`, `verify-plugin-mirror.mjs`) read from that repo.
 
 ---
 
@@ -306,9 +243,6 @@ npm run test:coverage --workspace=mcp-server
 # Run shared type tests
 npm run test --workspace=shared
 
-# Run PHP tests (from plugin/)
-cd plugin && composer install && vendor/bin/phpunit
-
 # Watch mode during development
 npm run test:watch --workspace=mcp-server
 ```
@@ -318,7 +252,7 @@ npm run test:watch --workspace=mcp-server
 1. Fork and clone
 2. Create a branch: `git checkout -b feat/your-feature`
 3. Make changes with tests
-4. Run the full test suite: `npm test` + `phpunit`
+4. Run the full test suite: `npm test`
 5. Open a pull request using the provided template
 
 ---
@@ -333,5 +267,5 @@ Never commit API keys or `.env` files. Use governance settings to restrict destr
 
 ## License
 
-MCP Server: Apache-2.0 — see [LICENSE](./LICENSE).
-WordPress Plugin: GPL-2.0-or-later — see [plugin/composer.json](./plugin/composer.json).
+Apache-2.0 — see [LICENSE](./LICENSE).
+WordPress Plugin: GPL-2.0-or-later — see [elementeer/elementeer](https://github.com/elementeer/elementeer).
