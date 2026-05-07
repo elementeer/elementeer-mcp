@@ -8,7 +8,7 @@ on:
 
 jobs:
   verify:
-    name: Verify Mirror Contains Only Free Tier Tools
+    name: Verify Free Mirror Gate
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -17,9 +17,7 @@ jobs:
           node-version: '20'
           cache: 'npm'
       - run: npm ci
-      - run: npm run build
-      - name: Run Mirror Export Verification
-        run: node scripts/verify-mirror-export.mjs
+      - name: Run Full Free Mirror Gate
+        run: npm run release:free-mirror:gate
         env:
-          # Optional environment variables
           CI: true
