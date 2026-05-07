@@ -132,12 +132,6 @@ export function registerModuleWizards(
       requiredCapability: 'plugin-stack-context:read',
     },
     {
-      id: 'forms',
-      label: 'Forms',
-      description: 'Detect form plugins → assess submission rate → recommend anti-spam',
-      requiredCapability: 'plugin-stack-context:read',
-    },
-    {
       id: 'comments',
       label: 'Comments',
       description: 'Assess volume → moderation backlog → recommend plugin or disabling',
@@ -165,24 +159,6 @@ export function registerModuleWizards(
       id: 'health',
       label: 'Site Health',
       description: 'PHP version → memory → DB bloat → cache → hosting recommendation',
-      requiredCapability: 'plugin-stack-context:read',
-    },
-    {
-      id: 'ally',
-      label: 'Accessibility',
-      description: 'Recommend built‑in scanner vs Ally based on site needs',
-      requiredCapability: 'plugin-stack-context:read',
-    },
-    {
-      id: 'lms',
-      label: 'LMS',
-      description: 'Plugin recommendation, course structure advice, Elementor integration',
-      requiredCapability: 'plugin-stack-context:read',
-    },
-    {
-      id: 'charity',
-      label: 'Charity',
-      description: 'Fundraising setup, donation form optimization, payment gateway tips',
       requiredCapability: 'plugin-stack-context:read',
     },
   ];

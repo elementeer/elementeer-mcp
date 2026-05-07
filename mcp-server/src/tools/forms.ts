@@ -489,481 +489,6 @@ function parseGravityFormsJson(gravityData: any): { fields: Array<z.infer<typeof
   return { fields, warnings };
 }
 
-export function registerFormTools(
-  server: McpServer,
-  getClient: (siteId?: string) => ElementeerClient,
-): void {
-
-  // ------------------------------------------------------------------ //
-  // create_form_light (FORM-004)
-  // ------------------------------------------------------------------ //
-  server.tool(
-    'create_form_light',
-    'Generate Elementor Form widget JSON from a form specification. Free tier form creation. Input: array of field objects with type, label, required flag, and optional options. Output is valid Elementor form widget JSON that can be inserted via update_page_data or create_template.',
-    {
-      site_id: z.string().optional(),
-      fields: z.array(formFieldSchema).min(1).max(20)
-                .describe('Form field specifications'),
-      form_name: z.string().optional().default('Contact Form')
-                .describe('Form name for identification'),
-      email_to: z.string().email().optional()
-                .describe('Email address to send submissions to (optional)'),
-      redirect_url: z.string().url().optional()
-                .describe('URL to redirect after submission (optional)'),
-      success_message: z.string().optional()
-                .describe('Custom success message (optional)'),
-      note: z.string().optional()
-                .describe('Optional note for queued changes (auto-queued for L2 governance)'),
-      consent: z.boolean().optional()
-                .describe('Explicit consent required for L3 operations (not needed for L2 auto-queue)'),
-    },
-    async ({ site_id, fields, form_name, email_to, redirect_url, success_message, note, consent }) => {
-      const client = getClient(site_id);
-      const toolName = 'create_form_light';
-      const level = GOVERNANCE_LEVELS[toolName] || 'L0';
-      
-      // L3 requires explicit consent
-      if (level === 'L3' && consent !== true) {
-        return {
-          content: [{
-            type: 'text',
-            text: `Operation "${toolName}" requires explicit consent (governance level L3). Please provide consent: true to proceed.`,
-          }],
-        };
-      }
-      
-      // Generate the form widget JSON
-      const formWidget = generateFormWidget(fields, {
-        formName: form_name,
-        emailTo: email_to,
-        redirectUrl: redirect_url,
-        successMessage: success_message,
-      });
-      
-      // For L2/L3, queue the creation
-      if (level === 'L2' || level === 'L3') {
-        const change = await client.createChange({
-          operation: 'create_template', // We'll create a template with the form
-          params: {
-            title: `${form_name} (Form)`,
-            type: 'widget',
-            elementor_data: [formWidget],
-            status: 'draft',
-          },
-          note: note || `Form "${form_name}" auto-queued by governance level ${level}`,
-        });
-
-        const lines = [
-          `🟡 Form template queued for review (governance level ${level})`,
-          `   ID: ${change.id}`,
-          `   Operation: create_template`,
-          `   Form name: ${form_name}`,
-          `   Fields: ${fields.length} field(s)`,
-          note ? `   Note: ${note}` : '',
-          '',
-          'Next steps:',
-          '  1. review_change(change_id, "approve") — approve it',
-          '  2. apply_change(change_id)             — create the form template',
-          '  Or: review_change(change_id, "reject") to discard.',
-          '',
-          'After approval, use update_page_data to insert the form into a page.',
-        ].filter(Boolean);
-
-        return { content: [{ type: 'text', text: lines.join('\n') }] };
-      }
-      
-      // L0/L1: Return the JSON directly
-      const lines = [
-        `✅ Form "${form_name}" generated`,
-        `   Fields: ${fields.length} field(s)`,
-        `   Email notification: ${email_to ? 'Yes' : 'No'}`,
-        `   Redirect: ${redirect_url || 'None'}`,
-        '',
-        '## Elementor Form Widget JSON',
-        '```json',
-        JSON.stringify([formWidget], null, 2),
-        '```',
-        '',
-        '## Usage',
-        '1. Copy the JSON above',
-        '2. Use update_page_data(page_id, elementor_data: JSON) to insert into a page',
-        '3. Or use create_template to save as a reusable template',
-      ];
-
-      return { content: [{ type: 'text', text: lines.join('\n') }] };
-    },
-  );
-
-  // ------------------------------------------------------------------ //
-  // list_forms (FORM-008)
-  // ------------------------------------------------------------------ //
-  server.tool(
-    'list_forms',
-    'List forms across active form plugins (Gravity Forms, Contact Form 7, WPForms, Ninja Forms).',
-    {
-      site_id: z.string().optional().describe('Site ID from config (defaults to active site)'),
-      plugin: z.enum(['gravityforms', 'contact-form-7', 'wpforms', 'ninja-forms', 'all']).optional().default('all').describe('Specific plugin to list forms from'),
-      page: z.number().optional().default(1).describe('Page number'),
-      per_page: z.number().optional().default(20).describe('Items per page'),
-    },
-    async ({ site_id, plugin, page, per_page }) => {
-      try {
-      const _client = getClient(site_id);
-        const forms = await _client.listForms({ plugin: plugin === 'all' ? undefined : plugin, page, per_page });
-
-        const lines: string[] = [
-          '# Forms',
-          `**Plugin**: ${plugin}`,
-          `**Total forms**: ${forms.total || forms.length}`,
-        ];
-
-        if (forms.forms && forms.forms.length > 0) {
-          lines.push('\n## Forms');
-          lines.push('| ID | Title | Fields | Entries | Shortcode |');
-          lines.push('|----|-------|--------|---------|-----------|');
-          for (const form of forms.forms.slice(0, 20)) {
-            lines.push(`| ${form.id} | ${form.title} | ${form.field_count || '—'} | ${form.entry_count || '—'} | ${form.shortcode || '—'} |`);
-          }
-          if (forms.forms.length > 20) {
-            lines.push(`| … ${forms.forms.length - 20} more … |`);
-          }
-        } else {
-          lines.push('\nNo forms found.');
-        }
-
-        return {
-          content: [{
-            type: 'text',
-            text: lines.join('\n'),
-          }],
-        };
-      } catch (error) {
-        return {
-          content: [{
-            type: 'text',
-            text: `❌ Error listing forms: ${error instanceof Error ? error.message : String(error)}`,
-          }],
-        };
-      }
-    },
-  );
-      
-
-  // ------------------------------------------------------------------ //
-  // list_form_templates (FORM-007)
-  // ------------------------------------------------------------------ //
-  server.tool(
-    'list_form_templates',
-    'List pre-built Elementor form templates: Contact, Newsletter Signup, Quote Request, Booking Inquiry, Event Registration, Survey, Feedback. Each template is optimized for conversion and uses Global Typography/Colors.',
-    {
-      site_id: z.string().optional(),
-      category: z.enum(['all', 'contact', 'lead-generation', 'feedback', 'registration']).optional().default('all')
-                .describe('Filter templates by category'),
-    },
-    async ({ site_id, category }) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const _client = getClient(site_id);
-      
-      // Define form templates (7 minimum as per FORM-007)
-      const formTemplates = [
-        {
-          id: 'contact-form',
-          title: 'Contact Form',
-          description: 'Standard contact form with name, email, message, and optional phone number',
-          category: 'contact',
-          fields: [
-            { type: 'text', label: 'Name', required: true, placeholder: 'Your name' },
-            { type: 'email', label: 'Email', required: true, placeholder: 'your@email.com' },
-            { type: 'tel', label: 'Phone', required: false, placeholder: 'Your phone number' },
-            { type: 'textarea', label: 'Message', required: true, placeholder: 'How can we help you?' },
-          ],
-          recommended_email_to: '{site_admin_email}',
-          recommended_success_message: 'Thank you! We\'ll get back to you soon.',
-        },
-        {
-          id: 'newsletter-signup',
-          title: 'Newsletter Signup',
-          description: 'Simple newsletter subscription form with email and optional name',
-          category: 'lead-generation',
-          fields: [
-            { type: 'text', label: 'First Name', required: false, placeholder: 'First name' },
-            { type: 'text', label: 'Last Name', required: false, placeholder: 'Last name' },
-            { type: 'email', label: 'Email', required: true, placeholder: 'your@email.com' },
-            { type: 'checkbox', label: 'Interests', required: false, options: ['Technology', 'Marketing', 'Design', 'Business'] },
-          ],
-          recommended_email_to: '{site_admin_email}',
-          recommended_success_message: 'Thank you for subscribing!',
-        },
-        {
-          id: 'quote-request',
-          title: 'Quote Request',
-          description: 'Detailed quote request form for service businesses',
-          category: 'lead-generation',
-          fields: [
-            { type: 'text', label: 'Company Name', required: true, placeholder: 'Your company' },
-            { type: 'text', label: 'Contact Person', required: true, placeholder: 'Your name' },
-            { type: 'email', label: 'Email', required: true, placeholder: 'your@email.com' },
-            { type: 'tel', label: 'Phone', required: true, placeholder: 'Your phone number' },
-            { type: 'select', label: 'Service Type', required: true, options: ['Web Design', 'Development', 'Consulting', 'Maintenance', 'Other'] },
-            { type: 'textarea', label: 'Project Details', required: true, placeholder: 'Tell us about your project...' },
-            { type: 'date', label: 'Desired Start Date', required: false },
-          ],
-          recommended_email_to: '{site_admin_email}',
-          recommended_success_message: 'Thank you! We\'ll send you a quote within 24 hours.',
-        },
-        {
-          id: 'booking-inquiry',
-          title: 'Booking Inquiry',
-          description: 'Appointment or booking request form',
-          category: 'registration',
-          fields: [
-            { type: 'text', label: 'Name', required: true, placeholder: 'Your name' },
-            { type: 'email', label: 'Email', required: true, placeholder: 'your@email.com' },
-            { type: 'tel', label: 'Phone', required: true, placeholder: 'Your phone number' },
-            { type: 'date', label: 'Preferred Date', required: true },
-            { type: 'select', label: 'Preferred Time', required: true, options: ['Morning (9-12)', 'Afternoon (12-5)', 'Evening (5-8)'] },
-            { type: 'select', label: 'Service', required: true, options: ['Consultation', 'Demo', 'Training', 'Support'] },
-            { type: 'textarea', label: 'Additional Notes', required: false, placeholder: 'Any special requirements?' },
-          ],
-          recommended_email_to: '{site_admin_email}',
-          recommended_success_message: 'Booking request received! We\'ll confirm shortly.',
-        },
-        {
-          id: 'event-registration',
-          title: 'Event Registration',
-          description: 'Event registration form with attendee details',
-          category: 'registration',
-          fields: [
-            { type: 'text', label: 'Full Name', required: true, placeholder: 'Your full name' },
-            { type: 'email', label: 'Email', required: true, placeholder: 'your@email.com' },
-            { type: 'text', label: 'Job Title', required: false, placeholder: 'Your position' },
-            { type: 'text', label: 'Company', required: false, placeholder: 'Your company' },
-            { type: 'select', label: 'Ticket Type', required: true, options: ['General Admission', 'VIP', 'Student', 'Group (5+)'] },
-            { type: 'number', label: 'Number of Tickets', required: true, placeholder: '1' },
-            { type: 'checkbox', label: 'Dietary Requirements', required: false, options: ['Vegetarian', 'Vegan', 'Gluten-free', 'Other'] },
-          ],
-          recommended_email_to: '{site_admin_email}',
-          recommended_success_message: 'Registration confirmed! Check your email for details.',
-        },
-        {
-          id: 'survey-form',
-          title: 'Survey Form',
-          description: 'Customer feedback or survey form',
-          category: 'feedback',
-          fields: [
-            { type: 'text', label: 'Name', required: false, placeholder: 'Optional' },
-            { type: 'email', label: 'Email', required: false, placeholder: 'Optional' },
-            { type: 'select', label: 'Overall Satisfaction', required: true, options: ['Very Satisfied', 'Satisfied', 'Neutral', 'Dissatisfied', 'Very Dissatisfied'] },
-            { type: 'radio', label: 'Would you recommend us?', required: true, options: ['Yes', 'No', 'Maybe'] },
-            { type: 'textarea', label: 'What could we improve?', required: false, placeholder: 'Your suggestions...' },
-            { type: 'textarea', label: 'Additional Comments', required: false, placeholder: 'Any other feedback?' },
-          ],
-          recommended_email_to: '{site_admin_email}',
-          recommended_success_message: 'Thank you for your feedback!',
-        },
-        {
-          id: 'feedback-form',
-          title: 'Feedback Form',
-          description: 'General feedback form for products or services',
-          category: 'feedback',
-          fields: [
-            { type: 'text', label: 'Name', required: false, placeholder: 'Optional' },
-            { type: 'email', label: 'Email', required: false, placeholder: 'Optional' },
-            { type: 'select', label: 'Feedback Type', required: true, options: ['Bug Report', 'Feature Request', 'General Feedback', 'Complaint'] },
-            { type: 'textarea', label: 'Feedback', required: true, placeholder: 'Please describe your feedback...' },
-            { type: 'checkbox', label: 'Follow-up Options', required: false, options: ['Email me updates', 'Contact me for more details', 'Add me to beta testing'] },
-          ],
-          recommended_email_to: '{site_admin_email}',
-          recommended_success_message: 'Thank you for your feedback!',
-        },
-      ];
-
-      // Filter by category if specified
-      const filteredTemplates = category === 'all' 
-        ? formTemplates 
-        : formTemplates.filter(t => t.category === category);
-
-      // Generate output
-      const lines = [
-        `Form Template Library (${filteredTemplates.length} templates)`,
-        '',
-        ...filteredTemplates.map(t => [
-          `### ${t.title}`,
-          `  ID: ${t.id}`,
-          `  Category: ${t.category}`,
-          `  Description: ${t.description}`,
-          `  Fields: ${t.fields.length} field(s)`,
-          `  Recommended email: ${t.recommended_email_to}`,
-          '',
-          '  **Usage:**',
-          `  create_form_light(fields: ${JSON.stringify(t.fields)}, form_name: "${t.title}", email_to: "${t.recommended_email_to}", success_message: "${t.recommended_success_message}")`,
-          '',
-        ].join('\n')),
-        '',
-        '**How to use:**',
-        '1. Copy the create_form_light command for your chosen template',
-        '2. Run it to generate Elementor form widget JSON',
-        '3. Use update_page_data to insert into a page, or create_template to save as reusable template',
-      ];
-
-       return { content: [{ type: 'text', text: lines.join('\n') }] };
-    },
-  );
-
-  // ------------------------------------------------------------------ //
-  // migrate_form (FORM-006)
-  // ------------------------------------------------------------------ //
-  server.tool(
-    'migrate_form',
-    'Migrate forms between plugins: CF7 → Elementor Forms, WPForms → Elementor Forms, Gravity Forms → Elementor Forms. Preserves field structure and settings. Reports unmappable fields as warnings.',
-    {
-      site_id: z.string().optional(),
-      source_type: z.enum(['cf7', 'wpforms', 'gravityforms']).describe('Source form plugin type'),
-      source_data: z.string().describe('Form data: CF7 shortcode or WPForms/Gravity Forms JSON'),
-      form_name: z.string().optional().default('Migrated Form').describe('Name for the new Elementor form'),
-      email_to: z.string().email().optional().describe('Email address to send submissions to (optional)'),
-      success_message: z.string().optional().describe('Custom success message (optional)'),
-      note: z.string().optional().describe('Optional note for queued changes (auto-queued for L2 governance)'),
-      consent: z.boolean().optional().describe('Explicit consent required for L3 operations (not needed for L2 auto-queue)'),
-    },
-    async ({ site_id, source_type, source_data, form_name, email_to, success_message, note, consent }) => {
-      const client = getClient(site_id);
-      const toolName = 'migrate_form';
-      const level = GOVERNANCE_LEVELS[toolName] || 'L0';
-      
-      // L3 requires explicit consent
-      if (level === 'L3' && consent !== true) {
-        return {
-          content: [{
-            type: 'text',
-            text: `Operation "${toolName}" requires explicit consent (governance level L3). Please provide consent: true to proceed.`,
-          }],
-        };
-      }
-      
-      let fields: Array<z.infer<typeof formFieldSchema>> = [];
-      const warnings: string[] = [];
-      
-      try {
-        // Parse source data based on type
-        switch (source_type) {
-          case 'cf7':
-            const cf7Result = parseCf7Shortcode(source_data);
-            fields = cf7Result.fields;
-            warnings.push(...cf7Result.warnings);
-            break;
-          case 'wpforms':
-            const wpformsJson = JSON.parse(source_data);
-            const wpformsResult = parseWpFormsJson(wpformsJson);
-            fields = wpformsResult.fields;
-            warnings.push(...wpformsResult.warnings);
-            break;
-          case 'gravityforms':
-            const gravityJson = JSON.parse(source_data);
-            const gravityResult = parseGravityFormsJson(gravityJson);
-            fields = gravityResult.fields;
-            warnings.push(...gravityResult.warnings);
-            break;
-          default:
-            throw new Error(`Unsupported source type: ${source_type}`);
-        }
-      } catch (error) {
-        return {
-          content: [{
-            type: 'text',
-            text: `Failed to parse ${source_type} data: ${error instanceof Error ? error.message : String(error)}`,
-          }],
-          isError: true,
-        };
-      }
-      
-      if (fields.length === 0) {
-        return {
-          content: [{
-            type: 'text',
-            text: `No fields could be extracted from the ${source_type} data.`,
-          }],
-          isError: true,
-        };
-      }
-      
-      // Generate Elementor form widget
-      const formWidget = generateFormWidget(fields, {
-        formName: form_name,
-        emailTo: email_to,
-        successMessage: success_message,
-      });
-      
-      // For L2/L3, queue the creation
-      if (level === 'L2' || level === 'L3') {
-        const change = await client.createChange({
-          operation: 'create_template',
-          params: {
-            title: `${form_name} (Migrated from ${source_type})`,
-            type: 'widget',
-            elementor_data: [formWidget],
-            status: 'draft',
-          },
-          note: note || `Form migrated from ${source_type} auto-queued by governance level ${level}`,
-        });
-
-        const lines = [
-          `🟡 Migrated form queued for review (governance level ${level})`,
-          `   ID: ${change.id}`,
-          `   Operation: create_template`,
-          `   Form name: ${form_name}`,
-          `   Source: ${source_type}`,
-          `   Fields migrated: ${fields.length} field(s)`,
-          warnings.length > 0 ? `   Warnings: ${warnings.length} (see details below)` : '',
-          note ? `   Note: ${note}` : '',
-          '',
-          'Next steps:',
-          '  1. review_change(change_id, "approve") — approve it',
-          '  2. apply_change(change_id)             — create the form template',
-          '  Or: review_change(change_id, "reject") to discard.',
-          '',
-          'After approval, use update_page_data to insert the form into a page.',
-          '',
-          ...(warnings.length > 0 ? [
-            '**Migration warnings:**',
-            ...warnings.map(w => `• ${w}`),
-            ''
-          ] : []),
-        ].filter(Boolean);
-
-        return { content: [{ type: 'text', text: lines.join('\n') }] };
-      }
-      
-      // L0/L1: Return the JSON directly
-      const lines = [
-        `✅ Form migrated from ${source_type}`,
-        `   Form name: ${form_name}`,
-        `   Fields: ${fields.length} field(s)`,
-        `   Email notification: ${email_to ? 'Yes' : 'No'}`,
-        warnings.length > 0 ? `   Warnings: ${warnings.length}` : '',
-        '',
-        '## Elementor Form Widget JSON',
-        '```json',
-        JSON.stringify([formWidget], null, 2),
-        '```',
-        '',
-        '## Usage',
-        '1. Copy the JSON above',
-        '2. Use update_page_data(page_id, elementor_data: JSON) to insert into a page',
-        '3. Or use create_template to save as a reusable template',
-        '',
-        ...(warnings.length > 0 ? [
-          '## Migration Warnings',
-          ...warnings.map(w => `• ${w}`),
-          ''
-        ] : []),
-      ].filter(Boolean);
-
-      return { content: [{ type: 'text', text: lines.join('\n') }] };
-    },
-  );
-}
-
 export function registerFormFreeTools(
   server: McpServer,
   getClient: (siteId?: string) => ElementeerClient,
@@ -1076,6 +601,57 @@ export function registerFormFreeTools(
   // ------------------------------------------------------------------ //
   // migrate_form (FORM-006)
   // ------------------------------------------------------------------ //
+
+  // ------------------------------------------------------------------ //
+  // wizard_forms (FORM-009)
+  // ------------------------------------------------------------------ //
+  server.tool(
+    'wizard_forms',
+    'Forms module wizard — Detect form plugins, assess submission rate, recommend anti-spam.',
+    {
+      site_id: z.string().optional().describe('Site ID from config (defaults to active site)'),
+    },
+    async ({ site_id }) => {
+      try {
+        const client = getClient(site_id);
+        const result = await client.getWizard('forms');
+
+        return {
+          content: [{
+            type: 'text',
+            text: [
+              '# Forms Wizard',
+              `**Status**: ${result.status}`,
+              '',
+              '## Gaps',
+              ...result.gaps.map(gap => `- ${gap.severity.toUpperCase()}: ${gap.description}`),
+              '',
+              '## Recommendations',
+              ...result.recommendations.map(rec => `- ${rec.priority.toUpperCase()}: ${rec.title} — ${rec.description}`),
+              '',
+              result.suggested_tools.length > 0 ? [
+                '## Suggested MCP Tools',
+                ...result.suggested_tools.map(tool => `- \`${tool.tool}\`: ${tool.purpose}` + (tool.governance_level ? ` (${tool.governance_level})` : '')),
+                ''
+              ].join('\n') : '',
+              result.suggested_plugins.length > 0 ? [
+                '## Suggested Plugins',
+                ...result.suggested_plugins.map(plugin => `- **${plugin.name}** (${plugin.slug}): ${plugin.reason}`),
+                ''
+              ].join('\n') : '',
+            ].filter(line => line !== '').join('\n'),
+          }],
+        };
+      } catch (error) {
+        return {
+          content: [{
+            type: 'text',
+            text: `❌ Error running wizard: ${error instanceof Error ? error.message : String(error)}`,
+          }],
+        };
+      }
+    },
+  );
 }
 
 
@@ -1349,6 +925,211 @@ export function registerFormAdvancedTools(
       ].filter(Boolean);
 
       return { content: [{ type: 'text', text: lines.join('\n') }] };
+    },
+  );
+
+  // ------------------------------------------------------------------ //
+  // list_form_templates (FORM-007)
+  // ------------------------------------------------------------------ //
+  server.tool(
+    'list_form_templates',
+    'List pre-built Elementor form templates: Contact, Newsletter Signup, Quote Request, Booking Inquiry, Event Registration, Survey, Feedback. Each template is optimized for conversion and uses Global Typography/Colors.',
+    {
+      site_id: z.string().optional(),
+      category: z.enum(['all', 'contact', 'lead-generation', 'feedback', 'registration']).optional().default('all')
+                .describe('Filter templates by category'),
+    },
+    async ({ site_id, category }) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const _client = getClient(site_id);
+      
+      const formTemplates = [
+        {
+          id: 'contact-form', title: 'Contact Form',
+          description: 'Standard contact form with name, email, message, and optional phone number',
+          category: 'contact',
+          fields: [
+            { type: 'text', label: 'Name', required: true, placeholder: 'Your name' },
+            { type: 'email', label: 'Email', required: true, placeholder: 'your@email.com' },
+            { type: 'tel', label: 'Phone', required: false, placeholder: 'Your phone number' },
+            { type: 'textarea', label: 'Message', required: true, placeholder: 'How can we help you?' },
+          ],
+          recommended_email_to: '{site_admin_email}',
+          recommended_success_message: 'Thank you! We\'ll get back to you soon.',
+        },
+        {
+          id: 'newsletter-signup', title: 'Newsletter Signup',
+          description: 'Simple newsletter subscription form with email and optional name',
+          category: 'lead-generation',
+          fields: [
+            { type: 'text', label: 'First Name', required: false, placeholder: 'First name' },
+            { type: 'text', label: 'Last Name', required: false, placeholder: 'Last name' },
+            { type: 'email', label: 'Email', required: true, placeholder: 'your@email.com' },
+            { type: 'checkbox', label: 'Interests', required: false, options: ['Technology', 'Marketing', 'Design', 'Business'] },
+          ],
+          recommended_email_to: '{site_admin_email}',
+          recommended_success_message: 'Thank you for subscribing!',
+        },
+        {
+          id: 'quote-request', title: 'Quote Request',
+          description: 'Detailed quote request form for service businesses',
+          category: 'lead-generation',
+          fields: [
+            { type: 'text', label: 'Company Name', required: true, placeholder: 'Your company' },
+            { type: 'text', label: 'Contact Person', required: true, placeholder: 'Your name' },
+            { type: 'email', label: 'Email', required: true, placeholder: 'your@email.com' },
+            { type: 'tel', label: 'Phone', required: true, placeholder: 'Your phone number' },
+            { type: 'select', label: 'Service Type', required: true, options: ['Web Design', 'Development', 'Consulting', 'Maintenance', 'Other'] },
+            { type: 'textarea', label: 'Project Details', required: true, placeholder: 'Tell us about your project...' },
+            { type: 'date', label: 'Desired Start Date', required: false },
+          ],
+          recommended_email_to: '{site_admin_email}',
+          recommended_success_message: 'Thank you! We\'ll send you a quote within 24 hours.',
+        },
+        {
+          id: 'booking-inquiry', title: 'Booking Inquiry',
+          description: 'Appointment or booking request form',
+          category: 'registration',
+          fields: [
+            { type: 'text', label: 'Name', required: true, placeholder: 'Your name' },
+            { type: 'email', label: 'Email', required: true, placeholder: 'your@email.com' },
+            { type: 'tel', label: 'Phone', required: true, placeholder: 'Your phone number' },
+            { type: 'date', label: 'Preferred Date', required: true },
+            { type: 'select', label: 'Preferred Time', required: true, options: ['Morning (9-12)', 'Afternoon (12-5)', 'Evening (5-8)'] },
+            { type: 'select', label: 'Service', required: true, options: ['Consultation', 'Demo', 'Training', 'Support'] },
+            { type: 'textarea', label: 'Additional Notes', required: false, placeholder: 'Any special requirements?' },
+          ],
+          recommended_email_to: '{site_admin_email}',
+          recommended_success_message: 'Booking request received! We\'ll confirm shortly.',
+        },
+        {
+          id: 'event-registration', title: 'Event Registration',
+          description: 'Event registration form with attendee details',
+          category: 'registration',
+          fields: [
+            { type: 'text', label: 'Full Name', required: true, placeholder: 'Your full name' },
+            { type: 'email', label: 'Email', required: true, placeholder: 'your@email.com' },
+            { type: 'text', label: 'Job Title', required: false, placeholder: 'Your position' },
+            { type: 'text', label: 'Company', required: false, placeholder: 'Your company' },
+            { type: 'select', label: 'Ticket Type', required: true, options: ['General Admission', 'VIP', 'Student', 'Group (5+)'] },
+            { type: 'number', label: 'Number of Tickets', required: true, placeholder: '1' },
+            { type: 'checkbox', label: 'Dietary Requirements', required: false, options: ['Vegetarian', 'Vegan', 'Gluten-free', 'Other'] },
+          ],
+          recommended_email_to: '{site_admin_email}',
+          recommended_success_message: 'Registration confirmed! Check your email for details.',
+        },
+        {
+          id: 'survey-form', title: 'Survey Form',
+          description: 'Customer feedback or survey form',
+          category: 'feedback',
+          fields: [
+            { type: 'text', label: 'Name', required: false, placeholder: 'Optional' },
+            { type: 'email', label: 'Email', required: false, placeholder: 'Optional' },
+            { type: 'select', label: 'Overall Satisfaction', required: true, options: ['Very Satisfied', 'Satisfied', 'Neutral', 'Dissatisfied', 'Very Dissatisfied'] },
+            { type: 'radio', label: 'Would you recommend us?', required: true, options: ['Yes', 'No', 'Maybe'] },
+            { type: 'textarea', label: 'What could we improve?', required: false, placeholder: 'Your suggestions...' },
+            { type: 'textarea', label: 'Additional Comments', required: false, placeholder: 'Any other feedback?' },
+          ],
+          recommended_email_to: '{site_admin_email}',
+          recommended_success_message: 'Thank you for your feedback!',
+        },
+        {
+          id: 'feedback-form', title: 'Feedback Form',
+          description: 'General feedback form for products or services',
+          category: 'feedback',
+          fields: [
+            { type: 'text', label: 'Name', required: false, placeholder: 'Optional' },
+            { type: 'email', label: 'Email', required: false, placeholder: 'Optional' },
+            { type: 'select', label: 'Feedback Type', required: true, options: ['Bug Report', 'Feature Request', 'General Feedback', 'Complaint'] },
+            { type: 'textarea', label: 'Feedback', required: true, placeholder: 'Please describe your feedback...' },
+            { type: 'checkbox', label: 'Follow-up Options', required: false, options: ['Email me updates', 'Contact me for more details', 'Add me to beta testing'] },
+          ],
+          recommended_email_to: '{site_admin_email}',
+          recommended_success_message: 'Thank you for your feedback!',
+        },
+      ];
+
+      const filteredTemplates = category === 'all'
+        ? formTemplates
+        : formTemplates.filter(t => t.category === category);
+
+      const lines = [
+        `Form Template Library (${filteredTemplates.length} templates)`,
+        '',
+        ...filteredTemplates.map(t => [
+          `### ${t.title}`,
+          `  ID: ${t.id}`,
+          `  Category: ${t.category}`,
+          `  Description: ${t.description}`,
+          `  Fields: ${t.fields.length} field(s)`,
+          `  Recommended email: ${t.recommended_email_to}`,
+          '',
+          '  **Usage:**',
+          `  create_form_light(fields: ${JSON.stringify(t.fields)}, form_name: "${t.title}", email_to: "${t.recommended_email_to}", success_message: "${t.recommended_success_message}")`,
+          '',
+        ].join('\n')),
+        '',
+        '**How to use:**',
+        '1. Copy the create_form_light command for your chosen template',
+        '2. Run it to generate Elementor form widget JSON',
+        '3. Use update_page_data to insert into a page, or create_template to save as reusable template',
+      ];
+
+      return { content: [{ type: 'text', text: lines.join('\n') }] };
+    },
+  );
+
+  // ------------------------------------------------------------------ //
+  // list_forms (FORM-008)
+  // ------------------------------------------------------------------ //
+  server.tool(
+    'list_forms',
+    'List forms across active form plugins (Gravity Forms, Contact Form 7, WPForms, Ninja Forms).',
+    {
+      site_id: z.string().optional().describe('Site ID from config (defaults to active site)'),
+      plugin: z.enum(['gravityforms', 'contact-form-7', 'wpforms', 'ninja-forms', 'all']).optional().default('all').describe('Specific plugin to list forms from'),
+      page: z.number().optional().default(1).describe('Page number'),
+      per_page: z.number().optional().default(20).describe('Items per page'),
+    },
+    async ({ site_id, plugin, page, per_page }) => {
+      try {
+        const client = getClient(site_id);
+        const forms = await client.listForms({ plugin: plugin === 'all' ? undefined : plugin, page, per_page });
+
+        const lines: string[] = [
+          '# Forms',
+          `**Plugin**: ${plugin}`,
+          `**Total forms**: ${forms.total || forms.length}`,
+        ];
+
+        if (forms.forms && forms.forms.length > 0) {
+          lines.push('\n## Forms');
+          lines.push('| ID | Title | Fields | Entries | Shortcode |');
+          lines.push('|----|-------|--------|---------|-----------|');
+          for (const form of forms.forms.slice(0, 20)) {
+            lines.push(`| ${form.id} | ${form.title} | ${form.field_count || '—'} | ${form.entry_count || '—'} | ${form.shortcode || '—'} |`);
+          }
+          if (forms.forms.length > 20) {
+            lines.push(`| … ${forms.forms.length - 20} more … |`);
+          }
+        } else {
+          lines.push('\nNo forms found.');
+        }
+
+        return {
+          content: [{
+            type: 'text',
+            text: lines.join('\n'),
+          }],
+        };
+      } catch (error) {
+        return {
+          content: [{
+            type: 'text',
+            text: `❌ Error listing forms: ${error instanceof Error ? error.message : String(error)}`,
+          }],
+        };
+      }
     },
   );
 }
