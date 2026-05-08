@@ -13,7 +13,7 @@
 
 Elementor-native MCP bridge for the public Free surface. A Node.js MCP server with **128+ Free tools**, fine-grained governance (L0‑L3), and safe AI‑agent operation across brand setup, template composition, forms, translation, site health, LMS, charity, and accessibility workflows.
 
-> **WordPress Plugin**: The companion WordPress plugin lives at [elementeer/elementeer](https://github.com/elementeer/elementeer). It exposes the REST API under `/wp-json/elementeer/v1/` that this MCP server connects to.
+> **WordPress Plugin**: The companion WordPress plugin lives at [elementeer/elementeer](https://github.com/elementeer/elementeer). The Pro addon lives at [elementeer/elementeer-pro](https://github.com/elementeer/elementeer-pro) (private). Both expose REST API endpoints under `/wp-json/elementeer/v1/` that this MCP server connects to.
 
 ## Quick Start — Free
 
@@ -194,34 +194,31 @@ Unlike general-purpose WordPress MCP tools, Elementeer understands Elementor's a
 ```
 elementeer-mcp/
 ├── .github/
-│   ├── workflows/
-│   │   ├── ci.yml              # Test matrix: Node 22
-│   │   ├── release.yml         # npm publish on tag
-│   │   ├── repo-safety.yml     # Block committed secrets
-│   │   └── verify-mirror-export.yml  # Free mirror gate
-│   ├── dependabot.yml
-│   ├── PULL_REQUEST_TEMPLATE.md
-│   └── SECURITY.md
+│   └── workflows/
+│       ├── ci.yml
+│       ├── release.yml
+│       ├── repo-safety.yml
+│       └── verify-mirror-export.yml
 │
 ├── mcp-server/                 # Node.js/TypeScript MCP server
 │   ├── src/
-│   │   ├── index.ts            # MCP server entry
-│   │   ├── cli.ts              # elementeer-mcp binary
-│   │   ├── client.ts           # ElementeerClient (axios + error mapping)
-│   │   ├── config.ts           # ~/.elementeer/config.json
-│   │   └── tools/              # 128+ Free tools
-│   ├── __tests__/
-│   ├── vitest.config.ts
+│   │   ├── index.ts
+│   │   ├── client.ts
+│   │   ├── config.ts
+│   │   └── tools/
+│   ├── dist/                   # Compiled output
 │   └── package.json
 │
 ├── shared/                     # Shared TypeScript types
 │   ├── src/
 │   └── package.json
 │
-└── mirror/                     # Free mirror staging + scripts
+├── mirror/                     # Free mirror staging + scripts
+│
+└── .skillweave/                # SkillWeave session artifacts (gitignored)
 ```
 
-> **WordPress Plugin**: Lives in [elementeer/elementeer](https://github.com/elementeer/elementeer). Plugin mirror scripts (`prepare-plugin-mirror.mjs`, `verify-plugin-mirror.mjs`) read from that repo.
+> **WordPress Plugins**: Free plugin at [elementeer/elementeer](https://github.com/elementeer/elementeer). Pro addon at [elementeer/elementeer-pro](https://github.com/elementeer/elementeer-pro) (private). Plugin source lives in separate repositories.
 
 ---
 
@@ -268,4 +265,5 @@ Never commit API keys or `.env` files. Use governance settings to restrict destr
 ## License
 
 Apache-2.0 — see [LICENSE](./LICENSE).
-WordPress Plugin: GPL-2.0-or-later — see [elementeer/elementeer](https://github.com/elementeer/elementeer).
+WordPress Plugin (Free): GPL-2.0-or-later — see [elementeer/elementeer](https://github.com/elementeer/elementeer).
+WordPress Plugin (Pro): proprietary — see [elementeer/elementeer-pro](https://github.com/elementeer/elementeer-pro).
