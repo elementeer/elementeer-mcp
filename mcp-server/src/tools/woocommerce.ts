@@ -505,17 +505,7 @@ export function registerWooCommerceTools(
     async ({ site_id, action, id, name, slug, parent, description }) => {
       try {
         const client = getClient(site_id);
-        let result;
-        if (action === 'create') {
-          result = await client.createWooCommerceProductCategory({ name, slug, parent, description });
-        } else if (action === 'update') {
-          if (!id) throw new Error('Category ID required for update');
-          result = await client.updateWooCommerceProductCategory(id, { name, slug, parent, description });
-        } else {
-          if (!id) throw new Error('Category ID required for delete');
-          await client.deleteWooCommerceProductCategory(id);
-          result = { deleted: true };
-        }
+        const result = await client.manageWooCommerceProductCategory({ action, id, name, slug, parent, description });
 
         const lines: string[] = [
           `# Category ${action}d`,

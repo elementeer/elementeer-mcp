@@ -626,7 +626,36 @@ export class ElementeerClient {
     }
 
     if (status === 404) {
-      return new ElementeerApiError('not_found', data?.message ?? 'Not found.', status);
+      const msg = data?.message ?? 'Not found.';
+      // Detect Pro-only routes that would 404 when Pro plugin is not active
+      const url = err.config?.url ?? '';
+      const isProRoute =
+        url.includes('/woocommerce/') ||
+        url.includes('/booking/amelia/') ||
+        url.includes('/snapshots') ||
+        url.includes('/changes/') ||
+        url.includes('/workflows') ||
+        url.includes('/import/external') ||
+        url.includes('/export/data') ||
+        url.includes('/media/sideload') ||
+        url.includes('/media/search-stock') ||
+        url.includes('/translation/strings/translate') ||
+        url.includes('/translation/media/translate') ||
+        url.includes('/site/performance/optimize') ||
+        url.includes('/site/performance/cache-recommendation') ||
+        url.includes('/site/performance/diagnose') ||
+        url.includes('/site/performance/core-web-vitals') ||
+        url.includes('/site/performance/generate-critical-css') ||
+        url.includes('/site/performance/analyze');
+
+      if (isProRoute) {
+        return new ElementeerApiError(
+          'pro_required',
+          'This feature requires the Elementeer Pro plugin to be active on your WordPress site.',
+          status,
+        );
+      }
+      return new ElementeerApiError('not_found', msg, status);
     }
 
     if (status === 429) {
@@ -1241,63 +1270,68 @@ export class ElementeerClient {
   // ------------------------------------------------------------------ //
 
   async listWooCommerceProducts(params: { page?: number; per_page?: number; status?: string; category?: string; stock_status?: string; search?: string } = {}): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
+    const res = await this.http.get('/woocommerce/products', { params });
+    return res.data;
   }
 
   async getWooCommerceProduct(productId: number): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
+    const res = await this.http.get(`/woocommerce/products/${productId}`);
+    return res.data;
   }
 
   async createWooCommerceProduct(data: any): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
+    const res = await this.http.post('/woocommerce/products', data);
+    return res.data;
   }
 
   async updateWooCommerceProduct(productId: number, data: any): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
+    const res = await this.http.put(`/woocommerce/products/${productId}`, data);
+    return res.data;
   }
 
   async deleteWooCommerceProduct(productId: number, force?: boolean): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
+    const res = await this.http.delete(`/woocommerce/products/${productId}`, force ? { params: { force } } : {});
+    return res.data;
   }
 
   async listWooCommerceOrders(params: { page?: number; per_page?: number; status?: string; customer?: number; product?: number; date_after?: string; date_before?: string } = {}): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
+    const res = await this.http.get('/woocommerce/orders', { params });
+    return res.data;
   }
 
   async getWooCommerceOrder(orderId: number): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
+    const res = await this.http.get(`/woocommerce/orders/${orderId}`);
+    return res.data;
   }
 
   async updateWooCommerceOrderStatus(orderId: number, status: string, note?: string): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
+    const res = await this.http.put(`/woocommerce/orders/${orderId}/status`, { status, note });
+    return res.data;
   }
 
   async listWooCommerceProductCategories(params: { page?: number; per_page?: number; parent?: number } = {}): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
+    const res = await this.http.get('/woocommerce/product-categories', { params });
+    return res.data;
   }
 
-  async createWooCommerceProductCategory(data: any): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
-  }
-
-  async updateWooCommerceProductCategory(categoryId: number, data: any): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
-  }
-
-  async deleteWooCommerceProductCategory(categoryId: number): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
+  async manageWooCommerceProductCategory(data: { action: 'create' | 'update' | 'delete'; id?: number; name?: string; slug?: string; parent?: number; description?: string }): Promise<any> {
+    const res = await this.http.post('/woocommerce/product-categories/manage', data);
+    return res.data;
   }
 
   async getWooCommerceStoreSettings(): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
+    const res = await this.http.get('/woocommerce/store-settings');
+    return res.data;
   }
 
   async updateWooCommerceStoreSettings(data: any): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
+    const res = await this.http.put('/woocommerce/store-settings', data);
+    return res.data;
   }
 
   async setupWooCommercePages(params: { create_missing?: boolean; assign_template?: boolean } = {}): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
+    const res = await this.http.post('/woocommerce/pages/setup', params);
+    return res.data;
   }
 
   // ------------------------------------------------------------------ //
@@ -1305,35 +1339,35 @@ export class ElementeerClient {
   // ------------------------------------------------------------------ //
 
   async listForms(params: { plugin?: string; page?: number; per_page?: number } = {}): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
+    return { code: 'not_implemented', message: 'Forms management coming soon', data: { status: 501 } };
   }
 
   async getForm(formId: number, plugin?: string): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
+    return { code: 'not_implemented', message: 'Forms management coming soon', data: { status: 501 } };
   }
 
   async createForm(data: any): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
+    return { code: 'not_implemented', message: 'Forms management coming soon', data: { status: 501 } };
   }
 
   async updateForm(formId: number, data: any): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
+    return { code: 'not_implemented', message: 'Forms management coming soon', data: { status: 501 } };
   }
 
   async deleteForm(formId: number, plugin?: string): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
+    return { code: 'not_implemented', message: 'Forms management coming soon', data: { status: 501 } };
   }
 
   async listFormEntries(formId: number, params: { page?: number; per_page?: number; plugin?: string } = {}): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
+    return { code: 'not_implemented', message: 'Forms management coming soon', data: { status: 501 } };
   }
 
   async getFormEntry(entryId: number, plugin?: string): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
+    return { code: 'not_implemented', message: 'Forms management coming soon', data: { status: 501 } };
   }
 
   async exportFormEntries(formId: number, format: string = 'csv', plugin?: string): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
+    return { code: 'not_implemented', message: 'Forms management coming soon', data: { status: 501 } };
   }
 
   // ------------------------------------------------------------------ //
@@ -1345,19 +1379,19 @@ export class ElementeerClient {
   }
 
   async auditAssetLoading(pageId?: number): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
+    return { code: 'not_implemented', message: 'Asset loading audit coming soon', data: { status: 501 } };
   }
 
   async enableRedisCache(): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
+    return { code: 'not_implemented', message: 'Redis cache management coming soon', data: { status: 501 } };
   }
 
   async purgeCdnCache(): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
+    return { code: 'not_implemented', message: 'CDN cache purge coming soon', data: { status: 501 } };
   }
 
   async optimizeHtaccess(): Promise<any> {
-    return { code: 'not_implemented', message: 'WooCommerce integration coming soon', data: { status: 501 } };
+    return { code: 'not_implemented', message: '.htaccess optimization coming soon', data: { status: 501 } };
   }
 
   // ------------------------------------------------------------------ //
