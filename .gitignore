@@ -154,3 +154,10 @@ vite.config.ts.timestamp-*
 # Codenomad session-local state
 .codenomad/
 .skillweave/
+
+# Backup files (never commit)
+*.backup
+*.bak
+*.tar.gz
+.DS_Store
+__pycache__/
