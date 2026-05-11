@@ -1,5 +1,5 @@
 name: elementeer-mcp
-version: 2.0.3
+version: 2.1.0
 kind: mcp-server
 owner: elementeer
 license: Apache-2.0
@@ -10,6 +10,11 @@ description: >
 homepage: https://github.com/elementeer/elementeer-mcp
 repository: https://github.com/elementeer/elementeer-mcp
 entrypoint: mcp-server
+mcp:
+  transport: stdio
+  command: node
+  args:
+    - mcp-server/dist/index.js
 runtimes:
   node: ">=22"
 capabilities:
