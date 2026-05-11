@@ -1,0 +1,40 @@
+name: Release Gate
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'mcp-server/**'
+      - 'mirror/**'
+      - 'scripts/**'
+      - 'capability.yaml'
+      - '.forgejo/workflows/release-gate.yml'
+
+jobs:
+  pre-build:
+    runs-on: docker
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: |
+          cd mcp-server && npm ci
+      - name: Prepare plugin mirror
+        run: node scripts/prepare-plugin-mirror.mjs
+      - name: Pre-build quality gate
+        run: bash scripts/release-check.sh --pre-build
+
+  post-build:
+    needs: pre-build
+    runs-on: docker
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build MCP server
+        run: |
+          cd mcp-server && npm run build
+      - name: Post-build quality gate
+        run: bash scripts/release-check.sh --post-build

@@ -1,0 +1,18 @@
+name: Mirror to GitHub (private)
+on:
+  push:
+    branches: [main]
+
+jobs:
+  mirror:
+    runs-on: docker
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Push to GitHub (private mirror)
+        env:
+          GH_TOKEN: ${{ secrets.GH_MIRROR_TOKEN }}
+        run: |
+          git remote add github-private https://x-access-token:${GH_TOKEN}@github.com/elementeer/elementeer-mcp.git
+          git push github-private main --tags

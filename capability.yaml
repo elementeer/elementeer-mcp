@@ -1,5 +1,5 @@
 name: elementeer-mcp
-version: 2.1.1
+version: 2.0.3
 kind: mcp-server
 owner: elementeer
 license: Apache-2.0
@@ -10,19 +10,6 @@ description: >
 homepage: https://github.com/elementeer/elementeer-mcp
 repository: https://github.com/elementeer/elementeer-mcp
 entrypoint: mcp-server
-mcp:
-  transport: stdio
-  command: node
-  args:
-    - mcp-server/dist/index.js
-  supported_clients:
-    - claude-desktop
-    - claude-code
-    - opencode
-    - antigravity
-    - gemini-cli
-    - qwen
-    - codex
 runtimes:
   node: ">=22"
 capabilities:
@@ -48,6 +35,14 @@ capabilities:
   - seo-operations
   - performance-operations
   - ecommerce-operations
+discovery:
+  deferred_tools: true
+  tool_surface_prompt: >
+    Elementeer MCP provides 250+ AI-native tools for WordPress and Elementor site management,
+    including site auditing, page building, content orchestration, design system management,
+    add-on analytics, SEO operations, performance optimization, e-commerce operations,
+    accessibility scanning, translation management, and governed workflow automation.
+  auto_discover: true
 tags:
   - elementor
   - wordpress
