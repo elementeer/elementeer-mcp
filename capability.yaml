@@ -15,6 +15,14 @@ mcp:
   command: node
   args:
     - mcp-server/dist/index.js
+  supported_clients:
+    - claude-desktop
+    - claude-code
+    - opencode
+    - antigravity
+    - gemini-cli
+    - qwen
+    - codex
 runtimes:
   node: ">=22"
 capabilities:
