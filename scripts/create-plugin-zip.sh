@@ -13,8 +13,10 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-PLUGIN_DIR="$REPO_DIR/plugin"
-OUTPUT_DIR="$REPO_DIR/releases"
+# Source of truth: Forgejo elementeer plugin repo
+FORGEJO_PLUGIN="/Users/andrelange/Documents/repositories/forgejo/elementeer/elementeer"
+PLUGIN_DIR="${ELEMENTEER_PLUGIN_SOURCE:-$FORGEJO_PLUGIN}"
+OUTPUT_DIR="/tmp/elementeer-build-final"
 
 # Extract version from plugin header
 VERSION=$(grep -o "Version:[[:space:]]*[0-9]\.[0-9]\.[0-9]" "$PLUGIN_DIR/elementeer.php" | awk '{print $2}')
@@ -45,7 +47,6 @@ required_files=(
     "$PLUGIN_DIR/elementeer.php"
     "$PLUGIN_DIR/includes/Plugin.php"
     "$PLUGIN_DIR/includes/Api/Router.php"
-    "$PLUGIN_DIR/vendor/autoload.php"
 )
 
 for file in "${required_files[@]}"; do

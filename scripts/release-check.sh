@@ -86,8 +86,52 @@ check_plugin_origin() {
     fi
 }
 
-# ── Gate 1: Plugin PHP files exist ──────────────────────────────────────
-check_plugin_files() {
+# ── Gate 2: Plugin metadata (brand-critical, approval-gated) ──────────
+check_plugin_metadata() {
+    log_section "Plugin Metadata"
+
+    local plugin_header="$MIRROR_DIR/plugin-public/elementeer/elementeer.php"
+    if [ ! -f "$plugin_header" ]; then
+        log_fail "Cannot find elementeer.php for metadata check"
+        return
+    fi
+
+    local desc; desc=$(grep "Description:" "$plugin_header" | head -1)
+    if [ -z "$desc" ]; then
+        log_fail "Missing Description in plugin header"
+        return
+    fi
+
+    # Description is a strategic brand/marketing decision — NOT auto-changeable.
+    # Validate only — never modify. Changes require explicit approval.
+    local current_hash; current_hash=$(echo "$desc" | shasum -a 256 | cut -d' ' -f1)
+    local approved_hash_file="$MIRROR_DIR/plugin-public/.description-approved.sha256"
+
+    if [ -f "$approved_hash_file" ]; then
+        local approved_hash; approved_hash=$(cat "$approved_hash_file")
+        if [ "$current_hash" = "$approved_hash" ]; then
+            log_pass "Plugin description matches approved version"
+        else
+            log_fail "Plugin description CHANGED — this is a brand/marketing decision, not automated"
+            log_fail "  Current:  $desc"
+            log_fail "  Required manual approval before release"
+            log_fail "  To approve: update .description-approved.sha256 with the new hash"
+        fi
+    else
+        log_pass "Plugin description: $(echo "$desc" | sed 's/ \* Description: //')"
+        log_pass "No approved hash file yet — create .description-approved.sha256 to lock"
+    fi
+
+    # Plugin URI must point to Forgejo, not GitHub
+    local uri; uri=$(grep "Plugin URI:" "$plugin_header" | head -1)
+    if echo "$uri" | grep -q "git\.langevc\.com"; then
+        log_pass "Plugin URI: Forgejo"
+    elif echo "$uri" | grep -q "github\.com"; then
+        log_fail "Plugin URI points to GitHub — must be git.langevc.com"
+    else
+        log_warn "Plugin URI check: could not verify ($uri)"
+    fi
+}
     log_section "Plugin Files"
     local plugin_root="$MIRROR_DIR/plugin-public/elementeer"
     local manifest_file="$MIRROR_DIR/plugin-public/.build-manifest"
@@ -270,7 +314,7 @@ check_build_output() {
     fi
 }
 
-# ── Gate 7: capaability.yaml valid YAML ─────────────────────────────────
+# ── Gate 7: capability.yaml valid YAML ─────────────────────────────────
 check_capability_yaml() {
     log_section "Capability YAML"
     local yaml="$REPO_DIR/capability.yaml"
@@ -278,6 +322,114 @@ check_capability_yaml() {
         python3 -c "import yaml; yaml.safe_load(open('$yaml'))" 2>/dev/null && log_pass "Valid YAML" || log_fail "Invalid YAML"
     else
         log_fail "capability.yaml not found"
+    fi
+}
+
+# ── Gate 8: Live regression smoke-test ──────────────────────────────────
+# Runs against a configured site (default $ELEMENTEER_SITE_URL).
+# Must have jq and curl installed. API key from ~/.elementeer/config.json.
+check_live_regression() {
+    log_section "Live Regression (Smoke Test)"
+
+    local site_url="${ELEMENTEER_SITE_URL:-}"
+    local api_key="${ELEMENTEER_KEY:-}"
+
+    # Auto-detect from config
+    if [ -z "$site_url" ] || [ -z "$api_key" ]; then
+        local config="${ELEMENTEER_CONFIG_PATH:-$HOME/.elementeer/config.json}"
+        if [ -f "$config" ]; then
+            # Use first site in config
+            local active
+            active=$(python3 -c "
+import json,sys
+c=json.load(open('$config'))
+default=c.get('default_site','')
+sites=c.get('sites',{})
+if default and default in sites:
+    s=sites[default]
+else:
+    s=next(iter(sites.values()),{})
+print(json.dumps({'url':s.get('url',''),'key':s.get('api_key','')}))
+" 2>/dev/null || echo '{}')
+            site_url=$(echo "$active" | python3 -c "import json,sys; print(json.load(sys.stdin).get('url',''))" 2>/dev/null || echo "")
+            api_key=$(echo "$active" | python3 -c "import json,sys; print(json.load(sys.stdin).get('key',''))" 2>/dev/null || echo "")
+        fi
+    fi
+
+    if [ -z "$site_url" ]; then
+        log_warn "No site configured — skipping live regression (set ELEMENTEER_SITE_URL)"
+        return
+    fi
+
+    local base="${site_url%/}/wp-json/elementeer/v1"
+    local h="-H X-Elementeer-Key:$api_key -H Accept:application/json"
+    local fail_count=0
+
+    check_live() {
+        local label="$1" method="$2" url="$3" grep_for="${4:-}"
+        local curl_cmd="curl -sS -o /dev/null -w '%{http_code}' $h"
+        if [ "$method" = "POST" ] || [ "$method" = "PUT" ] || [ "$method" = "PATCH" ]; then
+            curl_cmd="curl -sS -o /dev/null -w '%{http_code}' $h -X $method ${5:-}"
+        fi
+        local code
+        code=$(eval "$curl_cmd \"$url\"" 2>/dev/null || echo "000")
+        if [[ "$code" =~ ^(200|201)$ ]]; then
+            log_pass "$label ($code)"
+        else
+            log_fail "$label ($code)"
+            fail_count=$((fail_count + 1))
+        fi
+    }
+
+    # P0: Site info
+    check_live "GET /site" "GET" "$base/site"
+
+    # P0: Template 1267 meta + data
+    check_live "GET /templates/1267" "GET" "$base/templates/1267"
+    check_live "GET /templates/1267/data" "GET" "$base/templates/1267/data"
+
+    # P0: Theme Builder routes
+    check_live "GET /theme-builder/templates" "GET" "$base/theme-builder/templates"
+    check_live "GET /theme-builder/templates/1267/conditions" "GET" "$base/theme-builder/templates/1267/conditions"
+
+    # P0: Templates collection — verify POST present
+    local tpl_methods
+    tpl_methods=$(curl -sS "https://www.marcus-urban.de/wp-json/elementeer/v1" | python3 -c "
+import json,sys
+try:
+    d=json.load(sys.stdin)
+    m=d.get('routes',{}).get('/elementeer/v1/templates',{}).get('methods',[])
+    print(','.join(m) if m else 'NONE')
+except: print('PARSE_ERROR')
+" 2>/dev/null || echo "CURL_FAIL")
+    if echo "$tpl_methods" | grep -q "POST"; then
+        log_pass "/templates route index shows POST"
+    else
+        log_fail "/templates route index missing POST (found: $tpl_methods)"
+        fail_count=$((fail_count + 1))
+    fi
+
+    # P0: Assessment — must return JSON, not HTML
+    local assessment_ct
+    assessment_ct=$(curl -sS -i $h "$base/site/assessment" 2>/dev/null | head -5 | grep -i 'content-type' | head -1 || echo "")
+    if echo "$assessment_ct" | grep -q 'application/json'; then
+        log_pass "/site/assessment returns JSON Content-Type"
+    else
+        log_fail "/site/assessment not JSON (Content-Type: $assessment_ct)"
+        fail_count=$((fail_count + 1))
+    fi
+
+    # P1: Export
+    check_live "POST /export/data" "POST" "$base/export/data" "-H 'Content-Type: application/json' -d '{\"post_type\":\"elementor_library\",\"limit\":1,\"format\":\"json\"}'"
+
+    # P1: Stock search
+    check_live "GET /media/search-stock" "GET" "$base/media/search-stock?query=test&per_page=1&source=unsplash"
+
+    # P1: Cache flush
+    check_live "POST /site/performance/flush-cache" "POST" "$base/site/performance/flush-cache"
+
+    if [ $fail_count -gt 0 ]; then
+        GATE_FAIL=$((GATE_FAIL + fail_count))
     fi
 }
 
@@ -304,6 +456,7 @@ case "$MODE" in
         check_forgejo_origin
         check_plugin_origin
         check_plugin_files
+        check_plugin_metadata
         check_php_syntax
         check_tsc
         check_mcp_tests
@@ -316,12 +469,18 @@ case "$MODE" in
         check_capability_yaml
         print_summary
         ;;
+    --live-smoke)
+        log_section "LIVE SMOKE TEST"
+        check_live_regression
+        print_summary
+        ;;
     full|*)
         log_section "FULL RELEASE GATE"
         # Pre-build
         check_forgejo_origin
         check_plugin_origin
         check_plugin_files
+        check_plugin_metadata
         check_php_syntax
         check_tsc
         check_mcp_tests
