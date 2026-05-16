@@ -357,4 +357,77 @@ export function registerVoxelTools(
       }
     },
   );
+
+  // ------------------------------------------------------------------ //
+  // voxel_marketplace_wizard (VOXEL-WIZARD — P2)
+  // ------------------------------------------------------------------ //
+  server.tool(
+    'voxel_marketplace_wizard',
+    'Guided marketplace setup wizard: inspects Voxel post types → creates product type → creates test listing → validates search. Gracefully degrades at every step when Voxel is not active.',
+    {
+      site_id: z.string().optional().describe('Site ID from config (defaults to active site)'),
+    },
+    async ({ site_id }) => {
+      try {
+        const client = getClient(site_id);
+        const result = await client.runVoxelMarketplaceWizard();
+
+        const lines: string[] = [
+          '# Voxel Marketplace Setup Wizard',
+          `**Voxel active**: ${result.voxel_active ? 'Yes' : 'No'}`,
+          `**Status**: ${result.status}`,
+          '',
+          '## Steps',
+        ];
+
+        for (const step of result.steps ?? []) {
+          const icon = step.success ? 'OK' : 'FAIL';
+          lines.push(`\n### ${icon} ${step.step}`);
+          if (step.action) lines.push(`**Action**: ${step.action}`);
+          if (step.reason) lines.push(`**Reason**: ${step.reason}`);
+          if (step.count) lines.push(`**Count**: ${step.count}`);
+          if (step.error) lines.push(`**Error**: ${step.error}`);
+          if (step.results_found !== undefined) lines.push(`**Results found**: ${step.results_found ? 'Yes' : 'No'}`);
+          if (step.hint) lines.push(`**Hint**: ${step.hint}`);
+          if (step.edit_url) lines.push(`**Edit URL**: ${step.edit_url}`);
+          if (step.listing_id) lines.push(`**Listing ID**: ${step.listing_id}`);
+
+          if (step.post_types && step.post_types.length > 0) {
+            lines.push('\n| Key | Label | Public |');
+            lines.push('|-----|-------|--------|');
+            for (const pt of step.post_types) {
+              lines.push(`| ${pt.key} | ${pt.label} | ${pt.is_public ? 'Yes' : 'No'} |`);
+            }
+          }
+
+          if (step.product_types && step.product_types.length > 0) {
+            lines.push('\n| Key | Label |');
+            lines.push('|-----|-------|');
+            for (const pt of step.product_types) {
+              lines.push(`| ${pt.key} | ${pt.label} |`);
+            }
+          }
+        }
+
+        if (result.blocked_at) {
+          lines.push(`\n## Blocked at: ${result.blocked_at}`);
+          lines.push('\nResolve the issue above and re-run the wizard.');
+        }
+
+        return {
+          content: [{
+            type: 'text',
+            text: lines.join('\n'),
+          }],
+        };
+      } catch (error) {
+        return {
+          content: [{
+            type: 'text',
+            text: `Error running Voxel marketplace wizard: ${error instanceof Error ? error.message : String(error)}`,
+          }],
+        };
+      }
+    },
+  );
 }
