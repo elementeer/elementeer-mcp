@@ -14,7 +14,15 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 MCP_DIR="$REPO_DIR/mcp-server"
-MIRROR_DIR="$REPO_DIR/mirror/generated"
+# MIRROR_DIR: points to plugin files (from elementeer/elementeer) if available
+MIRROR_DIR=""
+if [ -d "/Users/andrelange/Documents/repositories/forgejo/elementeer/elementeer" ]; then
+    MIRROR_DIR="/Users/andrelange/Documents/repositories/forgejo/elementeer/elementeer"
+fi
+# Fallback: old mirror/generated
+if [ -d "$REPO_DIR/mirror/generated/plugin-public/elementeer" ]; then
+    MIRROR_DIR="$REPO_DIR/mirror/generated"
+fi
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; BLUE='\033[0;34m'; NC='\033[0m'
 
 GATE_PASS=0; GATE_FAIL=0
@@ -131,7 +139,18 @@ check_plugin_metadata() {
     else
         log_warn "Plugin URI check: could not verify ($uri)"
     fi
+
+    # Version consistency: header version must match PHP constant
+    local header_version; header_version=$(grep "Version:" "$plugin_header" | head -1 | sed 's/.*Version: *//')
+    local php_version; php_version=$(grep "ELEMENTEER_MCP_VERSION" "$plugin_header" | sed "s/.*'\(.*\)'.*/\1/")
+    if [ "$header_version" = "$php_version" ]; then
+        log_pass "Version consistent: $header_version (header == PHP constant)"
+    else
+        log_fail "Version MISMATCH: header=$header_version, ELEMENTEER_MCP_VERSION=$php_version"
+    fi
 }
+# ── Gate 2: Plugin files via build manifest ─────────────────────────────
+check_plugin_files() {
     log_section "Plugin Files"
     local plugin_root="$MIRROR_DIR/plugin-public/elementeer"
     local manifest_file="$MIRROR_DIR/plugin-public/.build-manifest"
@@ -253,18 +272,7 @@ check_lint() {
 
 # ── Gate 6: Build produces dist/ ────────────────────────────────────────
 check_build_output() {
-    log_section "Build Output"
-
-    # Expected version from plugin header (single source of truth)
-    local expected_version
-    expected_version=$(grep "Version:" "$MIRROR_DIR/plugin-public/elementeer/elementeer.php" 2>/dev/null | \
-                       head -1 | sed 's/.*Version:[[:space:]]*//; s/[[:space:]].*//')
-    if [ -z "$expected_version" ]; then
-        log_fail "Cannot read version from elementeer.php"
-        expected_version="unknown"
-    else
-        log_pass "Plugin version: $expected_version"
-    fi
+    log_section "Build Output (MCP Server)"
 
     local dist="$MCP_DIR/dist"
     if [ -d "$dist" ] && [ -f "$dist/index.js" ]; then
@@ -272,45 +280,6 @@ check_build_output() {
         log_pass "dist/ exists with $js_count JS files"
     else
         log_fail "dist/ missing or no index.js — run npm run build"
-    fi
-
-    local zip
-    zip=$(ls -t /tmp/elementeer-build-final/elementeer-${expected_version}.zip 2>/dev/null | head -1 || true)
-    if [ -z "$zip" ]; then
-        # Fallback: any elementeer ZIP
-        zip=$(ls -t /tmp/elementeer-build-final/elementeer-*.zip 2>/dev/null | head -1 || true)
-    fi
-    if [ -n "$zip" ]; then
-        local zip_name; zip_name=$(basename "$zip")
-        log_pass "Plugin ZIP: $zip_name ($(du -h "$zip" | cut -f1))"
-
-        # Guard: ZIP version must match plugin header version
-        local zip_version
-        zip_version=$(echo "$zip_name" | sed 's/elementeer-//; s/\.zip//')
-        if [ "$zip_version" != "$expected_version" ]; then
-            log_fail "Version mismatch: ZIP has $zip_version but plugin header has $expected_version"
-        fi
-    else
-        log_fail "Plugin ZIP not found in /tmp/elementeer-build-final/"
-    fi
-
-    local tarball
-    tarball=$(ls -t /tmp/elementeer-build-final/elementeer-mcp-${expected_version}.tar.gz 2>/dev/null | head -1 || true)
-    if [ -z "$tarball" ]; then
-        tarball=$(ls -t /tmp/elementeer-build-final/elementeer-mcp-*.tar.gz 2>/dev/null | head -1 || true)
-    fi
-    if [ -n "$tarball" ]; then
-        local tar_name; tar_name=$(basename "$tarball")
-        log_pass "MCP tarball: $tar_name ($(du -h "$tarball" | cut -f1))"
-
-        # Guard: Tarball version must match plugin header version
-        local tar_version
-        tar_version=$(echo "$tar_name" | sed 's/elementeer-mcp-//; s/\.tar\.gz//')
-        if [ "$tar_version" != "$expected_version" ]; then
-            log_fail "Version mismatch: tarball has $tar_version but plugin header has $expected_version"
-        fi
-    else
-        log_fail "MCP tarball not found in /tmp/elementeer-build-final/"
     fi
 }
 
@@ -447,24 +416,21 @@ print_summary() {
     fi
 }
 
+
 # ── Main ────────────────────────────────────────────────────────────────
 MODE="${1:-full}"
 
 case "$MODE" in
     --pre-build)
-        log_section "PRE-BUILD GATES"
+        log_section "PRE-BUILD GATES (MCP Server)"
         check_forgejo_origin
-        check_plugin_origin
-        check_plugin_files
-        check_plugin_metadata
-        check_php_syntax
         check_tsc
         check_mcp_tests
         check_lint
         print_summary
         ;;
     --post-build)
-        log_section "POST-BUILD GATES"
+        log_section "POST-BUILD GATES (MCP Server)"
         check_build_output
         check_capability_yaml
         print_summary
@@ -475,17 +441,11 @@ case "$MODE" in
         print_summary
         ;;
     full|*)
-        log_section "FULL RELEASE GATE"
-        # Pre-build
+        log_section "FULL RELEASE GATE (MCP Server)"
         check_forgejo_origin
-        check_plugin_origin
-        check_plugin_files
-        check_plugin_metadata
-        check_php_syntax
         check_tsc
         check_mcp_tests
         check_lint
-        # Post-build
         check_build_output
         check_capability_yaml
         print_summary
