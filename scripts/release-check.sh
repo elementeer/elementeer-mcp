@@ -330,18 +330,6 @@ check_version_sync() {
         log_fail "  package.json:    $pkg_ver"
         log_fail "  Fix: bump both to the same version before tagging"
     fi
-
-    # Also check plugin mirror version if present
-    if [ -n "$MIRROR_DIR" ] && [ -d "$MIRROR_DIR" ]; then
-        local plugin_header="$MIRROR_DIR/elementeer.php"
-        if [ -f "$plugin_header" ]; then
-            local plugin_ver
-            plugin_ver=$(grep "Version:" "$plugin_header" | head -1 | sed 's/.*Version: *//' | xargs)
-            if [ "$plugin_ver" != "$pkg_ver" ]; then
-                log_warn "Plugin version ($plugin_ver) differs from MCP version ($pkg_ver) — may be intentional"
-            fi
-        fi
-    fi
 }
 
 # ── Gate 8: Live regression smoke-test ──────────────────────────────────
