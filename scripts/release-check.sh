@@ -294,6 +294,56 @@ check_capability_yaml() {
     fi
 }
 
+# ── Gate 7b: Version sync: capability.yaml == package.json ──────────────
+# RELEASE BLOCKER — versions MUST be identical across all package targets
+check_version_sync() {
+    log_section "Version Sync Gate"
+    local yaml="$REPO_DIR/capability.yaml"
+    local pkg="$MCP_DIR/package.json"
+
+    if [ ! -f "$yaml" ]; then
+        log_fail "capability.yaml not found"
+        return
+    fi
+    if [ ! -f "$pkg" ]; then
+        log_fail "mcp-server/package.json not found"
+        return
+    fi
+
+    local cap_ver
+    cap_ver=$(python3 -c "import yaml,sys; print(yaml.safe_load(open('$yaml'))['version'])" 2>/dev/null) || true
+    local pkg_ver
+    pkg_ver=$(node -p "require('$pkg').version" 2>/dev/null) || true
+
+    if [ -z "$cap_ver" ] || [ -z "$pkg_ver" ]; then
+        log_fail "Could not read one or both versions"
+        log_fail "  capability.yaml: ${cap_ver:-MISSING}"
+        log_fail "  package.json:    ${pkg_ver:-MISSING}"
+        return
+    fi
+
+    if [ "$cap_ver" = "$pkg_ver" ]; then
+        log_pass "Version sync OK: capability.yaml == package.json == $cap_ver"
+    else
+        log_fail "VERSION MISMATCH — RELEASE BLOCKED"
+        log_fail "  capability.yaml: $cap_ver"
+        log_fail "  package.json:    $pkg_ver"
+        log_fail "  Fix: bump both to the same version before tagging"
+    fi
+
+    # Also check plugin mirror version if present
+    if [ -n "$MIRROR_DIR" ] && [ -d "$MIRROR_DIR" ]; then
+        local plugin_header="$MIRROR_DIR/elementeer.php"
+        if [ -f "$plugin_header" ]; then
+            local plugin_ver
+            plugin_ver=$(grep "Version:" "$plugin_header" | head -1 | sed 's/.*Version: *//' | xargs)
+            if [ "$plugin_ver" != "$pkg_ver" ]; then
+                log_warn "Plugin version ($plugin_ver) differs from MCP version ($pkg_ver) — may be intentional"
+            fi
+        fi
+    fi
+}
+
 # ── Gate 8: Live regression smoke-test ──────────────────────────────────
 # Runs against a configured site (default $ELEMENTEER_SITE_URL).
 # Must have jq and curl installed. API key from ~/.elementeer/config.json.
@@ -424,6 +474,7 @@ case "$MODE" in
     --pre-build)
         log_section "PRE-BUILD GATES (MCP Server)"
         check_forgejo_origin
+        check_version_sync
         check_tsc
         check_mcp_tests
         check_lint
