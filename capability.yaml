@@ -9,6 +9,14 @@ description: >
   and framework-level workflow automation.
 homepage: https://github.com/elementeer/elementeer-mcp
 repository: https://github.com/elementeer/elementeer-mcp
+frameworks:
+  - opencode
+  - claude-code
+  - claude-desktop
+  - qwen
+  - gemini-cli
+  - cursor
+  - codex
 entrypoint: mcp-server
 runtimes:
   node: ">=22"
