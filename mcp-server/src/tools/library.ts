@@ -86,7 +86,7 @@ export function registerLibraryTools(
                 categories: t.categories,
                 tags: t.tags,
                 shortcode: t.shortcode,
-                has_elementor_data: !!t.elementor_data,
+                has_elementor_data: t.has_elementor_data ?? false,
               },
               null,
               2,

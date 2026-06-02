@@ -57,6 +57,8 @@ import { registerLmsTools } from './lms.js';
 import { registerCharityTools } from './charity.js';
 import { registerBookingTools, registerBookingAdvancedTools } from "./booking.js";
 import { registerVoxelTools } from './voxel.js';
+import { registerCreatePopupTools } from './create-popup.js';
+import { registerCreateFormTools } from './create-form.js';
 import { registerWooCommerceTools } from './woocommerce.js';
 
 interface ToolRegistrationOptions {
@@ -101,6 +103,7 @@ const FREE_TOOL_REGISTRARS = [
   registerDestinationTools,
   registerValidationTools,
   registerModuleWizards,
+  registerCreateFormTools,
 ] as const;
 
 const ADVANCED_TOOL_REGISTRARS = [
@@ -135,6 +138,7 @@ const ADVANCED_TOOL_REGISTRARS = [
   registerAddonEcosystemTools,
   registerWooCommerceTools,
   registerBookingAdvancedTools,
+  registerCreatePopupTools,
 ] as const;
 
 const STUDIO_FUTURE_TOOL_REGISTRARS = [

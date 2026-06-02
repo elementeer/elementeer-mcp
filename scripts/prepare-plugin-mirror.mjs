@@ -10,9 +10,12 @@ const repoRoot = path.resolve(__dirname, '..');
 const outputRoot = path.join(repoRoot, 'mirror', 'generated', 'plugin-public');
 
 const PLUGIN_REPO_PATH = path.join(
-  repoRoot,
-  '..',
-  '..',
+  '/Users',
+  'andrelange',
+  'Documents',
+  'repositories',
+  'forgejo',
+  'elementeer',
   'elementeer',
 );
 
@@ -42,8 +45,8 @@ function copyDir(src, dest, exclude = []) {
 function main() {
   if (!fs.existsSync(PLUGIN_REPO_PATH)) {
     console.error(`Plugin repository not found at: ${PLUGIN_REPO_PATH}`);
-    console.error('Expected structure: ../elementeer relative to this repo');
-    console.error('Clone: git clone git@github.com:elementeer/elementeer.git ../elementeer');
+    console.error('Expected structure: ../repositories/forgejo/elementeer/elementeer');
+    console.error('This is the Forgejo source of truth for the Elementeer WordPress plugin.');
     process.exit(1);
   }
 
@@ -51,7 +54,7 @@ function main() {
   ensureDir(outputRoot);
 
   const pluginDest = path.join(outputRoot, 'elementeer');
-  const excludeDirs = ['tests', '__tests__', '.phpunit.cache', 'vendor', 'node_modules', '.git', '.github', '.understand-anything'];
+  const excludeDirs = ['tests', '__tests__', '.phpunit.cache', 'vendor', 'node_modules', '.git', '.github', '.forgejo', '.understand-anything'];
   const excludeFiles = ['.phpunit.result.cache', '.gitignore'];
 
   copyDir(PLUGIN_REPO_PATH, pluginDest, [...excludeDirs, ...excludeFiles]);

@@ -39,7 +39,7 @@ class Manager {
         if ( empty( $raw_key ) ) {
             return new WP_Error(
                 'elementeer_invalid_key',
-                __( 'Missing API key. Provide X-Elementeer-Key header or Bearer token.', 'elementeer-mcp' ),
+                __( 'Missing API key. Provide X-Elementeer-Key header or Bearer token.', 'elementeer' ),
                 [ 'status' => 401 ]
             );
         }
@@ -57,7 +57,7 @@ class Manager {
         if ( null === $matched ) {
             return new WP_Error(
                 'elementeer_invalid_key',
-                __( 'Invalid API key.', 'elementeer-mcp' ),
+                __( 'Invalid API key.', 'elementeer' ),
                 [ 'status' => 401 ]
             );
         }
@@ -65,7 +65,7 @@ class Manager {
         if ( empty( $matched['is_active'] ) ) {
             return new WP_Error(
                 'elementeer_invalid_key',
-                __( 'This API key has been deactivated.', 'elementeer-mcp' ),
+                __( 'This API key has been deactivated.', 'elementeer' ),
                 [ 'status' => 401 ]
             );
         }
@@ -93,7 +93,7 @@ class Manager {
                 'elementeer_insufficient_scope',
                 sprintf(
                     /* translators: %s: required capability */
-                    __( 'This API key does not have the "%s" capability.', 'elementeer-mcp' ),
+                    __( 'This API key does not have the "%s" capability.', 'elementeer' ),
                     $capability
                 ),
                 [ 'status' => 403 ]
@@ -118,7 +118,7 @@ class Manager {
                 'elementeer_governance_blocked',
                 sprintf(
                     /* translators: %s: capability */
-                    __( 'The capability "%s" is disabled by governance settings for this site.', 'elementeer-mcp' ),
+                    __( 'The capability "%s" is disabled by governance settings for this site.', 'elementeer' ),
                     $capability
                 ),
                 [ 'status' => 403 ]

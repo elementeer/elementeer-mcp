@@ -30,9 +30,9 @@ const OPERATION_EXECUTORS: Record<string, Executor> = {
       ((p['slot'] as string) ?? 'system') as 'system' | 'custom',
     ),
   update_template_data: (c, p) =>
-    c.updateTemplateData(p['template_id'] as number, p['elementor_data'] as unknown[]),
+    c.updateTemplateData(p['id'] as number, p['elementor_data'] as unknown[]),
   update_page_data: (c, p) =>
-    c.updatePageData(p['page_id'] as number, p['elementor_data'] as unknown[]),
+    c.updatePageData(p['id'] as number, p['elementor_data'] as unknown[]),
   create_template: (c, p) =>
     c.createTemplate(p as unknown as CreateTemplateInput),
   set_site_logo: (c, p) =>
@@ -232,7 +232,29 @@ export function registerChangeQueueTools(
       }
 
       const client = getClient(_site_id);
-      
+
+      // CLI-002: Preflight the target REST route before queuing
+      const preflight = client.preflightRoute(operation);
+      if (!preflight.available) {
+        return {
+          content: [{
+            type: 'text' as const,
+            text: [
+              `Cannot queue "${operation}": the required REST endpoint is not available.`,
+              `  Expected: ${preflight.method} ${preflight.route}`,
+              `  Status: route not found in WordPress REST index.`,
+              '',
+              'This may be because:',
+              '  1. The Elementeer Pro plugin is not installed/active',
+              '  2. The REST route has not been registered (plugin version mismatch)',
+              '  3. The route index could not be fetched',
+              '',
+              'Run get_site_info to see which routes are available.',
+            ].join('\n'),
+          }],
+        };
+      }
+
       // Use QueueV2 for processing with auto-approval logic
       const queueV2 = new QueueV2(client, _site_id);
       const result = await queueV2.processChange(operation, _params, client, _note, _site_id);
@@ -389,6 +411,22 @@ export function registerChangeQueueTools(
           content: [{
             type: 'text' as const,
             text: `Cannot apply change ${change_id}: operation "${change.operation}" has no executor.\n\nSupported: ${SUPPORTED_OPERATIONS}`,
+          }],
+        };
+      }
+
+      // CLI-002: Preflight the route again before executing
+      const applyPreflight = client.preflightRoute(change.operation);
+      if (!applyPreflight.available) {
+        return {
+          content: [{
+            type: 'text' as const,
+            text: [
+              `Cannot apply change ${change_id}: the REST route for "${change.operation}" is no longer available.`,
+              `  Expected: ${applyPreflight.method} ${applyPreflight.route}`,
+              '',
+              'The route may have become unavailable since the change was queued. Check the site status with get_site_info.',
+            ].join('\n'),
           }],
         };
       }

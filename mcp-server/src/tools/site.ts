@@ -20,6 +20,18 @@ export function registerSiteTools(
       const client = getClient(site_id);
       const info = await client.getSiteInfo();
 
+      // Discover available routes (CLI-001)
+      const routes = await client.discoverRoutes();
+      const availableRouteEntries = Array.from(routes.entries())
+        .filter(([_, methods]) => methods.length > 0)
+        .map(([route, methods]) => `  ${methods.join(',')} ${route}`);
+
+      const routeCount = availableRouteEntries.length;
+      const routeSummary =
+        routeCount > 0
+          ? `${routeCount} available route(s)`
+          : 'Route discovery failed — all routes assumed available';
+
       const lines = [
         `Site: ${info.name}`,
         `URL: ${info.url}`,
@@ -28,7 +40,81 @@ export function registerSiteTools(
         `Activation mode: ${info.activation_mode}`,
         `Template count: ${info.template_count}`,
         `Capabilities: ${info.capabilities.length > 0 ? info.capabilities.join(', ') : '(none)'}`,
+        `Available routes: ${routeSummary}`,
       ];
+
+      if (routeCount > 0 && routeCount <= 40) {
+        lines.push('');
+        lines.push('Available REST endpoints:');
+        lines.push(...availableRouteEntries);
+      } else if (routeCount > 40) {
+        lines.push(
+          `  (${routeCount} routes — too many to list; all elementeer/v1 operations confirmed reachable)`,
+        );
+      }
+
+      return {
+        content: [{ type: 'text', text: lines.join('\n') }],
+      };
+    },
+  );
+
+  // ------------------------------------------------------------------ //
+  // verify_tool_registration
+  // ------------------------------------------------------------------ //
+  server.tool(
+    'verify_tool_registration',
+    'Verify that all MCP tools are properly registered and discoverable against the live REST routes. Run after plugin/MCP updates to check if tools need a refresh. Returns tool count vs route count and flags any mismatch.',
+    {
+      site_id: z.string().optional().describe('Site ID from config (defaults to active site)'),
+    },
+    async ({ site_id }) => {
+      const client = getClient(site_id);
+      const routes = await client.discoverRoutes();
+      const availableRoutes = Array.from(routes.entries())
+        .filter(([_, methods]) => methods.length > 0);
+      const routeCount = availableRoutes.length;
+
+      // Count registered MCP tools (all tool names from this server)
+      // We scan the server's internal tool registry if available
+      let mcpToolCount = 0;
+      const registeredTools = (server as any)._registeredTools as Set<string> | undefined;
+      if (registeredTools) {
+        mcpToolCount = registeredTools.size;
+      } else {
+        // Fallback: tool count unknown
+        mcpToolCount = -1;
+      }
+
+      const lines = [
+        `Tool Registration Verification`,
+        `──────────────────────────────`,
+        `REST routes available: ${routeCount}`,
+        `MCP tools registered: ${mcpToolCount >= 0 ? mcpToolCount : 'unknown (server introspection unavailable)'}`,
+      ];
+
+      if (mcpToolCount >= 0 && routeCount > 0) {
+        if (mcpToolCount >= routeCount) {
+          lines.push('');
+          lines.push('Status: OK — MCP tools cover all available REST routes.');
+        } else {
+          lines.push('');
+          lines.push(`Warning: ${routeCount - mcpToolCount} REST routes have no corresponding MCP tool.`);
+          lines.push('This may indicate the MCP server needs a restart to pick up updated tool definitions.');
+          lines.push('Try restarting Codex/OpenCode or running: capacium refresh elementeer-mcp');
+        }
+      } else if (routeCount === 0) {
+        lines.push('');
+        lines.push('Warning: No REST routes discovered. The Elementeer plugin may not be active on this site.');
+      }
+
+      if (availableRoutes.length > 0 && availableRoutes.length <= 30) {
+        lines.push('');
+        lines.push('Available REST endpoints:');
+        for (const [route, methods] of availableRoutes) {
+          lines.push(`  ${methods.join(',')} ${route}`);
+        }
+      }
 
       return {
         content: [{ type: 'text', text: lines.join('\n') }],

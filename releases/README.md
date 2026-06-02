@@ -70,12 +70,53 @@ elementeer-mcp-X.Y.Z.zip
 Before any release ZIP is considered official, it MUST:
 
 1. Pass all validation tests in `scripts/test-plugin-release.sh`
-2. Have a valid SHA256 checksum file
-3. Follow the exact naming convention above
-4. Include comprehensive release notes
-5. Be validated against the ReleaseChain PRD requirements
+2. Pass the Pre-Build Quality Gate: `scripts/release-check.sh --pre-build`
+3. Pass the Post-Build Quality Gate: `scripts/release-check.sh --post-build`
+4. Have a valid SHA256 checksum file
+5. Follow the exact naming convention above
+6. Include comprehensive release notes
+7. Be validated against the ReleaseChain PRD requirements
 
-## Automated ZIP Creation
+### Release Gate (`scripts/release-check.sh`)
+
+This is the **mandatory** quality gate that runs before AND after every build.
+No release may proceed if either gate fails.
+
+**Pre-build gate checks:**
+- All required plugin PHP files exist
+- PHP syntax validation (all files)
+- TypeScript compilation (no errors)
+- MCP unit tests (all 731+ tests pass)
+- ESLint (existing issues noted, no new regressions)
+
+**Post-build gate checks:**
+- `dist/` exists with JS output files
+- Plugin ZIP exists with matching version
+- MCP tarball exists with matching version
+- Version in ZIP/tarball filenames matches plugin header
+- `capability.yaml` is valid YAML
+
+```bash
+# Required before building
+./scripts/release-check.sh --pre-build    # exit 0 = proceed
+
+# Required after building, before publishing
+./scripts/release-check.sh --post-build   # exit 0 = proceed
+```
+
+## After Update: Tool Refresh
+
+After updating the Elementeer plugin or MCP package, the MCP server may need a restart to pick up new tools and routes:
+
+1. **Restart the AI client** (Codex, OpenCode, Claude Desktop) — this reloads all MCP servers
+2. **Run verification**: Once reconnected, call `verify_tool_registration` to confirm tool coverage
+3. **If tools are still stale**: Clear the MCP cache and restart the client again
+
+```bash
+# Verify tool registration after restart
+# (Call from within the AI session)
+verify_tool_registration
+```
 
 Use the `scripts/create-plugin-zip.sh` script to create properly named release ZIPs:
 

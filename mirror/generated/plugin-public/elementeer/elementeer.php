@@ -1,13 +1,13 @@
 <?php
 /**
  * Plugin Name: Elementeer
- * Plugin URI:  https://github.com/elementeer/elementeer-mcp
- * Description: Complete WordPress/Elementor AI development platform with enhanced API, intelligent composition, workflow staging, governance systems, and MCP integration.
- * Version:     2.0.1
+ * Plugin URI: https://git.langevc.com/elementeer/elementeer
+ * Description: The agent-native Elementor growth layer. Complete WordPress/Elementor AI platform with AI-native REST API, Theme Builder management, intelligent composition, workflow staging, and governance. Route preflight, route discovery, structural validation, and mass export included.
+ * Version: 2.1.3
  * Author:      Elementeer
- * Author URI:  https://elementeer.dev
- * License:     GPL-2.0-or-later
- * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * Author URI: https://elementeer.xyz
+ * License:     GPL-3.0-or-later
+ * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain: elementeer
  * Domain Path: /languages
  * Requires at least: 6.0
@@ -28,7 +28,7 @@ if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 }
 
 // Plugin constants - using WordPress functions when available, fallback otherwise
-define( 'ELEMENTEER_MCP_VERSION', '2.0.1' );
+define( 'ELEMENTEER_MCP_VERSION', '2.0.2' );
 define( 'ELEMENTEER_MCP_FILE', __FILE__ );
 
 // Define ELEMENTEER_MCP_DIR safely
@@ -86,14 +86,14 @@ if ( function_exists( 'add_action' ) ) {
             return;
         }
 
-        Plugin::get_instance()->init();
+        \Elementeer\MCP\Plugin::get_instance()->init();
     } );
 }
 
 // Activation / deactivation hooks
 if ( function_exists( 'register_activation_hook' ) ) {
-    \register_activation_hook( __FILE__, [ Plugin::class, 'activate' ] );
+    \register_activation_hook( __FILE__, [ \Elementeer\MCP\Plugin::class, 'activate' ] );
 }
 if ( function_exists( 'register_deactivation_hook' ) ) {
-    \register_deactivation_hook( __FILE__, [ Plugin::class, 'deactivate' ] );
+    \register_deactivation_hook( __FILE__, [ \Elementeer\MCP\Plugin::class, 'deactivate' ] );
 }

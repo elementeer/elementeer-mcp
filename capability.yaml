@@ -35,6 +35,14 @@ capabilities:
   - seo-operations
   - performance-operations
   - ecommerce-operations
+discovery:
+  deferred_tools: true
+  tool_surface_prompt: >
+    Elementeer MCP provides 250+ AI-native tools for WordPress and Elementor site management,
+    including site auditing, page building, content orchestration, design system management,
+    add-on analytics, SEO operations, performance optimization, e-commerce operations,
+    accessibility scanning, translation management, and governed workflow automation.
+  auto_discover: true
 tags:
   - elementor
   - wordpress

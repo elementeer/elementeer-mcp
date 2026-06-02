@@ -537,6 +537,7 @@ export interface ListTemplatesParams {
 
 export class ElementeerClient {
   private http: AxiosInstance;
+  private availableRoutes: Map<string, string[]> | null = null;
 
   constructor(siteUrl: string, apiKey: string) {
     const baseURL = siteUrl.replace(/\/$/, '') + '/wp-json/elementeer/v1';
@@ -559,6 +560,102 @@ export class ElementeerClient {
         throw this.handleError(err);
       },
     );
+  }
+
+  // ------------------------------------------------------------------ //
+  // Route discovery (CLI-001)
+  // ------------------------------------------------------------------ //
+
+  async discoverRoutes(): Promise<Map<string, string[]>> {
+    try {
+      const baseURL = this.http.defaults.baseURL as string;
+      const rootIndex = baseURL.replace(/\/elementeer\/v1\/?$/, '');
+      const res = await axios.get(rootIndex, { timeout: 10_000 });
+
+      const routes = new Map<string, string[]>();
+      const data = res.data as { routes?: Record<string, { methods: string[] }>; namespaces?: string[] };
+
+      if (data?.routes) {
+        for (const [routePath, methods] of Object.entries(data.routes)) {
+          if (Array.isArray(methods)) continue;
+          routes.set(routePath, methods.methods ?? []);
+        }
+      } else if (data?.namespaces) {
+        try {
+          const nsRes = await axios.get(baseURL, { timeout: 10_000 });
+          const nsData = nsRes.data as { routes?: Record<string, { methods: string[] }> };
+          if (nsData?.routes) {
+            for (const [routePath, methods] of Object.entries(nsData.routes)) {
+              if (Array.isArray(methods)) continue;
+              routes.set(routePath, methods.methods ?? []);
+            }
+          }
+        } catch {
+          // Ignore namespace resolution failures
+        }
+      }
+
+      this.availableRoutes = routes;
+      process.stderr.write(
+        `[ElementeerClient] Route discovery complete: ${routes.size} routes found.\n`,
+      );
+      return routes;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      process.stderr.write(
+        `[ElementeerClient] Route discovery failed: ${message}. Assuming all routes available.\n`,
+      );
+      this.availableRoutes = null;
+      return this.availableRoutes;
+    }
+  }
+
+  isRouteAvailable(route: string, method: string): boolean {
+    if (!this.availableRoutes) return true;
+    const methods = this.availableRoutes.get(route);
+    if (!methods) {
+      const altRoute = '/elementeer/v1' + route;
+      const altMethods = this.availableRoutes.get(altRoute);
+      if (altMethods) {
+        return altMethods.includes(method.toUpperCase()) || altMethods.includes(method);
+      }
+      return false;
+    }
+    return methods.includes(method.toUpperCase()) || methods.includes(method);
+  }
+
+  preflightRoute(operation: string): { route: string; method: string; available: boolean } {
+    const OPERATION_ROUTE_MAP: Record<string, { route: string; method: string }> = {
+      create_template: { route: '/templates', method: 'POST' },
+      save_page_section_as_template: { route: '/templates', method: 'POST' },
+      save_full_page_as_template: { route: '/templates', method: 'POST' },
+      compose_page_from_templates: { route: '/templates', method: 'POST' },
+      update_template_data: { route: '/templates/{id}/data', method: 'PUT' },
+      update_page_data: { route: '/pages/{id}/data', method: 'PUT' },
+      set_global_colors: { route: '/site/global-styles/colors', method: 'PUT' },
+      set_global_typography: { route: '/site/global-styles/typography', method: 'PUT' },
+      set_site_logo: { route: '/site/logo', method: 'PUT' },
+      set_site_context: { route: '/site/context', method: 'PUT' },
+      flush_elementor_cache: { route: '/site/performance/flush-cache', method: 'POST' },
+      optimize_elementor_assets: { route: '/site/performance/optimize-assets', method: 'POST' },
+      update_seo_meta: { route: '/site/seo/meta', method: 'PUT' },
+      update_site_settings: { route: '/site/settings', method: 'PUT' },
+      import_external_data: { route: '/import/external', method: 'POST' },
+      delete_template: { route: '/templates/{id}', method: 'DELETE' },
+      delete_post: { route: '/posts/{id}', method: 'DELETE' },
+      delete_menu: { route: '/menus/{id}', method: 'DELETE' },
+      delete_menu_item: { route: '/menu-items/{id}', method: 'DELETE' },
+      delete_term: { route: '/terms/{taxonomy}', method: 'DELETE' },
+      delete_media: { route: '/media/{id}', method: 'DELETE' },
+    };
+
+    const mapped = OPERATION_ROUTE_MAP[operation];
+    if (!mapped) {
+      return { route: operation, method: 'GET', available: true };
+    }
+
+    const available = this.isRouteAvailable(mapped.route, mapped.method);
+    return { route: mapped.route, method: mapped.method, available };
   }
 
   /** @internal — public for unit testing only */
@@ -685,8 +782,93 @@ export class ElementeerClient {
   }
 
   async createTemplate(params: any): Promise<any> {
+    if (!this.availableRoutes || this.isRouteAvailable('/templates', 'POST')) {
+      return this.createTemplateDirect(params);
+    }
+
+    const canDuplicate = this.isRouteAvailable('/templates/{id}/duplicate', 'POST');
+    const canUpdateData = this.isRouteAvailable('/templates/{id}/data', 'PUT');
+
+    if (canDuplicate && canUpdateData) {
+      process.stderr.write(
+        '[ElementeerClient] /templates POST unavailable — using seed-duplication fallback.\n',
+      );
+      return this.createTemplateWithFallback(params);
+    }
+
+    return this.createTemplateDirect(params);
+  }
+
+  private async createTemplateDirect(params: any): Promise<any> {
     const res = await this.http.post<any>('/templates', params);
     return res.data;
+  }
+
+  private async createTemplateWithFallback(params: any): Promise<any> {
+    let seedId: number | null = null;
+
+    const candidateQueries = [
+      { type: 'section', status: 'draft' },
+      { type: 'section', status: 'publish' },
+      { status: 'publish' },
+    ];
+
+    for (const query of candidateQueries) {
+      try {
+        const listResult = await this.listTemplates({ ...query, per_page: 1 });
+        if (listResult.templates?.length > 0) {
+          seedId = listResult.templates[0].id;
+          break;
+        }
+      } catch {
+        // Continue to next query
+      }
+    }
+
+    if (!seedId) {
+      throw new Error(
+        'Cannot create template: /templates POST is unavailable and no seed template was found for the duplication fallback.',
+      );
+    }
+
+    const duplicate = await this.duplicateTemplate(seedId, params.title);
+
+    await this.updateTemplate(duplicate.id, {
+      title: params.title,
+      status: params.status ?? 'draft',
+    });
+
+    if (params.categories?.length || params.tags?.length) {
+      try {
+        await this.http.patch(`/templates/${duplicate.id}`, {
+          categories: params.categories,
+          tags: params.tags,
+        });
+      } catch {
+        // Non-critical
+      }
+    }
+
+    if (params.elementor_data) {
+      let data: unknown[];
+      if (typeof params.elementor_data === 'string') {
+        try {
+          data = JSON.parse(params.elementor_data);
+        } catch {
+          data = [];
+        }
+      } else if (Array.isArray(params.elementor_data)) {
+        data = params.elementor_data;
+      } else {
+        data = [params.elementor_data];
+      }
+      await this.updateTemplateData(duplicate.id, data);
+    }
+
+    return {
+      ...duplicate,
+      type: params.type ?? duplicate.type,
+    };
   }
 
   async updateTemplate(id: number, updates: any): Promise<any> {
@@ -1896,6 +2078,17 @@ export class ElementeerClient {
   }
   async importExternalData(params: any): Promise<any> {
     const res = await this.http.post<any>('/import/external', params);
+    return res.data;
+  }
+
+  async massExport(params: {
+    post_type: string;
+    format: string;
+    filters: Record<string, unknown>;
+    limit: number;
+    offset: number;
+  }): Promise<any> {
+    const res = await this.http.post<any>('/export/data', { post_type, format, limit, offset });
     return res.data;
   }
 }
