@@ -1,7 +1,7 @@
 {
   "name": "@elementeer/mcp",
-  "version": "1.0.0",
-  "description": "AI-native MCP server for Elementor — standalone and embedded in Vamerli Studio",
+  "version": "1.0.1",
+  "description": "AI-native MCP server for Elementor \u2014 standalone and embedded in Vamerli Studio",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -34,6 +34,12 @@
     "typescript": "^5.4.0",
     "vitest": "^1.0.0"
   },
-  "keywords": ["mcp", "elementor", "wordpress", "ai", "vamerli"],
+  "keywords": [
+    "mcp",
+    "elementor",
+    "wordpress",
+    "ai",
+    "vamerli"
+  ],
   "license": "Apache-2.0"
 }
