@@ -132,81 +132,30 @@ export function registerImportExportTools(
     async (args) => {
       try {
         const client = getClient(args.site_id);
-        const toolName = 'mass_export';
-        const level = GOVERNANCE_LEVELS[toolName] || 'L0';
         
-        // Apply defaults (in case validation is bypassed, e.g., in tests)
         const filters = args.filters ?? {};
         const limit = args.limit ?? 100;
         const offset = args.offset ?? 0;
-        
-        // L3 requires explicit consent
-        if (level === 'L3' && args.consent !== true) {
-          return {
-            content: [{
-              type: 'text',
-              text: `Operation "${toolName}" requires explicit consent (governance level L3). Please provide consent: true to proceed.`,
-            }],
-          };
-        }
-        
-        // For L2/L3, queue the creation
-        if (level === 'L2' || level === 'L3') {
-          const change = await client.createChange({
-            operation: 'mass_export',
-            params: {
-              post_type: args.post_type,
-              format: args.format,
-              filters: filters,
-              limit: limit,
-              offset: offset,
-            },
-            note: args.note || `Export ${args.post_type} as ${args.format}`,
-          });
 
-          const lines = [
-            `🟡 Bulk export queued for review (governance level ${level})`,
-            `   ID: ${change.id}`,
-            `   Operation: mass_export`,
-            `   Post type: ${args.post_type}`,
-            `   Format: ${args.format}`,
-            `   Limit: ${limit}`,
-            `   Offset: ${offset}`,
-            filters && Object.keys(filters).length > 0 ? `   Filters: ${JSON.stringify(filters)}` : '',
-            '',
-            'Next steps:',
-            '  1. review_change(change_id, "approve") — approve the export plan',
-            '  2. apply_change(change_id)             — execute the export',
-            '  Or: review_change(change_id, "reject") to discard.',
-          ].filter(Boolean);
-
-          return {
-            content: [{
-              type: 'text',
-              text: lines.join('\n'),
-            }],
-          };
-        }
-        
-        // L1 or L0 - direct execution (should not happen as we set L2)
-        // For safety, we still queue
-        const change = await client.createChange({
-          operation: 'mass_export',
-          params: args,
-          note: `Export ${args.post_type} as ${args.format}`,
+        const result = await client.massExport({
+          post_type: args.post_type,
+          format: args.format,
+          filters,
+          limit,
+          offset,
         });
-        
+
         return {
           content: [{
             type: 'text',
-            text: `Export queued (change ID: ${change.id}). This operation requires review before execution.`,
+            text: JSON.stringify(result, null, 2),
           }],
         };
       } catch (error) {
         return {
           content: [{
             type: 'text',
-            text: `❌ Error queuing bulk export: ${error instanceof Error ? error.message : String(error)}`,
+            text: `❌ Error during bulk export: ${error instanceof Error ? error.message : String(error)}`,
           }],
         };
       }

@@ -19,6 +19,9 @@ try {
   process.stderr.write('No config found — registering all tools for initial setup.\n');
 }
 
+// 'standalone-free' = Free tier only (128 tools)
+// 'standalone-pro' or undefined = All tools including Advanced (260 tools)
+// 'studio' = Future Studio tier (not yet implemented)
 const isFreeOnly = activationMode === 'standalone-free';
 
 registerAllTools(server, getClient, {
@@ -30,8 +33,22 @@ async function main(): Promise<void> {
   const transport = new StdioServerTransport();
   await server.connect(transport);
 
-  // Log to stderr so it doesn't interfere with MCP stdio protocol
   process.stderr.write('Elementeer MCP server started.\n');
+
+  // Eagerly discover available routes for the active site (CLI-001)
+  try {
+    const activeSite = getActiveSite();
+    const client = getClient();
+    await client.discoverRoutes();
+    process.stderr.write(
+      `[Elem] Route discovery complete for site "${activeSite.id}".\n`,
+    );
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    process.stderr.write(
+      `[Elem] Route discovery deferred — no active config yet (${message}).\n`,
+    );
+  }
 }
 
 main().catch((err: unknown) => {

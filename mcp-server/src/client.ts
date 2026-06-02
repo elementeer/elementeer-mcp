@@ -605,7 +605,7 @@ export class ElementeerClient {
       process.stderr.write(
         `[ElementeerClient] Route discovery failed: ${message}. Assuming all routes available.\n`,
       );
-      this.availableRoutes = new Map();
+      this.availableRoutes = null;
       return this.availableRoutes;
     }
   }
@@ -1394,11 +1394,6 @@ export class ElementeerClient {
 
   async getVoxelHealth(): Promise<VoxelHealth> {
     const res = await this.http.get('/voxel/health');
-    return res.data;
-  }
-
-  async runVoxelMarketplaceWizard(): Promise<any> {
-    const res = await this.http.get('/voxel/wizard/marketplace');
     return res.data;
   }
 

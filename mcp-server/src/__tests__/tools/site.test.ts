@@ -34,6 +34,7 @@ function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> 
     getTemplateData: vi.fn(),
     updateTemplateData: vi.fn(),
     getSiteInfo: vi.fn().mockResolvedValue(makeSiteInfo()),
+    discoverRoutes: vi.fn().mockResolvedValue(new Map()),
     ...overrides,
   } as unknown as ElementeerClient;
 }

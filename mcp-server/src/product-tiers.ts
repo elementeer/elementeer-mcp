@@ -105,6 +105,8 @@ export const REGISTERED_TOOL_NAMES = [
   'update_site_settings',
   'create_form_light',
   'create_form_advanced',
+  'create_form',
+  'create_popup',
   'list_form_templates',
   'list_forms',
 
@@ -511,8 +513,8 @@ export const TOOL_TIER_ASSIGNMENTS: ProductSurfaceAssignment[] = [
     tier: 'advanced',
     visibility: 'private',
     kind: 'tool',
-    rationale: 'Bulk export of posts, pages, or products as CSV/JSON with filters. Supports filtering by post_type, category, date range, status, author, etc.',
-    dependsOn: ['queue_change'],
+    rationale: 'Bulk export of posts, pages, or products as CSV/JSON with filters. Read-only operation — returns data directly without governance queueing.',
+    dependsOn: [],
   },
   {
     id: 'route_advanced_scenario',
@@ -1112,6 +1114,23 @@ export const TOOL_TIER_ASSIGNMENTS: ProductSurfaceAssignment[] = [
     visibility: 'private',
     kind: 'tool',
     rationale: 'Advanced tier should support multi-step forms, conditional logic, and marketing integrations (Mailchimp, HubSpot, webhooks).',
+  },
+
+  {
+    id: 'create_form',
+    label: 'Form Creation (Template)',
+    tier: 'free',
+    visibility: 'public',
+    kind: 'tool',
+    rationale: 'Free should support creating an Elementor form as a reusable widget template with simple fields.',
+  },
+  {
+    id: 'create_popup',
+    label: 'Popup Creation',
+    tier: 'advanced',
+    visibility: 'private',
+    kind: 'tool',
+    rationale: 'Advanced tier should support creating Elementor popup templates with display conditions (entire site, specific pages, exit intent).',
   },
 
   {
@@ -1968,7 +1987,7 @@ const GOVERNANCE_LEVEL_OVERRIDES: Record<string, 'L0' | 'L1' | 'L2' | 'L3'> = {
   'compose_page_from_templates': 'L2',
   'migrate_form': 'L2',
   'import_external_data': 'L2',
-  'mass_export': 'L2',
+  'mass_export': 'L0',
   'save_page_section_as_template': 'L2',
   'save_full_page_as_template': 'L2',
   'set_site_context': 'L2',

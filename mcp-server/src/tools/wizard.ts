@@ -199,6 +199,60 @@ export async function runBrandSetupWizard(
   return { text: lines.join('\n') };
 }
 
+/**
+ * GAP-007: Ensure a menu is assigned to the "primary" theme location.
+ * If no menu is assigned, auto-creates a default menu with
+ * Home (/), About (/about), Blog (/blog), Contact (/contact)
+ * and assigns it to the "primary" location.
+ */
+async function ensurePrimaryMenu(client: ElementeerClient): Promise<void> {
+  try {
+    const menuLocations = await client.listMenuLocations();
+    const primaryLocation = menuLocations.locations.find(l => l.location === 'primary');
+
+    if (primaryLocation && primaryLocation.menu_id) {
+      return;
+    }
+
+    const menu = await client.createMenu({ name: 'Main Menu' });
+    const menuId = menu.menu.id;
+
+    const defaultItems = [
+      { label: 'Home', url: '/' },
+      { label: 'About', url: '/about' },
+      { label: 'Blog', url: '/blog' },
+      { label: 'Contact', url: '/contact' },
+    ];
+
+    for (let i = 0; i < defaultItems.length; i++) {
+      await client.createMenuItem({
+        menu_id: menuId,
+        label: defaultItems[i].label,
+        url: defaultItems[i].url,
+        position: i,
+      });
+    }
+
+    await client.assignMenuLocation({ menu_id: menuId, location: 'primary' });
+  } catch {
+    // Non-critical: menu creation failure should not block template creation
+  }
+}
+
+/** GAP-006: Schema for a single template in batch mode */
+const themeBuilderTemplateSchema = z.object({
+  type:               z.enum(['header','footer','single','single-post','single-page','archive','search','error-404','popup'])
+                       .describe('Theme Builder template type'),
+  title:              z.string().describe('Template title, e.g. "Main Header", "Blog Footer"'),
+  conditions:         z.enum(['all','front_page','singular','archive','posts']).optional().default('all')
+                       .describe('Where this template is displayed'),
+  status:             z.enum(['publish','draft']).optional().default('publish'),
+  source_template_id: z.number().int().optional()
+                       .describe('Copy Elementor data from this existing library template'),
+  sections:           z.array(z.string()).optional()
+                       .describe('Compose content by matching these section types from library (like creator_mode)'),
+});
+
 export async function runCreatorMode(
   client: ElementeerClient,
   input: CreatorModeInput,
@@ -488,12 +542,12 @@ export function registerWizardTools(
   if (includeAdvanced) {
     server.tool(
     'wizard_theme_builder',
-    'Create an Elementor Theme Builder template (header, footer, single post, archive, 404, etc.) with display conditions. You can supply content via source_template_id (copy from existing template), sections (compose from library like creator_mode), or leave empty to create a blank template to fill later. Conditions default to "all" (show everywhere).',
+    'Create an Elementor Theme Builder template (header, footer, single post, archive, 404, etc.) with display conditions. You can supply content via source_template_id (copy from existing template), sections (compose from library like creator_mode), or leave empty to create a blank template to fill later. Conditions default to "all" (show everywhere).\n\nGAP-006: Also supports batch mode via the `templates` array — pass multiple template definitions to create them all at once.\nGAP-007: When creating a header template, automatically creates and assigns a default "Main Menu" to the primary theme location if none exists.',
     {
       site_id:            z.string().optional(),
-      type:               z.enum(['header','footer','single','single-post','single-page','archive','search','error-404','popup'])
-                           .describe('Theme Builder template type'),
-      title:              z.string().describe('Template title, e.g. "Main Header", "Blog Footer"'),
+      type:               z.enum(['header','footer','single','single-post','single-page','archive','search','error-404','popup']).optional()
+                           .describe('Theme Builder template type (omit when using batch mode with `templates`)'),
+      title:              z.string().optional().describe('Template title, e.g. "Main Header", "Blog Footer" (omit when using batch mode)'),
       conditions:         z.enum(['all','front_page','singular','archive','posts']).optional().default('all')
                            .describe('Where this template is displayed'),
       status:             z.enum(['publish','draft']).optional().default('publish'),
@@ -501,10 +555,82 @@ export function registerWizardTools(
                            .describe('Copy Elementor data from this existing library template'),
       sections:           z.array(z.string()).optional()
                            .describe('Compose content by matching these section types from library (like creator_mode)'),
+      templates:          z.array(themeBuilderTemplateSchema).optional()
+                           .describe('GAP-006: Batch mode — array of template definitions to create at once. Each entry has the same fields as single mode.'),
       dry_run:            z.boolean().optional().default(false),
     },
-    async ({ site_id, type, title, conditions, status, source_template_id, sections, dry_run }) => {
+    async ({ site_id, type, title, conditions, status, source_template_id, sections, templates, dry_run }) => {
       const client = getClient(site_id);
+
+      // GAP-006: Batch mode — create multiple templates in sequence
+      if (templates && templates.length > 0) {
+        const results: Array<{ id: number; title: string; type: string; status: string; conditions: string[] }> = [];
+
+        for (const tpl of templates) {
+          let elementorData: unknown[] | undefined;
+
+          if (tpl.source_template_id) {
+            const tplData = await client.getTemplateData(tpl.source_template_id);
+            elementorData = tplData.elementor_data as unknown[];
+          } else if (tpl.sections && tpl.sections.length > 0) {
+            const libraryResult = await client.listTemplates({ status: 'publish', per_page: 100 });
+            const allTemplates: ElementeerTemplate[] = libraryResult.templates;
+            elementorData = [];
+            for (const sectionType of tpl.sections) {
+              const match = pickBestTemplate(allTemplates, sectionType);
+              if (match) {
+                const data = await client.getTemplateData(match.id);
+                const elements = data.elementor_data as unknown[];
+                elementorData.push(...elements);
+              }
+            }
+          }
+
+          const created = await client.createThemeBuilderTemplate({
+            title: tpl.title,
+            type: tpl.type,
+            elementor_data: elementorData,
+            conditions: tpl.conditions ?? 'all',
+            status: tpl.status ?? 'publish',
+          });
+
+          results.push(created);
+
+          // GAP-007: Auto-create menu for header templates
+          if (tpl.type === 'header') {
+            await ensurePrimaryMenu(client);
+          }
+        }
+
+        const summary = results.map(r =>
+          `  ✅ [${r.id}] ${r.type}: "${r.title}" — ${r.status} (${JSON.stringify(r.conditions)})`
+        ).join('\n');
+
+        return {
+          content: [{
+            type: 'text',
+            text: [
+              `Theme Builder Wizard — batch mode`,
+              `Created ${results.length} template(s):`,
+              '',
+              summary,
+              '',
+              'Elementor CSS cache cleared. Templates are now active.',
+            ].join('\n'),
+          }],
+        };
+      }
+
+      // Single-template mode (backward compatible) — require type + title
+      if (!type || !title) {
+        return {
+          content: [{
+            type: 'text',
+            text: 'Provide either `templates` (batch mode) or both `type` and `title` (single mode).',
+          }],
+          isError: true,
+        };
+      }
 
       const lines: string[] = [
         `Theme Builder Wizard — ${type}: "${title}"`,
@@ -574,6 +700,14 @@ export function registerWizardTools(
       lines.push(`   Type: ${created.type} · Status: ${created.status}`);
       lines.push(`   Conditions: ${JSON.stringify(created.conditions)}`);
       lines.push(`   Content: ${contentSource}`);
+
+      // GAP-007: Auto-create menu for header templates
+      if (type === 'header') {
+        await ensurePrimaryMenu(client);
+        lines.push('');
+        lines.push('🔗 Auto-menu: "Main Menu" assigned to primary location (Home, About, Blog, Contact).');
+      }
+
       lines.push('');
       lines.push('Elementor CSS cache cleared. The template is now active.');
 
