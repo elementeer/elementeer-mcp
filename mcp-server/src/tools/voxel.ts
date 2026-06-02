@@ -392,18 +392,20 @@ export function registerVoxelTools(
           if (step.edit_url) lines.push(`**Edit URL**: ${step.edit_url}`);
           if (step.listing_id) lines.push(`**Listing ID**: ${step.listing_id}`);
 
-          if (step.post_types && step.post_types.length > 0) {
+          const stepPostTypes = step.post_types as any[] | undefined;
+          if (stepPostTypes && stepPostTypes.length > 0) {
             lines.push('\n| Key | Label | Public |');
             lines.push('|-----|-------|--------|');
-            for (const pt of step.post_types) {
+            for (const pt of stepPostTypes) {
               lines.push(`| ${pt.key} | ${pt.label} | ${pt.is_public ? 'Yes' : 'No'} |`);
             }
           }
 
-          if (step.product_types && step.product_types.length > 0) {
+          const stepProductTypes = step.product_types as any[] | undefined;
+          if (stepProductTypes && stepProductTypes.length > 0) {
             lines.push('\n| Key | Label |');
             lines.push('|-----|-------|');
-            for (const pt of step.product_types) {
+            for (const pt of stepProductTypes) {
               lines.push(`| ${pt.key} | ${pt.label} |`);
             }
           }

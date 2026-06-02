@@ -1397,6 +1397,18 @@ export class ElementeerClient {
     return res.data;
   }
 
+  async runVoxelMarketplaceWizard(): Promise<{
+    wizard: string;
+    version: string;
+    voxel_active: boolean;
+    steps: Array<Record<string, unknown>>;
+    status: string;
+    blocked_at?: string;
+  }> {
+    const res = await this.http.get('/voxel/wizard/marketplace');
+    return res.data;
+  }
+
   async listAmeliaServices(params: { page?: number; per_page?: number } = {}): Promise<any> {
     const res = await this.http.get('/booking/amelia/services', { params });
     return res.data;
