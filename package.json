@@ -1,7 +1,10 @@
 {
   "name": "elementeer-mcp",
   "private": true,
-  "workspaces": ["mcp-server", "shared"],
+  "workspaces": [
+    "mcp-server",
+    "shared"
+  ],
   "license": "Apache-2.0",
   "scripts": {
     "dev": "npm run dev --workspace=mcp-server",
@@ -16,5 +19,6 @@
     "verify:plugin-mirror": "node scripts/verify-plugin-mirror.mjs",
     "release:free-mirror:gate": "npm run build && npm run test:free-contracts && npm run verify:free-mirror && npm run prepare:free-mirror && npm run verify:free-release",
     "plugin-mirror:gate": "npm run verify:plugin-mirror && npm run prepare:plugin-mirror"
-  }
+  },
+  "version": "2.2.0"
 }
