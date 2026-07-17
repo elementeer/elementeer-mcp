@@ -1,32 +1,35 @@
-[![repo-safety](https://github.com/elementeer/elementeer-mcp/actions/workflows/repo-safety.yml/badge.svg)](https://github.com/elementeer/elementeer-mcp/actions/workflows/repo-safety.yml)
 [![CI](https://github.com/elementeer/elementeer-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/elementeer/elementeer-mcp/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/elementeer/elementeer-mcp/actions/workflows/codeql.yml/badge.svg)](https://github.com/elementeer/elementeer-mcp/actions/workflows/codeql.yml)
-[![npm](https://img.shields.io/npm/v/@elementeer/mcp?label=coming+soon&color=lightgrey)](https://www.npmjs.com/package/@elementeer/mcp)
-[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
-[![WordPress tested](https://img.shields.io/badge/WordPress-6.0%2B-21759b.svg?logo=wordpress)](https://github.com/elementeer/elementeer)
-[![Elementor tested](https://img.shields.io/badge/Elementor-3.x-92003b.svg)](https://github.com/elementeer/elementeer)
+[![npm](https://img.shields.io/npm/v/@elementeer/mcp?color=6A35FF)](https://www.npmjs.com/package/@elementeer/mcp)
 [![Node.js](https://img.shields.io/badge/Node.js-20%2B-339933.svg?logo=node.js)](./mcp-server/package.json)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.4%2B-3178c6.svg?logo=typescript)](./mcp-server/package.json)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
 [![MCP compatible](https://img.shields.io/badge/MCP-compatible-7c3aed.svg)](https://modelcontextprotocol.io)
-[![Elementeer Studio](https://img.shields.io/badge/Elementeer_Studio-embedded-1A56DB.svg)](https://elementeer.studio)
 
 # Elementeer MCP
 
-Elementor-native MCP bridge for the public Free surface. A Node.js MCP server with **128+ Free tools**, fine-grained governance (L0‑L3), and safe AI‑agent operation across brand setup, template composition, forms, translation, site health, LMS, charity, and accessibility workflows.
+**The Model Context Protocol server connecting AI agents to Elementeer-powered WordPress sites.**
 
-> **WordPress Plugin**: The companion WordPress plugin lives at [elementeer/elementeer](https://github.com/elementeer/elementeer). The Pro addon lives at [elementeer/elementeer-pro](https://github.com/elementeer/elementeer-pro) (private). Both expose REST API endpoints under `/wp-json/elementeer/v1/` that this MCP server connects to.
+A Node.js MCP server with **128+ tools in the Free tier**, **250+ tools total**, **65 fine-grained capabilities**, and **L0–L3 governance** for safe AI-agent operation. Handles template composition, site assessment, brand setup, creator workflows, theme building, navigation, media, SEO, performance, translation, accessibility, LMS, charity, booking, e-commerce, and addon ecosystem management — all through a single protocol surface.
 
-## Quick Start — Free
+> **Companion plugin:** [elementeer/elementeer](https://github.com/elementeer/elementeer) — exposes `/wp-json/elementeer/v1/` on your WordPress site.
+
+---
+
+## Quick Start
 
 ### 1. Install the WordPress plugin
 
-Download from [elementeer/elementeer](https://github.com/elementeer/elementeer) → Upload → Activate → Generate API key in Settings → Elementeer MCP.
+Download from [elementeer/elementeer](https://github.com/elementeer/elementeer) → Upload → Activate → Settings → Elementeer MCP → Generate Key.
 
-### 2. Install and configure the MCP server
+### 2. Install the MCP server
 
 ```bash
 npm install -g @elementeer/mcp
 elementeer-mcp init   # creates ~/.elementeer/config.json
 ```
+
+### 3. Configure your sites
 
 Edit `~/.elementeer/config.json`:
 
@@ -44,7 +47,7 @@ Edit `~/.elementeer/config.json`:
 }
 ```
 
-### 3. Add to your MCP client
+### 4. Add to your MCP client
 
 ```json
 {
@@ -56,192 +59,242 @@ Edit `~/.elementeer/config.json`:
 }
 ```
 
----
+### From Capacium
 
-## Free Workflow
-
-The public Free surface focuses on:
-
-- scenario-first front door and intent routing
-- runtime wizard families for:
-  - `new-site-lite`
-  - `stack-bootstrap`
-  - `optimization-lite`
-  - `relaunch-lite`
-  - `extension-lite`
-- limited guided transitions for the first safe bootstrap and optimization paths
-- site assessment and context capture
-- prioritized recommendations
-- brand setup
-- Creator Light and simple assembly
-- local Elementor Library operations
-- honest write validation
-
-This public mirror does not include Advanced-only premium library flows, Studio orchestration, or cloud library semantics.
-It is still meant to function as a 360-degree starting point for both new-site and existing-site Elementor journeys.
-
-For a compact public summary of what Free includes and excludes, see [docs/public/free-includes-excludes.md](docs/public/free-includes-excludes.md).
+```bash
+cap install elementeer-mcp
+```
 
 ---
 
-## Available MCP Tools
+## Tools
 
-| Tool | Description | Capability required |
-|------|-------------|---------------------|
-| `list_templates` | List templates with filtering by type, status, keyword | `library-operations:read` |
-| `get_template` | Get a single template by ID | `library-operations:read` |
-| `create_template` | Create a new template | `library-operations:write` |
-| `update_template` | Update title, status, categories, tags | `library-operations:write` |
-| `delete_template` | Permanently delete a template | `library-operations:write` |
-| `rename_template` | Rename a single template | `library-operations:write` |
-| `duplicate_template` | Duplicate a template with optional new title | `library-operations:write` |
-| `bulk_rename` | Rename multiple templates in one call | `library-operations:write` |
-| `get_template_data` | Get raw `_elementor_data` JSON | `library-operations:read` |
-| `update_template_data` | Replace `_elementor_data` entirely | `library-operations:write` |
-| `extract_sections` | Get top-level section/container summary | `library-operations:read` |
-| `list_by_type` | List all templates grouped by type | `library-operations:read` |
-| `set_category` | Assign categories to a template | `library-operations:write` |
-| `set_tags` | Assign tags to a template | `library-operations:write` |
-| `audit_library` | Full library audit: counts, drafts, stale, uncategorized | `library-operations:read` |
-| `get_site_info` | WP version, Elementor version, activation mode, capabilities | `site-audit:read` |
-| `list_sites` | List all configured sites in `~/.elementeer/config.json` | — |
-| `switch_site` | Change the default site | — |
-| `list_media` | List media attachments with pagination and filtering | `media-operations:read` |
-| `get_media` | Get details of a single media attachment | `media-operations:read` |
-| `update_media` | Update media metadata (alt text, title, caption) | `media-operations:write` |
-| `delete_media` | Delete a media attachment | `media-operations:write` |
-| `audit_unused_media` | Identify orphaned media files not referenced in posts/pages | `media-operations:read` |
-| `create_page` | Create a WordPress page | `content-operations:write` |
-| `create_post` | Create a WordPress post | `content-operations:write` |
-| `update_post_meta` | Update post/page metadata (slug, excerpt, featured image) | `content-operations:write` |
-| `delete_post` | Delete a post or page | `content-operations:write` |
-| `list_taxonomies` | List all registered taxonomies | `content-operations:read` |
-| `create_term` | Create a term in a taxonomy | `content-operations:write` |
-| `update_term` | Update a term | `content-operations:write` |
-| `delete_term` | Delete a term | `content-operations:write` |
-| `list_post_types` | List registered post types (including CPT plugins) | `content-operations:read` |
-| `list_menus` | List all navigation menus | `theme-structure:read` |
-| `create_menu` | Create a new navigation menu | `theme-structure:write` |
-| `delete_menu` | Delete a navigation menu | `theme-structure:write` |
-| `list_menu_items` | List all items in a menu | `theme-structure:read` |
-| `create_menu_item` | Create a new menu item | `theme-structure:write` |
-| `update_menu_item` | Update a menu item | `theme-structure:write` |
-| `delete_menu_item` | Delete a menu item | `theme-structure:write` |
-| `list_menu_locations` | List all theme menu locations | `theme-structure:read` |
-| `assign_menu_location` | Assign a menu to a theme location | `theme-structure:write` |
-| `get_site_settings` | Read WordPress core settings (title, tagline, homepage, permalinks) | `site-settings:read` |
-| `update_site_settings` | Update WordPress core settings | `site-settings:write` |
-| `get_seo_meta` | Read SEO meta (title, description, focus keyword) — auto-detects plugin | `seo-operations:read` |
-| `update_seo_meta` | Update SEO meta | `seo-operations:write` |
-| `flush_elementor_cache` | Flush Elementor CSS cache | `performance-operations:write` |
-| `get_performance_report` | Get Elementor performance metrics (CSS method, DOM size, assets) | `performance-operations:read` |
-| `assess_site` | Comprehensive site assessment (brand, templates, performance, plugins) | `site-audit:read` |
-| `get_recommendations` | Context-aware prioritized recommendations | `site-audit:read` |
-| `wizard_brand_setup` | Coordinated brand setup wizard (colors, typography, logo) | `design-system:write` |
-| `creator_mode` | Compose page from template library by section types | `content-structure:write` |
-| `wizard_theme_builder` | Create Theme Builder templates (header, footer, single, etc.) | `theme-structure:write` |
-| `search_stock_images` | Search free stock photos (Pexels/Unsplash) | `media-operations:read` |
-| `sideload_stock_image` | Download stock image to media library | `media-operations:write` |
-| `generate_ai_image` | Generate AI image using DALL-E 3 or Pollinations.ai | `media-operations:write` |
-| `queue_change` | Queue a write operation for human review | `governance:write` |
-| `list_change_queue` | List queued changes awaiting review | `governance:read` |
-| `review_change` | Approve or reject a queued change | `governance:review` |
-| `apply_change` | Execute an approved queued change | `governance:apply` |
+### Template Library
 
-The public mirror keeps this surface aligned with the Free tier only. Advanced-only and Studio-future tools remain private in the Forgejo primary repository.
+| Tool | Capability |
+|------|-----------|
+| `list_templates` | `library-operations:read` |
+| `get_template` | `library-operations:read` |
+| `create_template` | `library-operations:write` |
+| `update_template` | `library-operations:write` |
+| `rename_template` | `library-operations:write` |
+| `duplicate_template` | `library-operations:write` |
+| `delete_template` | `library-operations:write` |
+| `bulk_rename` | `library-operations:write` |
+| `get_template_data` | `library-operations:read` |
+| `update_template_data` | `library-operations:write` |
+| `extract_sections` | `library-operations:read` |
+| `list_by_type` | `library-operations:read` |
+| `set_category` | `library-operations:write` |
+| `set_tags` | `library-operations:write` |
+| `audit_library` | `library-operations:read` |
+
+### Site Intelligence
+
+| Tool | Capability |
+|------|-----------|
+| `assess_site` | `site-audit:read` |
+| `get_recommendations` | `site-audit:read` |
+| `get_site_info` | `site-audit:read` |
+| `get_performance_report` | `performance-operations:read` |
+| `flush_elementor_cache` | `performance-operations:write` |
+
+### Brand & Design
+
+| Tool | Capability |
+|------|-----------|
+| `wizard_brand_setup` | `design-system:write` |
+| `get_site_settings` | `site-settings:read` |
+| `update_site_settings` | `site-settings:write` |
+
+### Content
+
+| Tool | Capability |
+|------|-----------|
+| `creator_mode` | `content-structure:write` |
+| `wizard_theme_builder` | `theme-structure:write` |
+| `create_page` / `create_post` | `content-operations:write` |
+| `update_post_meta` | `content-operations:write` |
+| `delete_post` | `content-operations:write` |
+| `list_taxonomies` | `content-operations:read` |
+| `create_term` / `update_term` / `delete_term` | `content-operations:write` |
+| `list_post_types` | `content-operations:read` |
+
+### Navigation
+
+| Tool | Capability |
+|------|-----------|
+| `list_menus` / `create_menu` / `delete_menu` | `theme-structure:read\|write` |
+| `list_menu_items` / `create_menu_item` | `theme-structure:read\|write` |
+| `update_menu_item` / `delete_menu_item` | `theme-structure:write` |
+| `list_menu_locations` / `assign_menu_location` | `theme-structure:read\|write` |
+
+### Media
+
+| Tool | Capability |
+|------|-----------|
+| `list_media` / `get_media` | `media-operations:read` |
+| `update_media` / `delete_media` | `media-operations:write` |
+| `audit_unused_media` | `media-operations:read` |
+| `search_stock_images` | `media-operations:read` |
+| `sideload_stock_image` | `media-operations:write` |
+| `generate_ai_image` | `media-operations:write` |
+
+### SEO
+
+| Tool | Capability |
+|------|-----------|
+| `get_seo_meta` | `seo-operations:read` |
+| `update_seo_meta` | `seo-operations:write` |
+
+### Governance
+
+| Tool | Capability |
+|------|-----------|
+| `queue_change` | `governance:write` |
+| `list_change_queue` | `governance:read` |
+| `review_change` | `governance:review` |
+| `apply_change` | `governance:apply` |
+
+### Integration Families
+
+All adapters auto-detect their respective plugins. Tools for WooCommerce, Voxel, Amelia booking, LearnDash/Tutor LMS, GiveWP/Charitable, accessibility (Ally), translation (WPML/Polylang), and addon ecosystem analytics — each with domain-appropriate read/write operations, widget inventories, usage tracking, and overlap detection.
+
+---
+
+## Governance Levels
+
+Elementeer enforces a four-tier governance model for safe AI operation:
+
+| Level | Description | Behavior |
+|-------|-------------|----------|
+| **L0** | Read-only inspection | No consent needed — list, get, assess |
+| **L1** | Safe writes | Auto-executed — create, update metadata |
+| **L2** | Impactful writes | Auto-queued for human review — layout changes, brand setup |
+| **L3** | High-risk operations | Block until explicit consent provided — deletions, plugin conflict tests |
+
+L2 tools call `queue_change` automatically. L3 tools require `consent: true` in the request. This gives AI agents the freedom to propose meaningful changes while keeping site owners in control.
 
 ---
 
 ## Permission Architecture
 
-Elementeer uses a two-layer permission model.
+**Layer 1 — API Key Capabilities.** Each key carries an explicit list of domain capabilities. A read-only key returns `elementeer_insufficient_scope` — not `elementeer_invalid_key` — on any write attempt, so the agent can guide the user precisely.
 
-**Layer 1 — Key capabilities.** Each API key is created with an explicit list of domain capabilities (e.g., `site-audit:read`, `library-operations:read`, `library-operations:write`). A key with only `library-operations:read` cannot write. When a write endpoint is called with a read-only key, the plugin returns `elementeer_insufficient_scope` — not `elementeer_invalid_key`. This distinction is intentional and must be preserved by any client that consumes the API. Legacy resource-first scopes remain accepted as transitional aliases for older keys.
+**Layer 2 — Governance Settings.** Site administrators configure `allowed_capabilities` in the WordPress admin. Even if a key has a capability, if governance blocks it, the server returns `elementeer_governance_blocked`. Site owners lock down entire domains without revoking keys.
 
-**Layer 2 — Governance settings.** Site administrators define an `allowed_capabilities` list in Settings → Elementeer MCP. Even if a key has a capability, if governance disables it at the site level, the request returns `elementeer_governance_blocked`. This enables a site owner to lock down operating domains such as `library-operations:write` or `governance:apply` without revoking keys.
-
-The MCP server maps these server-side error codes to typed `ElementeerErrorCode` values so AI clients receive actionable, precise error information.
+The MCP server maps these error codes to typed `ElementeerErrorCode` values so AI clients receive actionable error information.
 
 ---
 
-## Governance Levels (L0-L3)
+## Product Tiers
 
-Elementeer introduces four governance levels for safe AI‑agent operation:
-
-- **L0 (Read‑only)** – Inspection tools (list, get, assess) – no consent needed.
-- **L1 (Safe writes)** – Non‑destructive writes (create, update metadata) – auto‑executed.
-- **L2 (Impactful writes)** – Layout changes, brand setup, form creation – auto‑queued for human review.
-- **L3 (High‑risk)** – Deletions, plugin conflict tests – require explicit consent.
-
-L2 tools automatically queue changes via `queue_change`; L3 tools block execution until `consent: true` is provided. This layered model ensures AI agents can propose meaningful changes while keeping site owners in control.
-
-## What Makes Elementeer Unique
-
-Elementeer is the **first and only MCP server purpose-built for Elementor** — not a generic WordPress tool. Its unique architecture enables AI agents to work safely and effectively with Elementor templates, layouts, and workflows:
-
-- **`elementor_library` native access**: Direct querying of Elementor's template library via `WP_Query`, bypassing Elementor's REST API limitations that cause 401 errors and empty responses for template requests.
-- **Granular capability system**: Clear distinction between authentication failures (`auth_invalid_key`) and permission issues (`auth_insufficient_scope`), allowing AI clients to provide specific guidance to users.
-- **Elementor-specific data structures**: Full support for Elementor template types (section, page, header, footer), nested containers, and shortcode processing.
-- **Governance-controlled operations**: Four-tier governance model (L0-L3) ensures safe AI agent operation with appropriate human oversight.
-- **Multi-surface product strategy**: Clean separation between Free (public), Advanced (private), and Studio (future) features ensures sustainable open-source development.
-
-Unlike general-purpose WordPress MCP tools, Elementeer understands Elementor's architecture, template lifecycle, and workflow patterns — enabling truly intelligent AI-assisted Elementor development.
+| | Free | Advanced |
+|---|---|---|
+| **Tools** | 128+ | 250+ |
+| **Sites** | Unlimited | Unlimited |
+| **Template CRUD** | ✓ | ✓ |
+| **Site Assessment & Recommendations** | ✓ | ✓ |
+| **Brand Setup Wizard** | ✓ | ✓ |
+| **Creator Light** | ✓ | ✓ |
+| **Navigation & Content CRUD** | ✓ | ✓ |
+| **Media Library** | ✓ | ✓ |
+| **SEO Meta** | ✓ | ✓ |
+| **Performance Basics** | ✓ | ✓ |
+| **Addon Detection (11 adapters)** | ✓ | ✓ |
+| **Wizard Workflows (5 families)** | ✓ | ✓ |
+| **WooCommerce** | — | ✓ |
+| **Amelia Booking** | — | ✓ |
+| **AI Batch Translation** | — | ✓ |
+| **Snapshots & Versioning** | — | ✓ |
+| **Design Token Extraction** | — | ✓ |
+| **Change Review Queue** | — | ✓ |
+| **Performance Deep-Dive** | — | ✓ |
+| **Studio Orchestration** | — | 🔮 (Future) |
 
 ---
 
-## Monorepo Structure
+## Architecture
 
 ```
 elementeer-mcp/
-├── .github/
-│   └── workflows/
-│       ├── ci.yml
-│       ├── release.yml
-│       ├── repo-safety.yml
-│       └── verify-mirror-export.yml
-│
-├── mcp-server/                 # Node.js/TypeScript MCP server
+├── mcp-server/                 # TypeScript MCP server
 │   ├── src/
-│   │   ├── index.ts
-│   │   ├── client.ts
-│   │   ├── config.ts
-│   │   └── tools/
-│   ├── dist/                   # Compiled output
-│   └── package.json
+│   │   ├── index.ts           # Server entry point & tool registration
+│   │   ├── client.ts          # Axios HTTP client for WordPress API
+│   │   ├── config.ts          # ~/.elementeer/config.json management
+│   │   └── tools/             # 128+ tool implementations
+│   ├── dist/                  # Compiled output (npm entry: dist/index.js)
+│   └── package.json           # @elementeer/mcp v2.1.4
 │
-├── shared/                     # Shared TypeScript types
+├── shared/                    # Shared TypeScript types & validation
 │   ├── src/
-│   └── package.json
+│   └── package.json           # @elementeer/shared
 │
-├── mirror/                     # Free mirror staging + scripts
+├── mirror/                    # Free mirror staging & sync scripts
 │
-└── .skillweave/                # SkillWeave session artifacts (gitignored)
+├── capability.yaml            # MCP capability manifest (65 capabilities)
+├── TIERS.md                   # Tier comparison & pricing logic
+├── CHANGELOG.md
+├── ROADMAP.md
+└── packages/                  # npm workspace root
 ```
 
-> **WordPress Plugins**: Free plugin at [elementeer/elementeer](https://github.com/elementeer/elementeer). Pro addon at [elementeer/elementeer-pro](https://github.com/elementeer/elementeer-pro) (private). Plugin source lives in separate repositories.
+**Tech stack:** TypeScript 5.4+ (strict mode), Zod validation, Axios HTTP client, Vitest test runner, npm workspaces.
+
+---
+
+## Agent Setup
+
+Elementeer MCP works with any MCP-compatible client.
+
+### Claude Desktop
+
+```json
+{
+  "mcpServers": {
+    "elementeer": { "command": "elementeer-mcp" }
+  }
+}
+```
+
+### Cursor
+
+```json
+{
+  "mcpServers": {
+    "elementeer": { "command": "elementeer-mcp" }
+  }
+}
+```
+
+### OpenCode
+
+```sh
+opencode mcp add elementeer -- elementeer-mcp
+```
+
+### Antigravity / Codex
+
+As configured in their respective `mcpServers` settings — use `elementeer-mcp` as the command and add site configuration in `~/.elementeer/config.json`.
+
+### Capacium
+
+```bash
+cap install elementeer-mcp
+```
 
 ---
 
 ## Development
 
 ```bash
-# Install all dependencies
 npm install
-
-# Build everything
 npm run build
-
-# Run MCP server tests
 npm run test --workspace=mcp-server
-
-# Run with coverage
 npm run test:coverage --workspace=mcp-server
-
-# Run shared type tests
-npm run test --workspace=shared
-
-# Watch mode during development
 npm run test:watch --workspace=mcp-server
+npm run test --workspace=shared
 ```
 
 ### Contributing
@@ -249,21 +302,24 @@ npm run test:watch --workspace=mcp-server
 1. Fork and clone
 2. Create a branch: `git checkout -b feat/your-feature`
 3. Make changes with tests
-4. Run the full test suite: `npm test`
-5. Open a pull request using the provided template
+4. Run `npm test`
+5. Open a pull request using the template
 
 ---
 
-## Security
+## Links
 
-See [SECURITY.md](.github/SECURITY.md) for the vulnerability reporting policy and supported versions.
-
-Never commit API keys or `.env` files. Use governance settings to restrict destructive capabilities in production environments.
+- **Documentation:** [docs.elementeer.xyz](https://docs.elementeer.xyz)
+- **WordPress Plugin:** [github.com/elementeer/elementeer](https://github.com/elementeer/elementeer)
+- **Conversion Bridge:** [github.com/elementeer/elementeer-bridge](https://github.com/elementeer/elementeer-bridge)
+- **Pro Addon:** [github.com/elementeer/elementeer-pro](https://github.com/elementeer/elementeer-pro) (private)
 
 ---
 
 ## License
 
-Apache-2.0 — see [LICENSE](./LICENSE).
-WordPress Plugin (Free): GPL-2.0-or-later — see [elementeer/elementeer](https://github.com/elementeer/elementeer).
-WordPress Plugin (Pro): proprietary — see [elementeer/elementeer-pro](https://github.com/elementeer/elementeer-pro).
+**MCP Server:** [Apache-2.0](./LICENSE)
+
+**Bundled Plugin (Free):** GPL-2.0-or-later — see [elementeer/elementeer](https://github.com/elementeer/elementeer).
+
+**Pro Addon:** Proprietary — see [elementeer/elementeer-pro](https://github.com/elementeer/elementeer-pro) (private).
