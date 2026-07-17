@@ -146,14 +146,12 @@ vite.config.ts.timestamp-*
 *.sha256
 
 # SkillWeave work directory (session-local tracking, never pushed)
-.skillweave/
 
 # Claude Code local state
 .claude/
 
 # Codenomad session-local state
 .codenomad/
-.skillweave/
 
 # Backup files (never commit)
 *.backup
@@ -161,3 +159,7 @@ vite.config.ts.timestamp-*
 *.tar.gz
 .DS_Store
 __pycache__/
+
+# SkillWeave: only agents.md is durable; everything else is runtime and ignored
+.skillweave/*
+!.skillweave/agents.md
