@@ -6,4 +6,4 @@ This repository is automatically mirrored from the official Elementeer Forgejo i
 Pull requests, issues, and contributions are **not accepted here**.
 
 → [Open an issue](https://git.langevc.com/elementeer/elementeer-mcp/issues)
-→ [Read the docs](https://git.langevc.com/elementeer/) (coming soon)
+→ [Read the docs](https://docs.elementeer.xyz)
