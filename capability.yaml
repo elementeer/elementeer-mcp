@@ -7,8 +7,8 @@ description: >
   AI-native MCP server for Elementor providing 250+ tools for site management,
   page building, content orchestration, add-on analytics, design system management,
   and framework-level workflow automation.
-homepage: https://github.com/elementeer/elementeer-mcp
-repository: https://github.com/elementeer/elementeer-mcp
+homepage: https://git.langevc.com/elementeer/elementeer-mcp
+repository: https://git.langevc.com/elementeer/elementeer-mcp
 frameworks:
   - opencode
   - claude-code
