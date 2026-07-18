@@ -4,7 +4,7 @@
 
 ### 1. Install the WordPress plugin
 
-Download and install from [elementeer/elementeer](https://github.com/elementeer/elementeer):
+Download and install from [elementeer/elementeer](https://git.langevc.com/elementeer/elementeer):
 1. Download the latest release ZIP
 2. Upload via WordPress admin → **Plugins → Add New → Upload Plugin**
 3. Activate **Elementeer MCP Plugin**
