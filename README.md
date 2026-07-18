@@ -8,6 +8,12 @@
 
 # Elementeer MCP
 
+> [!NOTE]
+> **Public mirror.** The canonical repository is hosted on our self-hosted git.
+> This GitHub copy is a read-only mirror kept in sync for visibility and
+> installation. Bug reports are welcome via Issues; pull requests are applied
+> upstream and synced back here.
+
 **The Model Context Protocol server connecting AI agents to Elementeer-powered WordPress sites.**
 
 A Node.js MCP server with **128+ tools in the Free tier**, **250+ tools total**, **65 fine-grained capabilities**, and **L0–L3 governance** for safe AI-agent operation. Handles template composition, site assessment, brand setup, creator workflows, theme building, navigation, media, SEO, performance, translation, accessibility, LMS, charity, booking, e-commerce, and addon ecosystem management — all through a single protocol surface.
