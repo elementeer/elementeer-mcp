@@ -4,6 +4,9 @@
   "description": "AI-native MCP server for Elementor — standalone and embedded in Vamerli Studio",
   "type": "module",
   "main": "dist/index.js",
+  "files": [
+    "dist/"
+  ],
   "bin": {
     "elementeer-mcp": "dist/cli.js"
   },

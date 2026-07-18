@@ -36,6 +36,12 @@ jobs:
           cd mcp-server && npm run build
       - name: Post-build quality gate
         run: bash scripts/release-check.sh --post-build
+      - name: Publish to npm
+        run: |
+          cd mcp-server
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          npm publish --access public
+        continue-on-error: true
       - name: Package MCP server
         run: |
           cd mcp-server
