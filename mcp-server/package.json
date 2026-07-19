@@ -1,6 +1,6 @@
 {
   "name": "@elementeer/mcp",
-  "version": "2.1.4",
+  "version": "2.2.0",
   "description": "AI-native MCP server for Elementor — standalone and embedded in Vamerli Studio",
   "type": "module",
   "main": "dist/index.js",

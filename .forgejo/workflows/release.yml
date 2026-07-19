@@ -3,11 +3,16 @@ on:
   push:
     tags:
       - 'v*'
+  create:
+    tags:
+      - 'v*'
 
 jobs:
   pre-build:
-    runs-on: docker
+    runs-on: ubuntu-latest
     steps:
+      - name: Install checkout deps
+        run: apk add --no-cache nodejs npm git bash curl jq
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
@@ -22,8 +27,10 @@ jobs:
 
   post-build:
     needs: pre-build
-    runs-on: docker
+    runs-on: ubuntu-latest
     steps:
+      - name: Install checkout deps
+        run: apk add --no-cache nodejs npm git bash curl jq
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
@@ -36,12 +43,6 @@ jobs:
           cd mcp-server && npm run build
       - name: Post-build quality gate
         run: bash scripts/release-check.sh --post-build
-      - name: Publish to npm
-        run: |
-          cd mcp-server
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
-          npm publish --access public
-        continue-on-error: true
       - name: Package MCP server
         run: |
           cd mcp-server
@@ -51,28 +52,35 @@ jobs:
           tar czf /tmp/release/elementeer-mcp-v$VERSION.tgz .
           echo "TGZ=/tmp/release/elementeer-mcp-v$VERSION.tgz" >> $GITHUB_ENV
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-      - name: Create Release
+      - name: Create Forgejo Release
         run: |
           TAG="${GITHUB_REF##*/}"
           curl -X POST "https://git.langevc.com/api/v1/repos/$GITHUB_REPOSITORY/releases" \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d "{
-              \"tag_name\": \"$TAG\",
-              \"name\": \"Elementeer MCP Server v$VERSION\",
-              \"body\": \"Release v$VERSION — Voxel Marketplace Wizard tool, 7 read-only Voxel discovery tools.\n\n### Changes\n\`\`\`\n$(git log $(git describe --tags --abbrev=0 HEAD^)..HEAD --oneline 2>/dev/null || echo 'Initial release')\n\`\`\`\"
-            }" > /tmp/release-response.json
+            -d "$(jq -n --arg tag "$TAG" --arg name "Elementeer MCP Server v$VERSION" --arg body "Release v$VERSION.
+
+### Changes
+$(git log $(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo 'HEAD^')..HEAD --oneline 2>/dev/null || echo 'Initial release')" '{tag_name: $tag, name: $name, body: $body}')" \
+            > /tmp/release-response.json
           RELEASE_ID=$(jq -r '.id' /tmp/release-response.json)
           echo "RELEASE_ID=$RELEASE_ID" >> $GITHUB_ENV
-      - name: Install curl/jq for asset upload
-        run: |
-          apk add --no-cache curl jq 2>/dev/null || apt-get update -qq && apt-get install -y -qq curl jq
       - name: Upload Release Asset
         run: |
           TGZNAME="elementeer-mcp-v$VERSION.tgz"
-          curl -X POST "https://git.langevc.com/api/v1/repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID/assets" \
+          curl -X POST "https://git.langevc.com/api/v1/repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID/assets?name=$TGZNAME" \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/gzip" \
-            --data-binary "@$TGZ" \
-            -H "name=$TGZNAME"
+            --data-binary "@$TGZ"
           echo "Asset uploaded: $TGZNAME"
+      - name: Mirror Release to GitHub
+        env:
+          GH_TOKEN: ${{ secrets.GH_MIRROR_TOKEN }}
+        run: |
+          TAG="${GITHUB_REF##*/}"
+          gh release create "$TAG" \
+            --repo elementeer/elementeer-mcp \
+            --title "Elementeer MCP Server v$VERSION" \
+            --notes "Release v$VERSION." \
+            "$TGZ#Elementeer MCP Server v$VERSION" \
+            || echo "Mirror release skipped (token may lack permissions)"
