@@ -5,8 +5,10 @@ on:
 
 jobs:
   mirror:
-    runs-on: docker
+    runs-on: ubuntu-latest
     steps:
+      - name: Install checkout deps
+        run: apk add --no-cache nodejs npm git bash curl
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
