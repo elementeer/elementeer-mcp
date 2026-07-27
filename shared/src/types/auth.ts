@@ -121,9 +121,7 @@ export function normalizeStoredCapabilities(
 
 export type ActivationMode =
   | 'standalone-free'
-  | 'standalone-pro'
-  | 'vamerli-embedded'
-  | 'vamerli-agency';
+  | 'standalone-pro';
 
 export interface ApiKey {
   key: string;

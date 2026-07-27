@@ -67,8 +67,6 @@ import type {
 const ACTIVATION_MODES: ActivationMode[] = [
   'standalone-free',
   'standalone-pro',
-  'vamerli-embedded',
-  'vamerli-agency',
 ];
 
 const PRODUCT_TIERS: ProductTier[] = [
@@ -192,8 +190,8 @@ describe('ActivationMode', () => {
     }
   });
 
-  it('contains exactly 4 modes', () => {
-    expect(ACTIVATION_MODES).toHaveLength(4);
+  it('contains exactly 2 modes', () => {
+    expect(ACTIVATION_MODES).toHaveLength(2);
   });
 
   it('has no duplicate values', () => {
@@ -205,8 +203,8 @@ describe('ActivationMode', () => {
     expect(ACTIVATION_MODES).toContain('standalone-free');
   });
 
-  it('includes vamerli-agency as highest tier', () => {
-    expect(ACTIVATION_MODES).toContain('vamerli-agency');
+  it('includes standalone-pro as highest tier', () => {
+    expect(ACTIVATION_MODES).toContain('standalone-pro');
   });
 });
 

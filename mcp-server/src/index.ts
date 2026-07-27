@@ -2,7 +2,13 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { getClient, getActiveSite } from './config.js';
 import { registerAllTools } from './tools/index.js';
-import { registerPageResourceTemplates } from './page-resource-cache.js';
+import { ProviderLoader } from './providers/loader.js';
+import {
+  getProviderRegistry,
+  setProviderRegistry,
+  buildCoreProviderRegistration,
+  getCapabilitiesSummary,
+} from './capability-registry.js';
 
 const server = new McpServer({
   name: 'elementeer-mcp',
@@ -15,14 +21,9 @@ try {
   const activeSite = getActiveSite();
   activationMode = activeSite.activationMode;
 } catch {
-  // Config not yet set up — register all tools so the user can use
-  // site-management tools to configure their first site.
   process.stderr.write('No config found — registering all tools for initial setup.\n');
 }
 
-// 'standalone-free' = Free tier only (128 tools)
-// 'standalone-pro' or undefined = All tools including Advanced (260 tools)
-// 'studio' = Future Studio tier (not yet implemented)
 const isFreeOnly = activationMode === 'standalone-free';
 
 registerAllTools(server, getClient, {
@@ -30,15 +31,37 @@ registerAllTools(server, getClient, {
   includeStudioFuture: !isFreeOnly,
 });
 
-registerPageResourceTemplates(server, getClient);
+async function initializeProviders(): Promise<void> {
+  const registry = getProviderRegistry();
+  setProviderRegistry(registry);
+
+  const loader = new ProviderLoader(registry);
+  const coreProvider = buildCoreProviderRegistration();
+
+  const { loaded, failed } = await loader.loadProviders([coreProvider]);
+
+  if (failed.length > 0) {
+    process.stderr.write(
+      `[Elem] WARNING: Core provider initialization partially failed. Failed: ${failed.join(', ')}. Server may be degraded.\n`,
+    );
+  }
+
+  process.stderr.write(
+    `[Elem] Provider system initialized — ${loaded.length} providers loaded.\n`,
+  );
+  process.stderr.write(`[Elem] ${getCapabilitiesSummary()}\n`);
+}
 
 async function main(): Promise<void> {
+  // Initialize providers first — core tools are already registered above,
+  // so the server can start even if optional providers fail.
+  await initializeProviders();
+
   const transport = new StdioServerTransport();
   await server.connect(transport);
 
   process.stderr.write('Elementeer MCP server started.\n');
 
-  // Eagerly discover available routes for the active site (CLI-001)
   try {
     const activeSite = getActiveSite();
     const client = getClient();
