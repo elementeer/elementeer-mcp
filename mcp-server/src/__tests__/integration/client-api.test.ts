@@ -212,7 +212,7 @@ describe('ElementeerClient integration — happy paths', () => {
           elementor_pro: false,
           activation_mode: 'standalone-free',
           template_count: 5,
-          capabilities: ['site-audit:read'],
+          capabilities: ['cms.site.audit'],
         });
       }),
     );

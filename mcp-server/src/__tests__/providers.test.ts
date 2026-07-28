@@ -18,8 +18,8 @@ function makeCoreProvider(): ProviderRegistration {
     label: 'Core Test Provider',
     required: true,
     capabilities: [
-      { contractId: 'site-audit:read', operationId: 'audit' },
-      { contractId: 'design-system:read', operationId: 'get_styles' },
+      { contractId: 'cms.site.audit', operationId: 'audit' },
+      { contractId: 'cms.design-system.read', operationId: 'get_styles' },
     ],
     lifecycle: {
       healthCheck: () => ({ healthy: true }),
@@ -33,8 +33,8 @@ function makeOptionalProvider(): ProviderRegistration {
     label: 'Optional Test Provider',
     required: false,
     capabilities: [
-      { contractId: 'theme-structure:read', operationId: 'get_themes' },
-      { contractId: 'content-structure:write', operationId: 'write_content' },
+      { contractId: 'cms.theme-structure.read', operationId: 'get_themes' },
+      { contractId: 'cms.content-structure.write', operationId: 'write_content' },
     ],
     lifecycle: {
       healthCheck: () => ({ healthy: true }),
@@ -48,7 +48,7 @@ function makeUnhealthyProvider(): ProviderRegistration {
     label: 'Unhealthy Test Provider',
     required: false,
     capabilities: [
-      { contractId: 'extra-feature:read', operationId: 'extra' },
+      { contractId: 'cms.extra-feature.read', operationId: 'extra' },
     ],
     lifecycle: {
       healthCheck: () => ({ healthy: false, message: 'Cannot connect' }),
@@ -65,8 +65,8 @@ describe('ProviderRegistry', () => {
 
   it('registers a provider and indexes its capabilities', () => {
     registry.register(makeCoreProvider());
-    expect(registry.hasCapability('site-audit:read')).toBe(true);
-    expect(registry.hasCapability('design-system:read')).toBe(true);
+    expect(registry.hasCapability('cms.site.audit')).toBe(true);
+    expect(registry.hasCapability('cms.design-system.read')).toBe(true);
     expect(registry.hasCapability('unknown:cap')).toBe(false);
   });
 
@@ -81,9 +81,9 @@ describe('ProviderRegistry', () => {
     registry.register(makeCoreProvider());
     registry.markLoaded('core-test');
 
-    const result = registry.resolveCapability('site-audit:read');
+    const result = registry.resolveCapability('cms.site.audit');
     expect(result).not.toBeNull();
-    expect(result!.contractId).toBe('site-audit:read');
+    expect(result!.contractId).toBe('cms.site.audit');
     expect(result!.providerId).toBe('core-test');
     expect(result!.operationId).toBe('audit');
     expect(result!.resolved).toBe(true);
@@ -103,7 +103,7 @@ describe('ProviderRegistry', () => {
     registry.markLoaded('core-test');
     registry.markError('core-test', 'intermittent failure');
 
-    const result = registry.resolveCapability('site-audit:read');
+    const result = registry.resolveCapability('cms.site.audit');
     expect(result!.degradation).toBe('degraded');
   });
 
@@ -111,7 +111,7 @@ describe('ProviderRegistry', () => {
     registry.register(makeCoreProvider());
     // Not loaded
 
-    const result = registry.resolveCapability('site-audit:read');
+    const result = registry.resolveCapability('cms.site.audit');
     expect(result!.resolved).toBe(false);
     expect(result!.degradation).toBe('unavailable');
   });
@@ -121,8 +121,8 @@ describe('ProviderRegistry', () => {
     registry.markLoaded('core-test');
 
     const result = resolveMultipleCapabilities(registry, [
-      'site-audit:read',
-      'design-system:read',
+      'cms.site.audit',
+      'cms.design-system.read',
       'unknown:cap',
     ]);
 
@@ -161,13 +161,13 @@ describe('ProviderRegistry', () => {
       providerId: 'primary',
       label: 'Primary',
       required: true,
-      capabilities: [{ contractId: 'shared:cap', operationId: 'op_primary' }],
+      capabilities: [{ contractId: 'cms.shared.cap', operationId: 'op_primary' }],
     };
     const secondary: ProviderRegistration = {
       providerId: 'secondary',
       label: 'Secondary',
       required: false,
-      capabilities: [{ contractId: 'shared:cap', operationId: 'op_secondary' }],
+      capabilities: [{ contractId: 'cms.shared.cap', operationId: 'op_secondary' }],
     };
 
     registry.register(primary);
@@ -175,7 +175,7 @@ describe('ProviderRegistry', () => {
     registry.markLoaded('primary');
     registry.markLoaded('secondary');
 
-    const result = registry.resolveCapability('shared:cap');
+    const result = registry.resolveCapability('cms.shared.cap');
     expect(result!.providerId).toBe('primary');
     expect(result!.degradation).toBe('none');
   });
@@ -286,7 +286,7 @@ describe('CapabilityResolver', () => {
   });
 
   it('resolves a known capability', () => {
-    const result = resolveCapability(registry, 'site-audit:read');
+    const result = resolveCapability(registry, 'cms.site.audit');
     expect(result).not.toBeNull();
     expect(result!.providerId).toBe('core-test');
   });
@@ -298,8 +298,8 @@ describe('CapabilityResolver', () => {
 
   it('resolves multiple capabilities with summary', () => {
     const result = resolveMultipleCapabilities(registry, [
-      'site-audit:read',
-      'design-system:read',
+      'cms.site.audit',
+      'cms.design-system.read',
       'missing:cap',
     ]);
 

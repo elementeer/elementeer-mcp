@@ -155,7 +155,7 @@ describe('intent wizard routing', () => {
         elementor_pro: false,
         activation_mode: 'standalone-free',
         template_count: 4,
-        capabilities: ['site-audit:read'],
+        capabilities: ['cms.site.audit'],
       },
       {
         assessed_at: '2026-04-12T00:00:00Z',

@@ -332,7 +332,7 @@ describe('ElementeerClient', () => {
           elementor_pro: false,
           activation_mode: 'standalone-free',
           template_count: 10,
-          capabilities: ['site-audit:read'],
+          capabilities: ['cms.site.audit'],
         },
       });
       const info = await client.getSiteInfo();
