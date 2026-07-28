@@ -1,22 +1,23 @@
+import type {
+  CapabilityContractId,
+  ProviderId,
+  OperationId,
+  AuthorizationScopeId,
+} from '@elementeer/specs';
+
+export { CapabilityContractId, ProviderId, OperationId, AuthorizationScopeId };
+
 export interface ProviderCapability {
-  /** The abstract capability contract ID (e.g. "site-audit:read") */
-  contractId: string;
-  /** The concrete operation to invoke within this provider */
-  operationId: string;
-  /** Optional metadata about the capability mapping */
+  contractId: CapabilityContractId;
+  operationId: OperationId;
   metadata?: Record<string, unknown>;
 }
 
 export interface ProviderRegistration {
-  /** Unique identifier for this provider (e.g. "core-site", "elementor-pro-site") */
-  providerId: string;
-  /** Human-readable label */
+  providerId: ProviderId;
   label: string;
-  /** The capabilities this provider fulfills */
   capabilities: ProviderCapability[];
-  /** Whether this provider is required for the server to function */
   required: boolean;
-  /** Lifecycle hooks */
   lifecycle?: ProviderLifecycle;
 }
 
@@ -39,15 +40,10 @@ export interface ProviderHealth {
 }
 
 export interface ResolvedCapability {
-  /** The capability contract that was resolved */
-  contractId: string;
-  /** The provider that fulfills this capability */
-  providerId: string;
-  /** The concrete operation to invoke */
-  operationId: string;
-  /** Whether the resolution was successful */
+  contractId: CapabilityContractId;
+  providerId: ProviderId;
+  operationId: OperationId;
   resolved: boolean;
-  /** Degradation level if not fully resolved */
   degradation?: CapabilityDegradation;
 }
 
@@ -66,11 +62,11 @@ export interface CapabilityResolutionResult {
 }
 
 export interface ProviderStatus {
-  providerId: string;
+  providerId: ProviderId;
   label: string;
   loaded: boolean;
   healthy: boolean;
   required: boolean;
-  capabilities: string[];
+  capabilities: CapabilityContractId[];
   errors: string[];
 }

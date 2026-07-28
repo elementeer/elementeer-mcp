@@ -8,3 +8,4 @@ export {
   getCapabilitySummary,
 } from './resolver.js';
 export { checkProviderHealth, getOverallHealth } from './health.js';
+export { MCP_SCOPE_BINDINGS, getScopeBinding } from './scope-bindings.js';
