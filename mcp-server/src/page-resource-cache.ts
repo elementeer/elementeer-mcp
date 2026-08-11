@@ -47,7 +47,7 @@ export function registerPageResourceTemplates(
   server: McpServer,
   getClient: (siteId?: string) => ElementeerClient,
 ): void {
-  const RESOURCE_PROJECTIONS: ProjectionLevel[] = ['structure', 'content', 'interaction', 'style_tokens'];
+  const RESOURCE_PROJECTIONS: ProjectionLevel[] = ['structure', 'content', 'interaction', 'style_tokens', 'full'];
 
   for (const projection of RESOURCE_PROJECTIONS) {
     const template = new ResourceTemplate(
@@ -75,7 +75,7 @@ export function registerPageResourceTemplates(
           };
         }
 
-        const match = resourceKey.match(/^pages\/(\d+)\/data\/(structure|content|interaction|style_tokens)$/);
+        const match = resourceKey.match(/^pages\/(\d+)\/data\/(structure|content|interaction|style_tokens|full)$/);
         if (!match) {
           throw new Error(`Unsupported resource URI: ${resourceKey}`);
         }
@@ -87,15 +87,25 @@ export function registerPageResourceTemplates(
           const client = getClient();
           const result = await client.getPageData({ id: pageId });
           const rawData = result.elementor_data ?? [];
-          const projected = projectElementorData(rawData, resourceProjection, {
-            pageId: result.post_id ?? pageId,
-            post_title: result.post_title,
-            revision: result.post_modified ?? '',
-          });
-          const plaintext = JSON.stringify(projected, null, 2);
+
+          let plaintext: string;
+          let payload: unknown;
+
+          if (resourceProjection === 'full') {
+            payload = rawData;
+            plaintext = JSON.stringify(rawData, null, 2);
+          } else {
+            const projected = projectElementorData(rawData, resourceProjection, {
+              pageId: result.post_id ?? pageId,
+              post_title: result.post_title,
+              revision: result.post_modified ?? '',
+            });
+            payload = projected;
+            plaintext = JSON.stringify(projected, null, 2);
+          }
 
           cache.set(resourceKey, {
-            payload: projected,
+            payload,
             plaintext,
             projection: resourceProjection,
             page_id: pageId,
