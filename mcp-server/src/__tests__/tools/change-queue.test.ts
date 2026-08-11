@@ -3,6 +3,15 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { registerChangeQueueTools } from '../../tools/change-queue.js';
 import type { ElementeerClient, QueuedChange } from '../../client.js';
 
+vi.mock('../../queue-v2.js', () => ({
+  QueueV2: vi.fn().mockImplementation(() => ({
+    processChange: vi.fn().mockResolvedValue({
+      queued: true,
+      change: { id: 'chg_abc123' },
+    }),
+  })),
+}));
+
 // ------------------------------------------------------------------ //
 // Fixtures
 // ------------------------------------------------------------------ //
@@ -29,6 +38,7 @@ function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> 
     listChanges:          vi.fn().mockResolvedValue({ changes: [makeChange()], total: 1 }),
     getChange:            vi.fn().mockResolvedValue(makeChange({ status: 'approved' })),
     updateChangeStatus:   vi.fn().mockResolvedValue(makeChange({ status: 'approved' })),
+    preflightRoute:       vi.fn().mockReturnValue({ route: '/some/route', method: 'POST', available: true }),
     setGlobalColors:      vi.fn().mockResolvedValue({ kit_id: 1, slot: 'system', colors: [], updated: true }),
     setGlobalTypography:  vi.fn().mockResolvedValue({ kit_id: 1, slot: 'system', typography: [], updated: true }),
     updateTemplateData:   vi.fn().mockResolvedValue({ id: 1, updated: true }),
@@ -44,7 +54,7 @@ function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> 
 // Test setup
 // ------------------------------------------------------------------ //
 
-describe.skip('change queue tools', () => {
+describe('change queue tools', () => {
   let server: McpServer;
   let client: ElementeerClient;
   let getClient: (siteId?: string) => ElementeerClient;
@@ -74,15 +84,8 @@ describe.skip('change queue tools', () => {
   // queue_change
   // ---------------------------------------------------------------- //
   describe('queue_change', () => {
-    it('calls client.createChange with correct params', async () => {
+    it('returns queued message with change ID', async () => {
       const result = await call('queue_change', {
-        operation:    'set_global_colors',
-        params:       { colors: [{ title: 'Primary', color: '#1A56DB' }] },
-        note:         'Update brand color',
-        before_state: { colors: [{ title: 'Primary', color: '#000000' }] },
-      });
-
-      expect(client.createChange).toHaveBeenCalledWith({
         operation:    'set_global_colors',
         params:       { colors: [{ title: 'Primary', color: '#1A56DB' }] },
         note:         'Update brand color',
@@ -245,13 +248,27 @@ describe.skip('change queue tools', () => {
         makeChange({
           status:    'approved',
           operation: 'update_page_data',
-          params:    { page_id: 42, elementor_data: [{ type: 'section' }] },
+          params:    { id: 42, elementor_data: [{ type: 'section' }] },
         }),
       );
 
       await call('apply_change', { change_id: 'chg_abc123' });
 
       expect(client.updatePageData).toHaveBeenCalledWith(42, [{ type: 'section' }]);
+    });
+
+    it('should normalize elementor_data string to array in update_template_data executor', async () => {
+      vi.mocked(client.getChange).mockResolvedValueOnce(
+        makeChange({
+          status:    'approved',
+          operation: 'update_template_data',
+          params:    { id: 7, elementor_data: '[{"elType":"section"}]' },
+        }),
+      );
+
+      await call('apply_change', { change_id: 'chg_abc123' });
+
+      expect(client.updateTemplateData).toHaveBeenCalledWith(7, [{ elType: 'section' }]);
     });
 
     it('rejects change with status !== approved', async () => {

@@ -95,7 +95,7 @@ export function registerContentTools(
       if (level === 'L2' || level === 'L3') {
         const change = await client.createChange({
           operation: toolName,
-          params: { id, elementor_data },
+          params: { id, elementor_data: parsed },
           note: note || `Auto-queued by governance level ${level}`,
         });
 
