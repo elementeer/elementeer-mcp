@@ -218,6 +218,7 @@ export const REGISTERED_TOOL_NAMES = [
   'analyze_addon_overlap',
   'widget_census',
   'addon_ecosystem_wizard',
+  'describe_widget_type',
 ] as const;
 
 export type RegisteredToolName = (typeof REGISTERED_TOOL_NAMES)[number];
@@ -1910,6 +1911,7 @@ export const TOOL_TIER_ASSIGNMENTS: ProductSurfaceAssignment[] = [
     kind: 'tool',
     rationale: 'Internal diagnostic wizard for overall Elementor add‑on ecosystem recommendations.',
   },
+  { id: 'describe_widget_type', label: 'Describe widget type schema', tier: 'free', visibility: 'public', kind: 'tool', rationale: 'Free must expose widget field introspection so agents stop guessing text field names. Core Elementor plus at least two addon suites.' },
   { id: 'get_voxel_status', label: 'Get Voxel status', tier: 'free', visibility: 'public', kind: 'tool', rationale: 'Free should detect Voxel plugin presence and surface version, product-type count, and post-type summary.' },
   { id: 'list_voxel_post_types', label: 'List Voxel post types', tier: 'free', visibility: 'public', kind: 'tool', rationale: 'Free should surface all Voxel dynamic post types with field counts, template assignments, and visibility.' },
   { id: 'get_voxel_post_type', label: 'Get Voxel post type', tier: 'free', visibility: 'public', kind: 'tool', rationale: 'Free should expose detailed Voxel post type configuration, fields, and templates for a single CPT.' },
