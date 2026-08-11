@@ -12,6 +12,14 @@ import type {
 import { GOVERNANCE_LEVELS } from '../product-tiers.js';
 import { QueueV2 } from '../queue-v2.js';
 
+function normalizeElementorData(value: unknown): unknown[] {
+  const parsed = typeof value === 'string' ? JSON.parse(value) : value;
+  if (!Array.isArray(parsed)) {
+    throw new Error('elementor_data must resolve to an array, got ' + typeof parsed);
+  }
+  return parsed;
+}
+
 // ------------------------------------------------------------------ //
 // Operation executor map
 // Maps operation names to client method calls using the stored params.
@@ -30,9 +38,9 @@ const OPERATION_EXECUTORS: Record<string, Executor> = {
       ((p['slot'] as string) ?? 'system') as 'system' | 'custom',
     ),
   update_template_data: (c, p) =>
-    c.updateTemplateData(p['id'] as number, p['elementor_data'] as unknown[]),
+    c.updateTemplateData(p['id'] as number, normalizeElementorData(p['elementor_data'])),
   update_page_data: (c, p) =>
-    c.updatePageData(p['id'] as number, p['elementor_data'] as unknown[]),
+    c.updatePageData(p['id'] as number, normalizeElementorData(p['elementor_data'])),
   create_template: (c, p) =>
     c.createTemplate(p as unknown as CreateTemplateInput),
   set_site_logo: (c, p) =>
