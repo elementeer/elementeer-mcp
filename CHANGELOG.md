@@ -5,6 +5,18 @@ All notable changes to Elementeer MCP will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2026-08-11
+
+ELM-CMS-P0 integrity repairs. Wave `CP-OPT-2026-08-05-W1`, iteration I00, candidate `7c2fac1`.
+Independently reviewed and reproduced by the Elementeer review authority (EVIDENCE_REVIEW: PASS).
+
+### Fixed
+- **IMP-001 queue-type drift**: `elementor_data` is normalised from string to array before the change queue persists it and before the executor applies it. Affects `update_template_data` and `update_page_data`.
+- **IMP-002 change-queue tests reactivated**: `describe.skip` removed; suite runs green at 24/24 with an added string/array roundtrip test.
+
+### Notes
+- Contract parity against `elementeer-specs` measured read-only: 9 PARITY_OK / 3 PARTIAL / 7 GAP. The 7 gaps (notably `CapabilityBinding` and `ChangeSet`) are P1 candidates and not addressed here.
+
 ## [Unreleased]
 
 ### Changed
