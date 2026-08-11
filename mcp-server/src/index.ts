@@ -2,6 +2,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { getClient, getActiveSite } from './config.js';
 import { registerAllTools } from './tools/index.js';
+import { registerPageResourceTemplates } from './page-resource-cache.js';
 
 const server = new McpServer({
   name: 'elementeer-mcp',
@@ -28,6 +29,8 @@ registerAllTools(server, getClient, {
   includeAdvanced: !isFreeOnly,
   includeStudioFuture: !isFreeOnly,
 });
+
+registerPageResourceTemplates(server, getClient);
 
 async function main(): Promise<void> {
   const transport = new StdioServerTransport();
