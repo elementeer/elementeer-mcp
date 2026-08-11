@@ -1,0 +1,15 @@
+# Repo-local SkillWeave configuration.
+# Durable planning stays in elementeer-planning — see .skillweave/agents.md.
+# This file exists solely so ReleaseChain can read the git_flow declaration.
+
+git_flow:
+  enabled: true
+  branches:
+    production: main
+    integration: dev
+  branch_prefix:
+    feature: feature/
+    fix: fix/
+    chore: chore/
+  require_pr: true
+  auto_create_dev: false

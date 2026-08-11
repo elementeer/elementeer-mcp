@@ -20,3 +20,9 @@ centralized in the private `elementeer/elementeer-planning` repository.
 If the planning repository or synchronizer is temporarily unavailable, do not fork the
 backlog. Preserve a temporary local handoff note, avoid destructive cleanup, and reconcile
 into the central ticket once service returns.
+
+## Git flow
+
+This repository declares `git_flow` in `.skillweave/config.yaml` so ReleaseChain
+enforces `feature/... -> dev -> main -> tag` instead of only warning on direct
+`main` commits.
