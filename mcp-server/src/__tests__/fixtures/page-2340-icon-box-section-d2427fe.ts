@@ -1,13 +1,14 @@
 /**
- * REAL ICON-BOX FIXTURE — Page 2340 "fusionAIze Variant", Container d2427fe
+ *  REAL ICON-BOX FIXTURE — Page 2340 "fusionAIze Variant", Container d2427fe
  *
- * Bezugsquelle:   Respira `find_element` (include=content) am 2026-08-12
- * Site:           fusionaize-preview / preview.fusionaize.com
- * Page:           2340 "fusionAIze - Variant"
- * Container:      d2427fe, admin_label "How It Works", 5 children
- * Builder:        Elementor (Free) 3.28.4
+ *  Bezugsquelle:   Respira `find_element` (include=content) am 2026-08-12
+ *  Site:           fusionaize-preview / preview.fusionaize.com
+ *  Page:           2340 "fusionAIze - Variant"
+ *  Container:      d2427fe, admin_label "How It Works", 5 children
+ *  Builder:        Elementor 4.2.2 (Pro 4.2.1)
+ *  Theme:          Astra 4.13.8
  *
- * Nutzung:        diff_pages-Test gegen reale Daten in diff-pages.test.ts
+ *  Nutzung:        diff_pages-Test gegen reale Daten in diff-pages.test.ts
  * Wiederholbar:   einmal gezogen, deterministisch offline ausfuehrbar.
  *                 Fixture aendert sich nur bei manuellem Sync mit der Live-Site.
  *

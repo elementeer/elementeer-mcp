@@ -20,9 +20,27 @@ amendments:
     title: "diff_pages gegen echte daten 2618 vs 2340"
     resolved_in: HEAD^ (next commit after this file)
     notes: >
-      Page 2340 fixture (container d2427fe, 5 icon-boxen) via Respira gezogen.
-      diff_pages.test.ts erweitert: erkennt abc1234/def5678/ghi9012 fehlen,
-      1cefa87/c2068b0/3a4b09c sind die ersatz-widgets. 541 passed.
+      Fixture page-2340-icon-box-section-d2427fe.ts via Respira gezogen
+      (2026-08-12, Elementor 4.2.2, Pro 4.2.1, Astra 4.13.8).
+
+      Container d2427fe ("How It Works") existiert auf BEIDEN Seiten:
+      - 2618 Sektion 4: 1c775162 → addfe73 → d963208 → d2427fe
+      - 2340 Sektion 3: 1c775162 → addfe73 → d963208 → d2427fe
+      Gleiche 5 Widget-IDs: 1cefa87, c2068b0, 4c63abf, 8ae0619, 3a4b09c.
+
+      abc1234/def5678/ghi9012 sind synthetisch — sie kommen nirgendwo
+      auf der live-site vor. Die Annahme "3 statt 5 Icon-Boxen auf 2340"
+      im Gap-Report war falsch. Beide Seiten haben 5.
+
+      diff_pages.test.ts korrigiert:
+      - Test 'erkennt an realen Fixtures: d2427fe identisch' prueft
+        identische structure-Projektion (5 IDs, gleiche Reihenfolge).
+      - Test 'erkennt an realen Fixtures: unterschiedliche Texte' prueft
+        content-Diff bei gleichen Widget-IDs (z.B. title_text 1cefa87).
+      - Synthetischer Test umbenannt in 'synthetisches Fixture'.
+      - Builder-Version im Fixture-Kopf auf 4.2.2 korrigiert.
+
+      542 passed / 1 failed (pre-existing).
 
   - id: A3
     status: open

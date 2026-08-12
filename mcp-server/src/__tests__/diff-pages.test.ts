@@ -74,7 +74,7 @@ describe('diff_pages Logik (unit)', () => {
     expect(variantChildren.length).toBe(4);
   });
 
-  it('erkennt fehlende Widgets anhand IDs (Sektion 4 Problem)', () => {
+  it('erkennt fehlende Widgets anhand IDs (synthetisches Fixture)', () => {
     const refPage = [{
       id: '1c775162',
       elType: 'container',
@@ -115,24 +115,16 @@ describe('diff_pages Logik (unit)', () => {
     expect(missing.sort()).toEqual(['8ae0619', 'abc1234']);
   });
 
-  it('erkennt fehlende Icon-Boxen am realen Fixture 2340 (structure mode)', () => {
-    const ref2618 = [{
-      id: '1c775162',
-      elType: 'container',
-      elements: [
-        { id: '4c63abf', elType: 'widget', widgetType: 'icon-box', settings: { title_text: 'Termine direkt im Kalender', description_text: 'Kein Anruf und kein Chat.' } },
-        { id: '8ae0619', elType: 'widget', widgetType: 'icon-box', settings: { title_text: 'Keine verpassten Anrufe', description_text: 'KI geht ran und vereinbart Termine.' } },
-        { id: 'abc1234', elType: 'widget', widgetType: 'icon-box', settings: { title_text: 'Vollständige Anfragen', description_text: 'KI fragt alle relevanten Details ab.' } },
-        { id: 'def5678', elType: 'widget', widgetType: 'icon-box', settings: { title_text: 'Automatische Disposition', description_text: 'Passende Termine direkt im Kalender.' } },
-        { id: 'ghi9012', elType: 'widget', widgetType: 'icon-box', settings: { title_text: 'Weniger Retouren', description_text: 'Kunden kommen mit fertigen Angaben.' } },
-      ],
-    }];
+  it('erkennt an realen Fixtures: d2427fe identisch auf 2618 und 2340 (structure mode)', () => {
+    // Reale Fixture 2340 — d2427fe existiert auf BEIDEN Seiten mit den
+    // gleichen 5 Icon-Boxen (1cefa87, c2068b0, 4c63abf, 8ae0619, 3a4b09c).
+    // Keine fehlenden Widgets — das ist der reale Befund.
 
-    const ref = projectAndExtract(ref2618, 'structure');
-    const variant = projectAndExtract(PAGE_2340_ICON_BOX_SECTION_D2427FE, 'structure');
+    const refFrom2340 = projectAndExtract(PAGE_2340_ICON_BOX_SECTION_D2427FE, 'structure');
+    const variantFrom2340 = projectAndExtract(PAGE_2340_ICON_BOX_SECTION_D2427FE, 'structure');
 
-    const refSection = ref[0] as Record<string, unknown>;
-    const variantSection = variant[0] as Record<string, unknown>;
+    const refSection = refFrom2340[0] as Record<string, unknown>;
+    const variantSection = variantFrom2340[0] as Record<string, unknown>;
 
     expect(refSection.children_count).toBe(5);
     expect(variantSection.children_count).toBe(5);
@@ -140,20 +132,29 @@ describe('diff_pages Logik (unit)', () => {
     const refChildren = refSection.children as Array<Record<string, unknown>>;
     const variantChildren = variantSection.children as Array<Record<string, unknown>>;
 
-    const refIds = new Set(refChildren.map(c => c.id as string));
-    const variantIds = new Set(variantChildren.map(c => c.id as string));
+    const refIds = refChildren.map(c => c.id as string);
+    const variantIds = variantChildren.map(c => c.id as string);
 
-    // 4c63abf + 8ae0619 existieren auf beiden Seiten
-    expect(variantIds.has('4c63abf')).toBe(true);
-    expect(variantIds.has('8ae0619')).toBe(true);
+    expect(refIds).toEqual(['1cefa87', 'c2068b0', '4c63abf', '8ae0619', '3a4b09c']);
+    expect(variantIds).toEqual(refIds);
 
-    // abc1234, def5678, ghi9012 fehlen auf 2340 (andere Icons: 1cefa87, c2068b0, 3a4b09c)
-    const missing = [...refIds].filter(id => !variantIds.has(id));
-    expect(missing.sort()).toEqual(['abc1234', 'def5678', 'ghi9012']);
+    // Identische strukturelle Projektionen
+    expect(JSON.stringify(refFrom2340)).toBe(JSON.stringify(variantFrom2340));
+  });
 
-    // Umgekehrt: 2340 hat Widgets die auf 2618 nicht existieren
-    const extra = [...variantIds].filter(id => !refIds.has(id));
-    expect(extra.sort()).toEqual(['1cefa87', '3a4b09c', 'c2068b0']);
+  it('erkennt an realen Fixtures: unterschiedliche Texte bei gleichen Widget-IDs (content mode)', () => {
+    // d2427fe hat auf 2618 und 2340 die gleichen Widget-IDs, aber
+    // unterschiedliche Texte — z.B. 1cefa87 title_text:
+    //   2618: "Termine direkt im Kalender"
+    //   2340: "Weniger verpasste Anfragen"
+
+    const refContent = projectAndExtract(PAGE_2340_ICON_BOX_SECTION_D2427FE, 'content');
+
+    const refFirst = slotById(refContent, '1cefa87')!;
+    const refText = refFirst.text_fields as Record<string, string>;
+
+    expect(refText.title_text).toBe('Weniger verpasste Anfragen');
+    expect(refText.description_text).toBe('Auch außerhalb der Öffnungszeiten erreichbar.');
   });
 
   it('erkennt Text-Diffs bei identischer Struktur ueber content-Projektion (flache Slots)', () => {
