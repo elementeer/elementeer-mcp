@@ -11,34 +11,35 @@ export class BridgeError extends Error {
   }
 }
 
-export interface ScreenshotResult {
-  url: string;
-  screenshots: {
-    desktop: string;
-    tablet: string;
-    mobile: string;
-  };
-  meta: {
-    title: string;
-    description: string;
-  };
-  captured_at: string;
-}
-
-interface ScrapeScreenshotReferences {
+export interface ScreenshotViewports {
   desktop: string;
   tablet: string;
   mobile: string;
 }
 
-interface ScrapeSummaryResponse {
-  url: string;
-  meta: { title: string; description: string };
-  htmlLength: number;
-  textBlocksCount: number;
-  imagesCount: number;
-  linksCount: number;
-  screenshots: ScrapeScreenshotReferences;
+export interface ScreenshotResult {
+  pageId: number;
+  contentHash: string;
+  screenshots: ScreenshotViewports;
+  capturedAt: string;
+}
+
+export interface ScreenshotRequest {
+  pageId: number;
+  template: string;
+  contentHash?: string;
+  containers?: string[];
+}
+
+interface BridgeScreenshotResponse {
+  pageId: number;
+  contentHash: string;
+  screenshots: {
+    desktop: string;
+    tablet: string;
+    mobile: string;
+  };
+  capturedAt: string;
 }
 
 export class BridgeClient {
@@ -60,24 +61,33 @@ export class BridgeClient {
     });
   }
 
-  async requestScreenshot(pageUrl: string): Promise<ScreenshotResult> {
+  async requestScreenshot(params: ScreenshotRequest): Promise<ScreenshotResult> {
     try {
-      const res = await this.http.post<ScrapeSummaryResponse>('/api/scrape', {
-        url: pageUrl,
-      });
+      const body: Record<string, unknown> = {
+        template: params.template,
+      };
+      if (params.contentHash) body.contentHash = params.contentHash;
+      if (params.containers?.length) body.containers = params.containers;
+
+      const res = await this.http.post<BridgeScreenshotResponse>(
+        `/api/pages/${params.pageId}/screenshots`,
+        body,
+      );
 
       const data = res.data;
       const base = this.baseUrl.replace(/\/$/, '');
 
+      const prefix = `/static/page-screenshots/${data.pageId}/${data.contentHash}`;
+
       return {
-        url: data.url,
+        pageId: data.pageId,
+        contentHash: data.contentHash,
         screenshots: {
-          desktop: `${base}${data.screenshots.desktop}`,
-          tablet: `${base}${data.screenshots.tablet}`,
-          mobile: `${base}${data.screenshots.mobile}`,
+          desktop: `${base}${prefix}/desktop.png`,
+          tablet: `${base}${prefix}/tablet.png`,
+          mobile: `${base}${prefix}/mobile.png`,
         },
-        meta: data.meta,
-        captured_at: new Date().toISOString(),
+        capturedAt: data.capturedAt,
       };
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
@@ -101,8 +111,6 @@ export class BridgeClient {
     }
   }
 }
-
-const bridgeUrl = process.env['ELEMENTEER_BRIDGE_URL'];
 
 const bridgeUrl = process.env['ELEMENTEER_BRIDGE_URL'];
 const bridgeApiKey = process.env['ELEMENTEER_BRIDGE_API_KEY'];

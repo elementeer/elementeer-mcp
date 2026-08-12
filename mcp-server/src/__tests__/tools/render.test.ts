@@ -8,7 +8,6 @@ import {
   screenshotResourceUri,
   screenshotResourceKey,
   parseScreenshotResourceUri,
-  buildContentHash,
   storeScreenshot,
   getScreenshot,
 } from '../../screenshot-cache.js';
@@ -61,51 +60,45 @@ function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> 
 
 describe('Screenshot URI helpers', () => {
   it('builds and parses a full resource URI round-trip', () => {
-    const uri = screenshotResourceUri(42, 'p42-r2026-08-12-10-00-00');
-    expect(uri).toBe('elementeer://pages/42/screenshot/p42-r2026-08-12-10-00-00');
+    const uri = screenshotResourceUri(42, 'a'.repeat(64));
+    expect(uri).toBe(`elementeer://pages/42/screenshot/${'a'.repeat(64)}`);
 
-    const parsed = parseScreenshotResourceUri('pages/42/screenshot/p42-r2026-08-12-10-00-00');
+    const parsed = parseScreenshotResourceUri(`pages/42/screenshot/${'a'.repeat(64)}`);
     expect(parsed).not.toBeNull();
     expect(parsed!.pageId).toBe(42);
-    expect(parsed!.contentHash).toBe('p42-r2026-08-12-10-00-00');
+    expect(parsed!.contentHash).toBe('a'.repeat(64));
   });
 
   it('parses cache keys consistently', () => {
-    const key = screenshotResourceKey(10, 'abc-123');
-    expect(key).toBe('pages/10/screenshot/abc-123');
+    const key = screenshotResourceKey(10, 'abc');
+    expect(key).toBe('pages/10/screenshot/abc');
   });
 
   it('returns null for malformed URIs', () => {
     expect(parseScreenshotResourceUri('pages/42/data/structure')).toBeNull();
-    expect(parseScreenshotResourceUri('elementeer://pages/42/other/abc')).toBeNull();
-    expect(parseScreenshotResourceUri('pages/not-a-number/screenshot/hash')).toBeNull();
-  });
-
-  it('builds content_hash from page id and modified date', () => {
-    expect(buildContentHash(42, '2026-08-12 10:00:00')).toBe('p42-r2026-08-12-10-00-00');
-    expect(buildContentHash(1, '2024-01-01T00:00:00Z')).toBe('p1-r2024-01-01t00-00-00z');
+    expect(parseScreenshotResourceUri('pages/42/screenshot/short')).toBeNull();
+    expect(parseScreenshotResourceUri('pages/not-a-number/screenshot/aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmnnnnoo')).toBeNull();
   });
 });
 
 describe('Screenshot cache', () => {
   const mockResult = {
-    url: 'https://example.com',
+    pageId: 42,
+    contentHash: 'a'.repeat(64),
     screenshots: {
-      desktop: 'http://localhost:3201/static/scrapes/stub/desktop.png',
-      tablet: 'http://localhost:3201/static/scrapes/stub/tablet.png',
-      mobile: 'http://localhost:3201/static/scrapes/stub/mobile.png',
+      desktop: 'http://localhost:3201/static/page-screenshots/42/aaaa.../desktop.png',
+      tablet: 'http://localhost:3201/static/page-screenshots/42/aaaa.../tablet.png',
+      mobile: 'http://localhost:3201/static/page-screenshots/42/aaaa.../mobile.png',
     },
-    meta: { title: 'Test', description: '' },
-    captured_at: '2026-08-12T10:00:00.000Z',
+    capturedAt: '2026-08-12T10:00:00.000Z',
   };
 
   it('stores and retrieves screenshots by resource key', () => {
-    storeScreenshot('pages/42/screenshot/hash-abc', mockResult, 42, 'hash-abc');
-    const entry = getScreenshot('pages/42/screenshot/hash-abc');
+    storeScreenshot('pages/42/screenshot/aaaa', mockResult);
+    const entry = getScreenshot('pages/42/screenshot/aaaa');
     expect(entry).toBeDefined();
-    expect(entry!.result.url).toBe('https://example.com');
-    expect(entry!.result.screenshots.desktop).toContain('desktop.png');
-    expect(entry!.contentHash).toBe('hash-abc');
+    expect(entry!.result.pageId).toBe(42);
+    expect(entry!.result.contentHash).toBe('a'.repeat(64));
   });
 
   it('returns undefined for unknown keys', () => {
@@ -118,7 +111,6 @@ describe('request_screenshot tool', () => {
   let client: ElementeerClient;
   let getClient: (siteId?: string) => ElementeerClient;
   let toolHandlers: Map<string, (args: Record<string, unknown>) => Promise<unknown>>;
-  let bridgeRequestMock: MockInstance;
 
   beforeEach(() => {
     server = new McpServer({ name: 'test', version: '0.0.0' });
@@ -159,30 +151,6 @@ describe('request_screenshot tool', () => {
     expect(result.content[0].text).toContain('ELEMENTEER_BRIDGE_URL');
   });
 
-  it('errors when page is not found in listElementorPages', async () => {
-    vi.mocked(client.listElementorPages).mockResolvedValueOnce({
-      posts: [],
-      total: 0,
-      total_pages: 1,
-    });
-
-    const result = await callTool('request_screenshot', { page_id: 99 });
-    expect(result.isError).toBe(true);
-    expect(result.content[0].text).toContain('not found');
-  });
-
-  it('errors when page has no URL', async () => {
-    vi.mocked(client.listElementorPages).mockResolvedValueOnce({
-      posts: [{ id: 42, title: 'No URL', slug: 'no-url', post_type: 'page', status: 'publish', url: '', modified: '2026-01-01' }],
-      total: 1,
-      total_pages: 1,
-    });
-
-    const result = await callTool('request_screenshot', { page_id: 42 });
-    expect(result.isError).toBe(true);
-    expect(result.content[0].text).toContain('no public URL');
-  });
-
   it('returns bridge error details when bridge fails', async () => {
     const mockBridgeClient = {
       baseUrl: 'http://localhost:3201',
@@ -198,8 +166,50 @@ describe('request_screenshot tool', () => {
       BridgeError,
     }));
 
-    const result = await callTool('request_screenshot', { page_id: 42 });
+    const result = await callTool('request_screenshot', { page_id: 42, template: 'full_page' });
     expect(result.isError).toBe(true);
     expect(result.content[0].text).toContain('Bridge error');
+  });
+
+  it('reports content hash mismatch between plugin and bridge', async () => {
+    const pluginHash = 'a'.repeat(64);
+    const bridgeHash = 'b'.repeat(64);
+
+    vi.mocked(client.getPageData).mockResolvedValueOnce({
+      post_id: 42,
+      post_title: 'Modified Page',
+      post_type: 'page',
+      element_count: 3,
+      elementor_data: [],
+      content_hash: pluginHash,
+    });
+
+    const mockBridgeClient = {
+      baseUrl: 'http://localhost:3201',
+      apiKey: 'test-key',
+      requestScreenshot: vi.fn().mockResolvedValue({
+        pageId: 42,
+        contentHash: bridgeHash,
+        screenshots: { desktop: 'http://l:3201/x/desktop.png', tablet: '', mobile: '' },
+        capturedAt: '2026-08-12T10:00:00.000Z',
+      }),
+    };
+
+    vi.doMock('../../render-client.js', () => ({
+      getBridgeClient: () => mockBridgeClient,
+      getBridgeUrl: () => 'http://localhost:3201',
+      BridgeError,
+    }));
+
+    const result = await callTool('request_screenshot', {
+      page_id: 42,
+      template: 'full_page',
+      content_hash: pluginHash,
+    });
+
+    expect(result.isError).toBe(true);
+    expect(result.content[0].text).toContain('mismatch');
+    expect(result.content[0].text).toContain(pluginHash);
+    expect(result.content[0].text).toContain(bridgeHash);
   });
 });
