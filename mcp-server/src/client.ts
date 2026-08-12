@@ -975,14 +975,16 @@ export class ElementeerClient {
       operations: Array<{
         widget_id: string;
         settings: Record<string, unknown>;
-        dry_run?: boolean;
       }>;
       content_hash: string;
       dry_run?: boolean;
+      partial?: boolean;
     },
   ): Promise<{
     post_id: number;
     updated: number;
+    updated_ids: string[];
+    results: Array<{ widget_id: string; path: string; updated: boolean }>;
     not_found: string[];
     partial: boolean;
     new_hash: string;

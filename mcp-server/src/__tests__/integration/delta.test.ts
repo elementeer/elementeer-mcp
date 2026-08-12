@@ -95,11 +95,13 @@ async function deleteTestTemplate(id: number): Promise<void> {
   await del(`/templates/${id}?force=true`);
 }
 
-async function setProtectRule(key: string, postIds: number[]): Promise<void> {
+async function setProtectRule(key: string, postIds: number[], slugs?: string[]): Promise<void> {
+  const protect: Record<string, unknown> = { post_ids: postIds };
+  if (slugs && slugs.length) protect.slugs = slugs;
   const res = await put(`/site/memory/${key}`, {
     type: 'rule',
     content: `Test protection — ${key}`,
-    rule: { protect: { post_ids: postIds } },
+    rule: { protect },
   });
   if (!res.ok) throw new Error(`Failed to set protect rule: ${res.status}`);
 }
@@ -223,6 +225,20 @@ describe('DELTA-005 Protection enforcement', () => {
     });
     expect(res.status).toBe(200);
     expect((res.data as any).updated).toBe(true);
+  });
+
+  it('blocks write on a page protected by slug (HTTP 423)', async () => {
+    // Page 131 slug is "delta-test-page"
+    await setProtectRule(RULE_KEY, [], ['delta-test-page']);
+
+    const data = await getPageData(PAGE_ID);
+    const res = await patch(`/pages/${PAGE_ID}/widgets/w001`, {
+      settings: { title: 'SHOULD FAIL BY SLUG' },
+      content_hash: data.content_hash,
+    });
+    expect(res.status).toBe(423);
+
+    await removeProtectRule(RULE_KEY);
   });
 });
 

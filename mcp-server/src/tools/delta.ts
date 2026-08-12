@@ -79,7 +79,7 @@ export function registerDeltaTools(
   // -----------------------------------------------------------------------
   server.tool(
     'apply_content_map',
-    'Apply multiple widget content edits to a single page in one atomic batch. Each operation specifies a widget_id and the settings to merge. The entire batch shares one content_hash. If any individual widget fails (not found, bad settings), the result lists the error per widget but does NOT abort the batch — and the response carries a partial:true flag. Use this instead of making N separate patch_widget calls.',
+    'Apply multiple widget content edits to a single page in one atomic batch. Each operation specifies a widget_id and the settings to merge. The entire batch shares one content_hash. Missing widget_ids are reported in not_found without aborting the rest of the batch (partial mode). Use this instead of making N separate patch_widget calls.',
     {
       site_id:      z.string().optional().describe('Site ID from config'),
       post_id:      z.number().int().describe('Page or template ID'),
@@ -87,7 +87,6 @@ export function registerDeltaTools(
         z.object({
           widget_id: z.string().describe('Element ID of the widget to patch'),
           settings:  z.record(z.unknown()).describe('Settings to merge into this widget'),
-          dry_run:   z.boolean().optional().default(false).describe('If true, preview this widget change without writing'),
         }),
       ).min(1).max(100).describe('Array of widget operations to apply atomically'),
       content_hash: z.string().describe('Content hash from a recent get_page_data. REQUIRED.'),
@@ -108,6 +107,7 @@ export function registerDeltaTools(
         operations,
         content_hash,
         dry_run,
+        partial: true,
       });
 
       const summaryLines = [
