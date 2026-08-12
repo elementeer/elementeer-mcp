@@ -186,6 +186,18 @@ describe('DELTA-005 Protection enforcement', () => {
     await removeProtectRule(RULE_KEY);
   });
 
+  it('blocks update_template metadata PATCH on a protected template (HTTP 423)', async () => {
+    const tid = await createTestTemplate('Delta Meta Protect Tpl');
+    createdTemplateIds.push(tid);
+
+    await setProtectRule(RULE_KEY, [tid]);
+
+    const res = await patch(`/templates/${tid}`, { title: 'Should Be Blocked' });
+    expect(res.status).toBe(423);
+
+    await removeProtectRule(RULE_KEY);
+  });
+
   it('allows writes after protection is removed', { timeout: 15000 }, async () => {
     const tid = await createTestTemplate('Delta Unprotect Tpl');
     createdTemplateIds.push(tid);
