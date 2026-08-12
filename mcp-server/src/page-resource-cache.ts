@@ -139,7 +139,7 @@ export function registerPageResourceTemplates(
     screenshotTemplate,
     {
       title: 'Page Screenshot',
-      description: 'A screenshot of a page captured via the rendering bridge. Bound to a specific content_hash — the URI changes when the page is modified.',
+      description: 'A screenshot of a page captured via the rendering bridge. Bound to a specific content_hash — the URI changes when the page is modified. Returns the desktop-viewport PNG image.',
       mimeType: 'image/png',
     },
     async (uri: URL) => {
@@ -162,30 +162,57 @@ export function registerPageResourceTemplates(
 
       const { result } = cached;
 
-      if (result.screenshot_base64) {
-        const decoded = Buffer.from(result.screenshot_base64, 'base64');
+      const desktopUrl = result.screenshots.desktop;
+      if (!desktopUrl) {
+        throw new Error(
+          `Screenshot for page ${parsed.pageId} has no desktop image URL.`,
+        );
+      }
+
+      try {
+        const fetch = (await import('node:http')).get;
+        const httpsMod = await import('node:https');
+        const httpMod = await import('node:http');
+        const mod = desktopUrl.startsWith('https://') ? httpsMod : httpMod;
+
+        const imageBuffer = await new Promise<Buffer>((resolve, reject) => {
+          const req = mod.get(desktopUrl, (res) => {
+            if (res.statusCode !== 200) {
+              reject(new Error(`Bridge returned ${res.statusCode} for screenshot image`));
+              return;
+            }
+            const chunks: Buffer[] = [];
+            res.on('data', (chunk: Buffer) => chunks.push(chunk));
+            res.on('end', () => resolve(Buffer.concat(chunks)));
+          });
+          req.on('error', reject);
+          req.setTimeout(10_000, () => {
+            req.destroy();
+            reject(new Error('Timeout fetching screenshot image from bridge'));
+          });
+        });
+
         return {
           contents: [{
             uri: uri.href,
             mimeType: 'image/png' as const,
-            blob: decoded.toString('base64'),
+            blob: imageBuffer.toString('base64'),
           }],
         };
-      }
-
-      if (result.screenshot_url) {
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
         return {
           contents: [{
             uri: uri.href,
-            mimeType: 'image/png' as const,
-            text: `Screenshot URL (content_hash: ${result.content_hash}, captured: ${result.captured_at}):\n${result.screenshot_url}`,
+            mimeType: 'text/plain' as const,
+            text: `Screenshot for page ${parsed.pageId} (hash: ${parsed.contentHash}):\n` +
+              `  Desktop: ${desktopUrl}\n` +
+              `  Tablet:  ${result.screenshots.tablet}\n` +
+              `  Mobile:  ${result.screenshots.mobile}\n\n` +
+              `Fetch error: ${message}`,
           }],
         };
       }
-
-      throw new Error(
-        `Screenshot for page ${parsed.pageId} has no image data (neither base64 nor URL).`,
-      );
     },
   );
 }

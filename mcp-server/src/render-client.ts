@@ -12,77 +12,72 @@ export class BridgeError extends Error {
 }
 
 export interface ScreenshotResult {
-  screenshot_url: string;
-  screenshot_base64?: string;
-  content_hash: string;
-  page_id: number;
-  container_id?: string;
+  url: string;
+  screenshots: {
+    desktop: string;
+    tablet: string;
+    mobile: string;
+  };
+  meta: {
+    title: string;
+    description: string;
+  };
   captured_at: string;
 }
 
-export interface ScrapeRequest {
-  page_id: number;
-  container_id?: string;
+interface ScrapeScreenshotReferences {
+  desktop: string;
+  tablet: string;
+  mobile: string;
 }
 
-export interface ScrapeResponse {
-  screenshots?: {
-    full_page?: string;
-    viewport?: string;
-    container?: string;
-    base64?: {
-      full_page?: string;
-      viewport?: string;
-      container?: string;
-    };
-  };
-  content_hash?: string;
-  page_id?: number;
-  captured_at?: string;
+interface ScrapeSummaryResponse {
+  url: string;
+  meta: { title: string; description: string };
+  htmlLength: number;
+  textBlocksCount: number;
+  imagesCount: number;
+  linksCount: number;
+  screenshots: ScrapeScreenshotReferences;
 }
 
 export class BridgeClient {
   private http: AxiosInstance;
   public readonly baseUrl: string;
+  public readonly apiKey: string;
 
-  constructor(baseUrl: string) {
+  constructor(baseUrl: string, apiKey: string) {
     this.baseUrl = baseUrl;
+    this.apiKey = apiKey;
     this.http = axios.create({
       baseURL: baseUrl.replace(/\/$/, ''),
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
+        'X-API-Key': apiKey,
       },
       timeout: 60_000,
     });
   }
 
-  async requestScreenshot(params: ScrapeRequest): Promise<ScreenshotResult> {
+  async requestScreenshot(pageUrl: string): Promise<ScreenshotResult> {
     try {
-      const res = await this.http.post<ScrapeResponse>('/scrape', {
-        page_id: params.page_id,
-        ...(params.container_id ? { container_id: params.container_id } : {}),
+      const res = await this.http.post<ScrapeSummaryResponse>('/api/scrape', {
+        url: pageUrl,
       });
 
       const data = res.data;
-
-      const screenshotBase64 =
-        data.screenshots?.base64?.container ??
-        data.screenshots?.base64?.viewport ??
-        data.screenshots?.base64?.full_page ??
-        undefined;
+      const base = this.baseUrl.replace(/\/$/, '');
 
       return {
-        screenshot_url:
-          data.screenshots?.container ??
-          data.screenshots?.viewport ??
-          data.screenshots?.full_page ??
-          '',
-        screenshot_base64: screenshotBase64,
-        content_hash: data.content_hash ?? '',
-        page_id: data.page_id ?? params.page_id,
-        container_id: params.container_id,
-        captured_at: data.captured_at ?? new Date().toISOString(),
+        url: data.url,
+        screenshots: {
+          desktop: `${base}${data.screenshots.desktop}`,
+          tablet: `${base}${data.screenshots.tablet}`,
+          mobile: `${base}${data.screenshots.mobile}`,
+        },
+        meta: data.meta,
+        captured_at: new Date().toISOString(),
       };
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
@@ -109,22 +104,39 @@ export class BridgeClient {
 
 const bridgeUrl = process.env['ELEMENTEER_BRIDGE_URL'];
 
+const bridgeUrl = process.env['ELEMENTEER_BRIDGE_URL'];
+const bridgeApiKey = process.env['ELEMENTEER_BRIDGE_API_KEY'];
+
 let cachedClient: BridgeClient | null = null;
 
 export function getBridgeClient(): BridgeClient {
-  if (cachedClient && bridgeUrl && cachedClient.baseUrl === bridgeUrl) {
+  if (
+    cachedClient &&
+    bridgeUrl &&
+    cachedClient.baseUrl === bridgeUrl &&
+    bridgeApiKey &&
+    cachedClient.apiKey === bridgeApiKey
+  ) {
     return cachedClient;
   }
 
   if (!bridgeUrl) {
     throw new BridgeError(
       'ELEMENTEER_BRIDGE_URL is not set. Screenshot/render tools are unavailable.\n' +
-        'Set the environment variable to the bridge base URL (e.g. http://localhost:3000).',
+        'Set the environment variable to the bridge base URL (e.g. http://localhost:3201).',
       0,
     );
   }
 
-  cachedClient = new BridgeClient(bridgeUrl);
+  if (!bridgeApiKey) {
+    throw new BridgeError(
+      'ELEMENTEER_BRIDGE_API_KEY is not set. Screenshot/render tools are unavailable.\n' +
+        'Create an API key via POST /api/auth/keys on the bridge.',
+      0,
+    );
+  }
+
+  cachedClient = new BridgeClient(bridgeUrl, bridgeApiKey);
   return cachedClient;
 }
 

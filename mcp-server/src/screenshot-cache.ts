@@ -2,6 +2,8 @@ import type { ScreenshotResult } from './render-client.js';
 
 interface CachedScreenshot {
   result: ScreenshotResult;
+  pageId: number;
+  contentHash: string;
   cached_at: number;
 }
 
@@ -9,9 +11,16 @@ const cache = new Map<string, CachedScreenshot>();
 
 const SCREENSHOT_CACHE_TTL_MS = 5 * 60 * 1000;
 
-export function storeScreenshot(resourceKey: string, result: ScreenshotResult): void {
+export function storeScreenshot(
+  resourceKey: string,
+  result: ScreenshotResult,
+  pageId: number,
+  contentHash: string,
+): void {
   cache.set(resourceKey, {
     result,
+    pageId,
+    contentHash,
     cached_at: Date.now(),
   });
 }
@@ -38,7 +47,7 @@ export function screenshotResourceUri(
 export function parseScreenshotResourceUri(
   uri: string,
 ): { pageId: number; contentHash: string } | null {
-  const match = uri.match(/^pages\/(\d+)\/screenshot\/([a-f0-9]+)$/);
+  const match = uri.match(/^pages\/(\d+)\/screenshot\/([a-g0-9-]+)$/);
   if (!match) return null;
   return {
     pageId: parseInt(match[1], 10),
@@ -51,4 +60,9 @@ export function screenshotResourceKey(
   contentHash: string,
 ): string {
   return `pages/${pageId}/screenshot/${contentHash}`;
+}
+
+export function buildContentHash(pageId: number, modified: string): string {
+  const sanitized = modified.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+  return `p${pageId}-r${sanitized}`;
 }
