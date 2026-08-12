@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { projectElementorData } from '../projection.js';
+import { PAGE_2340_ICON_BOX_SECTION_D2427FE } from './fixtures/page-2340-icon-box-section-d2427fe.js';
 
 function projectAndExtract(data: Record<string, unknown>[], level: 'structure' | 'content' | 'interaction' | 'full'): unknown[] {
   const projected = projectElementorData(data, level, { pageId: 1, post_title: 'Test', revision: '' });
@@ -112,6 +113,47 @@ describe('diff_pages Logik (unit)', () => {
 
     const missing = [...refIds].filter(id => !variantIds.has(id));
     expect(missing.sort()).toEqual(['8ae0619', 'abc1234']);
+  });
+
+  it('erkennt fehlende Icon-Boxen am realen Fixture 2340 (structure mode)', () => {
+    const ref2618 = [{
+      id: '1c775162',
+      elType: 'container',
+      elements: [
+        { id: '4c63abf', elType: 'widget', widgetType: 'icon-box', settings: { title_text: 'Termine direkt im Kalender', description_text: 'Kein Anruf und kein Chat.' } },
+        { id: '8ae0619', elType: 'widget', widgetType: 'icon-box', settings: { title_text: 'Keine verpassten Anrufe', description_text: 'KI geht ran und vereinbart Termine.' } },
+        { id: 'abc1234', elType: 'widget', widgetType: 'icon-box', settings: { title_text: 'Vollständige Anfragen', description_text: 'KI fragt alle relevanten Details ab.' } },
+        { id: 'def5678', elType: 'widget', widgetType: 'icon-box', settings: { title_text: 'Automatische Disposition', description_text: 'Passende Termine direkt im Kalender.' } },
+        { id: 'ghi9012', elType: 'widget', widgetType: 'icon-box', settings: { title_text: 'Weniger Retouren', description_text: 'Kunden kommen mit fertigen Angaben.' } },
+      ],
+    }];
+
+    const ref = projectAndExtract(ref2618, 'structure');
+    const variant = projectAndExtract(PAGE_2340_ICON_BOX_SECTION_D2427FE, 'structure');
+
+    const refSection = ref[0] as Record<string, unknown>;
+    const variantSection = variant[0] as Record<string, unknown>;
+
+    expect(refSection.children_count).toBe(5);
+    expect(variantSection.children_count).toBe(5);
+
+    const refChildren = refSection.children as Array<Record<string, unknown>>;
+    const variantChildren = variantSection.children as Array<Record<string, unknown>>;
+
+    const refIds = new Set(refChildren.map(c => c.id as string));
+    const variantIds = new Set(variantChildren.map(c => c.id as string));
+
+    // 4c63abf + 8ae0619 existieren auf beiden Seiten
+    expect(variantIds.has('4c63abf')).toBe(true);
+    expect(variantIds.has('8ae0619')).toBe(true);
+
+    // abc1234, def5678, ghi9012 fehlen auf 2340 (andere Icons: 1cefa87, c2068b0, 3a4b09c)
+    const missing = [...refIds].filter(id => !variantIds.has(id));
+    expect(missing.sort()).toEqual(['abc1234', 'def5678', 'ghi9012']);
+
+    // Umgekehrt: 2340 hat Widgets die auf 2618 nicht existieren
+    const extra = [...variantIds].filter(id => !refIds.has(id));
+    expect(extra.sort()).toEqual(['1cefa87', '3a4b09c', 'c2068b0']);
   });
 
   it('erkennt Text-Diffs bei identischer Struktur ueber content-Projektion (flache Slots)', () => {

@@ -1,0 +1,36 @@
+# ELM-PROJ Merge-Status
+
+branch: feature/ELM-PROJ-content-projection
+review: PASS_WITH_REQUIRED_AMENDMENTS (R-PROJ auf 8fa6bd4)
+target: needs merge when all amendments resolved
+
+amendments:
+  - id: A1
+    status: open
+    title: "Projektionsmessung an ganzer Seite (nicht Hero-Container)"
+    blocked_on:
+      - "operator: realer Content-Ops-Durchlauf auf preview.fusionaize.com"
+    notes: >
+      Die rauchmessung misst bislang nur am hero-container b9149c (11.091 chars).
+      A1 verlangt messung an einer ganzen seite (2618 hat ~185KB elementor_data).
+      Dieselbe messung die A3 braucht. Nicht aus hero-fixture hochrechnen.
+
+  - id: A2
+    status: resolved
+    title: "diff_pages gegen echte daten 2618 vs 2340"
+    resolved_in: HEAD^ (next commit after this file)
+    notes: >
+      Page 2340 fixture (container d2427fe, 5 icon-boxen) via Respira gezogen.
+      diff_pages.test.ts erweitert: erkennt abc1234/def5678/ghi9012 fehlen,
+      1cefa87/c2068b0/3a4b09c sind die ersatz-widgets. 541 passed.
+
+  - id: A3
+    status: open
+    title: "Sitzungslog eines realen Content-Ops-Durchlaufs"
+    blocked_on:
+      - "operator: realer Content-Ops-Durchlauf auf preview.fusionaize.com"
+    notes: >
+      PROJ-006 messrahmen (measure-baseline.ts) steht, trockenlauf lauffaehig.
+      Kein Sitzungslog vorhanden → alle drei metriken "unbestimmt".
+      Erst messung moeglich wenn ein content-ops-agents gegen
+      preview.fusionaize.com laeuft und sein log parset.
