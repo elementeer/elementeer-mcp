@@ -915,8 +915,8 @@ export class ElementeerClient {
   // Template data (Elementor JSON)
   // ------------------------------------------------------------------ //
 
-  async getTemplateData(id: number): Promise<{ id: number; elementor_data: unknown[] }> {
-    const res = await this.http.get<{ id: number; elementor_data: unknown[] }>(
+  async getTemplateData(id: number): Promise<{ id: number; elementor_data: unknown[]; content_hash?: string }> {
+    const res = await this.http.get<{ id: number; elementor_data: unknown[]; content_hash?: string }>(
       `/templates/${id}/data`,
     );
     return res.data;
@@ -929,6 +929,131 @@ export class ElementeerClient {
     const res = await this.http.put<{ id: number; updated: true }>(`/templates/${id}/data`, {
       elementor_data: elementorData,
     });
+    return res.data;
+  }
+
+  // ------------------------------------------------------------------ //
+  // Widget patching (DELTA-001, DELTA-002)
+  // ------------------------------------------------------------------ //
+
+  async patchWidget(
+    id: number,
+    widgetId: string,
+    params: {
+      settings: Record<string, unknown>;
+      content_hash: string;
+      dry_run?: boolean;
+    },
+  ): Promise<{
+    post_id: number;
+    widget_id: string;
+    path: string;
+    updated: boolean;
+    new_hash: string;
+  }> {
+    const res = await this.http.patch(`/pages/${id}/widgets/${widgetId}`, params);
+    return res.data;
+  }
+
+  async patchWidgetsBatch(
+    id: number,
+    params: {
+      operations: Array<{
+        widget_id: string;
+        settings: Record<string, unknown>;
+        dry_run?: boolean;
+      }>;
+      content_hash: string;
+      dry_run?: boolean;
+    },
+  ): Promise<{
+    post_id: number;
+    content_hash: string;
+    new_hash: string;
+    dry_run: boolean;
+    results: Array<{
+      widget_id: string;
+      updated: boolean;
+      new_hash?: string;
+      error?: string;
+    }>;
+    partial?: boolean;
+  }> {
+    const res = await this.http.post(`/pages/${id}/widgets/batch`, params);
+    return res.data;
+  }
+
+  // ------------------------------------------------------------------ //
+  // Change Sessions (DELTA-004)
+  // ------------------------------------------------------------------ //
+
+  async beginChangeSession(): Promise<{ session_id: string; status: string }> {
+    const res = await this.http.post('/changes/sessions/begin');
+    return res.data;
+  }
+
+  async endChangeSession(sessionId: string): Promise<{ session_id: string; status: string }> {
+    const res = await this.http.post(`/changes/sessions/${sessionId}/end`);
+    return res.data;
+  }
+
+  async restoreChangeSession(sessionId: string): Promise<{
+    success: boolean;
+    session_id: string;
+    restored_count: number;
+    changes?: Array<Record<string, unknown>>;
+  }> {
+    const res = await this.http.post(`/changes/sessions/${sessionId}/restore`);
+    return res.data;
+  }
+
+  async getChangeSession(sessionId: string): Promise<{
+    session_id: string;
+    status: string;
+    started_at: string;
+    ended_at?: string;
+    change_count: number;
+    changes: Array<Record<string, unknown>>;
+  }> {
+    const res = await this.http.get(`/changes/sessions/${sessionId}`);
+    return res.data;
+  }
+
+  // ------------------------------------------------------------------ //
+  // Site Memory (DELTA-005)
+  // ------------------------------------------------------------------ //
+
+  async listSiteMemory(): Promise<Array<{
+    key: string;
+    type: string;
+    content: string;
+    set_at: string;
+    rule?: Record<string, unknown>;
+  }>> {
+    const res = await this.http.get('/site/memory');
+    return res.data;
+  }
+
+  async setSiteMemoryEntry(
+    key: string,
+    params: {
+      type: 'fact' | 'preference' | 'lesson' | 'rule';
+      content: string;
+      rule?: { protect?: { post_ids?: number[]; slugs?: string[] } };
+    },
+  ): Promise<{
+    key: string;
+    type: string;
+    content: string;
+    set_at: string;
+    rule?: Record<string, unknown>;
+  }> {
+    const res = await this.http.put(`/site/memory/${key}`, params);
+    return res.data;
+  }
+
+  async deleteSiteMemoryEntry(key: string): Promise<{ deleted: boolean; key: string }> {
+    const res = await this.http.delete(`/site/memory/${key}`);
     return res.data;
   }
 
