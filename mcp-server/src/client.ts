@@ -538,6 +538,8 @@ export interface ListTemplatesParams {
 export class ElementeerClient {
   private http: AxiosInstance;
   private availableRoutes: Map<string, string[]> | null = null;
+  /** Active change session id — sent as X-Elementeer-Session header on every write. */
+  private currentSessionId: string | null = null;
 
   constructor(siteUrl: string, apiKey: string) {
     const baseURL = siteUrl.replace(/\/$/, '') + '/wp-json/elementeer/v1';
@@ -553,6 +555,14 @@ export class ElementeerClient {
       timeout: 30_000,
     });
 
+    // Interceptor: inject X-Elementeer-Session header on every request
+    this.http.interceptors.request.use((config) => {
+      if (this.currentSessionId) {
+        config.headers['X-Elementeer-Session'] = this.currentSessionId;
+      }
+      return config;
+    });
+
     // Response interceptor — normalize errors
     this.http.interceptors.response.use(
       (res) => res,
@@ -560,6 +570,10 @@ export class ElementeerClient {
         throw this.handleError(err);
       },
     );
+  }
+
+  setSession(sessionId: string | null): void {
+    this.currentSessionId = sessionId;
   }
 
   // ------------------------------------------------------------------ //

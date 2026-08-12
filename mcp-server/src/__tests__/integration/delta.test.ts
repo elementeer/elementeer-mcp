@@ -27,12 +27,16 @@ async function api<T = unknown>(
   method: string,
   path: string,
   body?: unknown,
+  sessionId?: string,
 ): Promise<ApiResponse<T>> {
   const url = `${BASE}${path}`;
   const headers: Record<string, string> = {
     'X-Elementeer-Key': API_KEY,
     Accept: 'application/json',
   };
+  if (sessionId) {
+    headers['X-Elementeer-Session'] = sessionId;
+  }
   const init: RequestInit = { method, headers };
 
   if (body !== undefined && method !== 'GET' && method !== 'DELETE') {
@@ -55,16 +59,16 @@ async function get<T = unknown>(path: string): Promise<ApiResponse<T>> {
   return api<T>('GET', path);
 }
 
-async function post<T = unknown>(path: string, body?: unknown): Promise<ApiResponse<T>> {
-  return api<T>('POST', path, body);
+async function post<T = unknown>(path: string, body?: unknown, sessionId?: string): Promise<ApiResponse<T>> {
+  return api<T>('POST', path, body, sessionId);
 }
 
-async function put<T = unknown>(path: string, body?: unknown): Promise<ApiResponse<T>> {
-  return api<T>('PUT', path, body);
+async function put<T = unknown>(path: string, body?: unknown, sessionId?: string): Promise<ApiResponse<T>> {
+  return api<T>('PUT', path, body, sessionId);
 }
 
-async function patch<T = unknown>(path: string, body?: unknown): Promise<ApiResponse<T>> {
-  return api<T>('PATCH', path, body);
+async function patch<T = unknown>(path: string, body?: unknown, sessionId?: string): Promise<ApiResponse<T>> {
+  return api<T>('PATCH', path, body, sessionId);
 }
 
 async function del<T = unknown>(path: string): Promise<ApiResponse<T>> {
@@ -255,11 +259,11 @@ describe('DELTA-004 Change Sessions', () => {
     const begin = await post<{ session_id: string }>('/changes/sessions/begin');
     const sid = (begin.data as any).session_id;
 
-    // Make a write that changes the title
+    // Make a write WITH the session header so it attaches
     await patch(`/pages/${PAGE_ID}/widgets/w001`, {
       settings: { title: 'SESSION WRITE' },
       content_hash: dataBefore.content_hash,
-    });
+    }, sid);
 
     // Verify title DID change
     const dataAfter = await getPageData(PAGE_ID);
@@ -277,6 +281,28 @@ describe('DELTA-004 Change Sessions', () => {
     const restoredTitle = (dataRestored.elementor_data as any)[0]
       .elements[0]?.settings?.title;
     expect(restoredTitle).toBe(originalTitle);
+  });
+
+  it('a write without session header does not attach to the open session', { timeout: 15000 }, async () => {
+    // Two sessions simultaneously open — write with neither header,
+    // verify restore of both sessions reports 0 snapshots
+    const begin = await post('/changes/sessions/begin');
+    const sid = (begin.data as any).session_id;
+
+    // Write WITHOUT session header
+    const dataBefore = await getPageData(PAGE_ID);
+    await patch(`/pages/${PAGE_ID}/widgets/w001`, {
+      settings: { title: 'NO SESSION' },
+      content_hash: dataBefore.content_hash,
+    });
+    // No session header → snapshot not attached
+
+    const restore = await post(`/changes/sessions/${sid}/restore`);
+    expect(restore.status).toBe(200);
+    const body = restore.data as any;
+    expect(body.success).toBe(true);
+    // 0 snapshots in this session — the write was not attached
+    expect(body.total).toBe(0);
   });
 });
 

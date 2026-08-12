@@ -155,10 +155,11 @@ export function registerDeltaTools(
     async ({ site_id }) => {
       const client = getClient(site_id);
       const result = await client.beginChangeSession();
+      client.setSession(result.session_id);
       return {
         content: [{
           type: 'text',
-          text: `Session "${result.session_id}" started.\n\nAll subsequent writes are grouped under this session.\nCall session_end to close normally, or session_restore to roll back.\n\nSession ID: ${result.session_id}`,
+          text: `Session "${result.session_id}" started.\n\nAll subsequent writes in this connection are grouped under this session.\nCall session_end to close normally, or session_restore to roll back.\n\nSession ID: ${result.session_id}`,
         }],
       };
     },
@@ -177,6 +178,7 @@ export function registerDeltaTools(
     async ({ site_id, session_id }) => {
       const client = getClient(site_id);
       const result = await client.endChangeSession(session_id);
+      client.setSession(null);
       return {
         content: [{
           type: 'text',
@@ -199,6 +201,7 @@ export function registerDeltaTools(
     async ({ site_id, session_id }) => {
       const client = getClient(site_id);
       const result = await client.restoreChangeSession(session_id);
+      client.setSession(null);
       if (!result.success) {
         return {
           content: [{ type: 'text', text: `Session "${session_id}" restore failed.\n${JSON.stringify(result)}` }],
