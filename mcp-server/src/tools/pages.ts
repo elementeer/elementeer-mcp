@@ -2,6 +2,9 @@ import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { ElementeerClient } from '../client.js';
 import { GOVERNANCE_LEVELS } from '../product-tiers.js';
+import { projectElementorData, type ProjectionLevel } from '../projection.js';
+import { resolvePayloadViaResource } from '../page-resource-cache.js';
+import { describeWidgetType } from '../widget-schemas.js';
 
 export function registerPageTools(
   server: McpServer,
@@ -37,18 +40,41 @@ export function registerPageTools(
   // get_page_data
   server.tool(
     'get_page_data',
-    'Get the full Elementor JSON structure of any page/post. Returns all top-level containers/sections with their index. Use extract="all" to see a summary, or extract="section" with index=N to get a specific section ready to save as a template.',
+    'Get the full Elementor JSON structure of any page/post. Returns all top-level containers/sections with their index. Use extract="all" to see a summary, or extract="section" with index=N to get a specific section ready to save as a template. Use projection to filter the payload: "structure" (IDs and hierarchy), "content" (editable text, links, media), "interaction" (buttons and forms), "style_tokens" (colors, typography, spacing), or "full" (complete JSON). Default projection is "content" for token efficiency.',
     {
       site_id: z.string().optional().describe('Site ID from config'),
       id:      z.number().int().describe('Page/post ID'),
       extract: z.enum(['all', 'section']).optional().describe('"all" = summary of all sections, "section" = one specific section'),
       index:   z.number().int().min(0).optional().describe('0-based index of the section to extract (use with extract="section")'),
+      projection: z.enum(['structure', 'content', 'interaction', 'style_tokens', 'full']).optional().default('content')
+        .describe('Content projection level. "content" (default) returns only editable text, links, and media with stable IDs. "structure" returns IDs, types, and hierarchy without settings. "full" returns the complete JSON.'),
     },
-    async ({ site_id, id, extract, index }) => {
+    async ({ site_id, id, extract, index, projection }) => {
       const client = getClient(site_id);
-      const result = await client.getPageData({ id, extract, index });
 
-      if (extract === 'all' && result.elements) {
+      if (extract === 'all') {
+        const result = await client.getPageData({ id, extract, index });
+        if (projection && projection !== 'full') {
+          const projected = projectElementorData(
+            result.elements.map((el: { data: Record<string, unknown> }) => el.data),
+            projection,
+            { pageId: result.post_id ?? id, post_title: result.post_title, revision: result.post_modified ?? '' },
+          );
+          const plaintext = JSON.stringify(projected, null, 2);
+          const resource = resolvePayloadViaResource(projected, plaintext, projection, {
+            pageId: result.post_id ?? id,
+            post_title: result.post_title,
+          });
+          if (resource.asResource) {
+            return {
+              content: [{
+                type: 'text',
+                text: `Page "${result.post_title}" ${projection} projection stored as MCP resource: ${resource.uri}\nUse read_mcp_resource with server "elementeer-mcp" and this URI to fetch the full payload.`,
+              }],
+            };
+          }
+          return { content: [{ type: 'text', text: plaintext }] };
+        }
         const rows = result.elements.map((el: { index: number; elType: string; children: number; id: string }) =>
           `  [${el.index}] ${el.elType} (id: ${el.id}) — ${el.children} children`
         );
@@ -60,7 +86,29 @@ export function registerPageTools(
         };
       }
 
-      if (extract === 'section' && result.element) {
+      if (extract === 'section' && index !== undefined) {
+        const result = await client.getPageData({ id, extract, index });
+        if (projection && projection !== 'full' && result.element) {
+          const projected = projectElementorData(
+            [result.element],
+            projection,
+            { pageId: result.post_id ?? id, post_title: result.post_title, revision: result.post_modified ?? '' },
+          );
+          const plaintext = JSON.stringify(projected, null, 2);
+          const resource = resolvePayloadViaResource(projected, plaintext, projection, {
+            pageId: result.post_id ?? id,
+            post_title: result.post_title,
+          });
+          if (resource.asResource) {
+            return {
+              content: [{
+                type: 'text',
+                text: `Section [${result.index}] from "${result.post_title}" ${projection} projection stored as MCP resource: ${resource.uri}\nUse read_mcp_resource with server "elementeer-mcp" and this URI to fetch the full payload.`,
+              }],
+            };
+          }
+          return { content: [{ type: 'text', text: plaintext }] };
+        }
         return {
           content: [{
             type: 'text',
@@ -69,11 +117,86 @@ export function registerPageTools(
         };
       }
 
+      const result = await client.getPageData({ id });
+      const rawData = result.elementor_data ?? [];
+
+      if (projection && projection !== 'full') {
+        const projected = projectElementorData(
+          rawData,
+          projection,
+          { pageId: result.post_id ?? id, post_title: result.post_title, revision: result.post_modified ?? '' },
+        );
+        const plaintext = JSON.stringify(projected, null, 2);
+        const resource = resolvePayloadViaResource(projected, plaintext, projection, {
+          pageId: result.post_id ?? id,
+          post_title: result.post_title,
+        });
+        if (resource.asResource) {
+          return {
+            content: [{
+              type: 'text',
+              text: `Page "${result.post_title}" ${projection} projection stored as MCP resource: ${resource.uri}\nUse read_mcp_resource with server "elementeer-mcp" and this URI to fetch the full payload.`,
+            }],
+          };
+        }
+        return {
+          content: [{ type: 'text', text: plaintext }],
+        };
+      }
+
       return {
         content: [{
           type: 'text',
-          text: `Page: "${result.post_title}" (${result.element_count} top-level elements)\n\n${JSON.stringify(result.elementor_data, null, 2)}`,
+          text: `Page: "${result.post_title}" (${result.element_count} top-level elements)\n\n${JSON.stringify(rawData, null, 2)}`,
         }],
+      };
+    },
+  );
+
+  // describe_widget_type
+  server.tool(
+    'describe_widget_type',
+    'Get the editable field schema for a specific Elementor widget type. Returns text_fields, link_fields, media_fields, and control metadata. Covers core Elementor widgets plus Essential Addons and Ultimate Addons. Use this BEFORE reading full page JSON so you know which settings keys hold the actual content — no more guessing field names.',
+    {
+      widget_type: z.string().describe('Widget type name, e.g. "heading", "button", "text-editor", "icon-box", "eael-cta-box", "uael-faq". Use list_elementor_pages or get_page_data first to discover widget types on a page.'),
+    },
+    async ({ widget_type }) => {
+      const result = describeWidgetType(widget_type);
+
+      if (result.status === 'supported' && result.schema) {
+        const s = result.schema;
+        const lines = [
+          `Widget: ${s.widget_type}`,
+          `Source: ${s.source}`,
+          '',
+          '## Text Fields',
+          s.text_fields.length > 0 ? s.text_fields.map(f => `  - ${f}: ${s.controls[f]?.label ?? ''} (${s.controls[f]?.type ?? 'unknown'})`).join('\n') : '  (none)',
+          '',
+          '## Link Fields',
+          s.link_fields.length > 0 ? s.link_fields.map(f => `  - ${f}: ${s.controls[f]?.label ?? ''}`).join('\n') : '  (none)',
+          '',
+          '## Media Fields',
+          s.media_fields.length > 0 ? s.media_fields.map(f => `  - ${f}: ${s.controls[f]?.label ?? ''}`).join('\n') : '  (none)',
+          '',
+          '## All Controls',
+          ...Object.entries(s.controls).map(([key, ctrl]) =>
+            `  - ${key}: ${ctrl.type}${ctrl.required ? ' (required)' : ''}${ctrl.enum ? ` [${ctrl.enum.join('|')}]` : ''}`
+          ),
+        ];
+        if (s.notes) {
+          lines.push('', `*Note: ${s.notes}*`);
+        }
+        lines.push('', `Tip: Use get_page_data(id, projection:"content") with this knowledge — you'll only get the ${s.text_fields.length} text field(s), ${s.link_fields.length} link field(s), and ${s.media_fields.length} media field(s) instead of ~20KB of styling boilerplate.`);
+        return { content: [{ type: 'text', text: lines.join('\n') }] };
+      }
+
+      const supported = result.supported_types ?? [];
+      return {
+        content: [{
+          type: 'text',
+          text: `Widget type "${widget_type}" is not yet instrumented.\n\n${supported.length} widget types are available: ${supported.join(', ')}\n\nThis is an expected response — use get_page_data(projection:"content") to discover the text fields on this widget type, then re-read with projection:"full" only if you need the complete JSON.`,
+        }],
+        isError: false,
       };
     },
   );
