@@ -1,12 +1,12 @@
 /**
- * REAL SECTION 4 FIXTURE — Page 2618, Container 1c775162
- * "Was sich typischerweise sofort verbessert"
+ * REAL SECTION FIXTURE — Page 2340, Container 1c775162
+ * "Was sich typischerweise sofort verbessert" (Handwerk-Variante)
  *
- * Bezugsquelle:   Respira `find_element` (include=content) am 2026-08-12
+ * Bezugsquelle:   Respira `find_element` (include=content, post_id=2340) am 2026-08-12
  * Site:           fusionaize-preview / preview.fusionaize.com
- * Page:           2618 "fusionAIze Preview - Startseite"
+ * Page:           2340
  * Container:      1c775162, admin_label "Was sich typischerweise sofort verbessert"
- * Pfad:           [4]
+ * Pfad:           [3] (auf 2340; auf 2618 liegt derselbe Container unter [4])
  * Builder:        Elementor 4.2.2 (Pro 4.2.1)
  * Theme:          Astra 4.13.8
  *
@@ -14,23 +14,23 @@
  * Icon-Box-IDs:   1cefa87, c2068b0, 4c63abf, 8ae0619, 3a4b09c
  *
  * Nutzung:        diff_pages-Test gegen reale Daten in diff-pages.test.ts
- * Wiederholbar:   einmal gezogen, deterministisch offline ausfuehrbar.
- *                 Fixture aendert sich nur bei manuellem Sync mit der Live-Site.
+ *                 Gegenprobe zu PAGE_2618_SECTION4_1C775162.
  *
- * Anmerkung:      Respira-Format nach native elementor_data uebersetzt.
- *                 type:"container" → elType:"container", widget:null entfernt.
- *                 type:"widget"   → elType:"widget", widget als widgetType.
- *                 kind, _path, isInner, admin_label entfernt.
- *                 KEINE Anpassungen fuer projectElementorData.
- *
- * BEFUND:         Struktur UND IDs identisch zu 2340 (2340 ist Kopie von 2618),
- *                 TEXTE sind Beauty und weichen von 2340 (Handwerk) ab.
+ * BEFUND:         Struktur UND IDs identisch zu 2618 (2340 ist Kopie von 2618),
+ *                 TEXTE sind handwerk-spezifisch und weichen von 2618 (Beauty) ab.
  *                 Die Gap-Report-Annahme "3 statt 5 Icon-Boxen" ist widerlegt —
- *                 beide Seiten haben 5 icon-box-Widgets. Siehe Gegen-Fixture
- *                 page-2340-section4-1c775162.ts.
+ *                 beide Seiten haben 5 icon-box-Widgets.
+ *
+ * Text-Diffs 2618 (Beauty) → 2340 (Handwerk):
+ *   d5b8628  "oft schnell ... weitergeführt"              → "bei den meisten Betrieben sofort … vorqualifiziert und sauber übergeben"
+ *   1cefa87  "…erreichbar" (ohne Punkt)                  → "…erreichbar." (mit Punkt)
+ *   c2068b0  "Ohne endloses Hin und Her im Chat"          → "Ohne endlose Rückfrage-Ketten im Chat."
+ *   4c63abf  "Mehr gebuchte Termine"                      → "Weniger Leerlauf im Kalender"
+ *   8ae0619  "Weniger No-Shows"                           → "Weniger Rückfragen im Büro"
+ *   3a4b09c  "Bessere Auslastung"                         → "Mehr passende Termine"
  */
 
-export const PAGE_2618_SECTION4_1C775162: Record<string, unknown>[] = [
+export const PAGE_2340_SECTION4_1C775162: Record<string, unknown>[] = [
   {
     id: '1c775162',
     elType: 'container',
@@ -99,7 +99,7 @@ export const PAGE_2618_SECTION4_1C775162: Record<string, unknown>[] = [
             elType: 'widget',
             widgetType: 'text-editor',
             settings: {
-              editor: '<p>Diese Dinge verbessern sich oft schnell, wenn Anfragen sauber angenommen, eingeordnet und weitergeführt werden.</p>',
+              editor: '<p>Diese Dinge verbessern sich bei den meisten Betrieben sofort – weil Anfragen schneller angenommen, besser vorqualifiziert und sauber übergeben werden.</p>',
               align: 'center',
               typography_typography: 'custom',
               typography_font_family: 'Open Sans',
@@ -148,7 +148,7 @@ export const PAGE_2618_SECTION4_1C775162: Record<string, unknown>[] = [
                     settings: {
                       selected_icon: { value: 'fas fa-check', library: 'fa-solid' },
                       title_text: 'Weniger verpasste Anfragen',
-                      description_text: 'Auch außerhalb der Öffnungszeiten erreichbar',
+                      description_text: 'Auch außerhalb der Öffnungszeiten erreichbar.',
                       title_size: 'div',
                       position: 'left',
                       icon_space: { unit: 'px', size: 17, sizes: [] },
@@ -171,7 +171,7 @@ export const PAGE_2618_SECTION4_1C775162: Record<string, unknown>[] = [
                     settings: {
                       selected_icon: { value: 'fas fa-check', library: 'fa-solid' },
                       title_text: 'Schnellere Rückmeldung',
-                      description_text: 'Ohne endloses Hin und Her im Chat',
+                      description_text: 'Ohne endlose Rückfrage-Ketten im Chat.',
                       title_size: 'div',
                       position: 'left',
                       icon_space: { unit: 'px', size: 17, sizes: [] },
@@ -193,8 +193,8 @@ export const PAGE_2618_SECTION4_1C775162: Record<string, unknown>[] = [
                     widgetType: 'icon-box',
                     settings: {
                       selected_icon: { value: 'fas fa-check', library: 'fa-solid' },
-                      title_text: 'Mehr gebuchte Termine',
-                      description_text: 'Weil freie Zeiten direkt vorgeschlagen werden',
+                      title_text: 'Weniger Leerlauf im Kalender',
+                      description_text: 'Weil freie Termine und Rückrufslots schneller wieder gefüllt werden.',
                       title_size: 'div',
                       position: 'left',
                       icon_space: { unit: 'px', size: 17, sizes: [] },
@@ -216,8 +216,8 @@ export const PAGE_2618_SECTION4_1C775162: Record<string, unknown>[] = [
                     widgetType: 'icon-box',
                     settings: {
                       selected_icon: { value: 'fas fa-check', library: 'fa-solid' },
-                      title_text: 'Weniger No-Shows',
-                      description_text: 'Durch Bestätigung und automatische Erinnerung',
+                      title_text: 'Weniger Rückfragen im Büro',
+                      description_text: 'Weil alle Angaben von Anfang an vollständig ankommen.',
                       title_size: 'div',
                       position: 'left',
                       icon_space: { unit: 'px', size: 17, sizes: [] },
@@ -239,8 +239,8 @@ export const PAGE_2618_SECTION4_1C775162: Record<string, unknown>[] = [
                     widgetType: 'icon-box',
                     settings: {
                       selected_icon: { value: 'fas fa-check', library: 'fa-solid' },
-                      title_text: 'Bessere Auslastung',
-                      description_text: 'Weil Lücken schneller wieder gefüllt werden',
+                      title_text: 'Mehr passende Termine',
+                      description_text: 'Weil unpassende Anfragen vorher aussortiert werden.',
                       title_size: 'div',
                       position: 'left',
                       icon_space: { unit: 'px', size: 17, sizes: [] },

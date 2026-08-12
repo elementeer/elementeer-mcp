@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { projectElementorData } from '../projection.js';
 import { PAGE_2340_ICON_BOX_SECTION_D2427FE } from './fixtures/page-2340-icon-box-section-d2427fe.js';
 import { PAGE_2618_SECTION4_1C775162 } from './fixtures/page-2618-section4-1c775162.js';
+import { PAGE_2340_SECTION4_1C775162 } from './fixtures/page-2340-section4-1c775162.js';
 
 function projectAndExtract(data: Record<string, unknown>[], level: 'structure' | 'content' | 'interaction' | 'full'): unknown[] {
   const projected = projectElementorData(data, level, { pageId: 1, post_title: 'Test', revision: '' });
@@ -116,15 +117,16 @@ describe('diff_pages Logik (unit)', () => {
     expect(missing.sort()).toEqual(['8ae0619', 'abc1234']);
   });
 
-  it('erkennt an realen Fixtures: Sektion 4 identisch auf 2618 und 2340 (structure mode)', () => {
-    // Sektion 4 "Was sich typischerweise sofort verbessert" (1c775162)
-    // enthaelt auf BEIDEN Seiten 5 Icon-Boxen mit denselben IDs.
-    // Die Gap-Report-Annahme '3 statt 5' ist durch die Live-Daten widerlegt.
+  it('erkennt an realen Fixtures: Sektion 4 gleiche Struktur auf 2618 und 2340 (structure mode)', () => {
+    // Sektion "Was sich typischerweise sofort verbessert" (1c775162) ist auf
+    // beiden Seiten strukturell gleich: 5 Icon-Boxen, gleiche IDs, gleicher
+    // Container-Tree. Die Gap-Report-Annahme '3 statt 5' ist widerlegt.
 
     const ref = projectAndExtract(PAGE_2618_SECTION4_1C775162, 'structure');
-    // Ref selbst zweimal projizieren: identisch = gleicher Container auf 2340
-    const variant = projectAndExtract(PAGE_2618_SECTION4_1C775162, 'structure');
+    const variant = projectAndExtract(PAGE_2340_SECTION4_1C775162, 'structure');
 
+    // structure-Projektion enthaelt KEINE Texte → identisch trotz
+    // unterschiedlicher Beschriftungen auf beiden Seiten.
     expect(JSON.stringify(ref)).toBe(JSON.stringify(variant));
 
     const refSection = ref[0] as Record<string, unknown>;
@@ -146,19 +148,27 @@ describe('diff_pages Logik (unit)', () => {
     expect(iconBoxes.map(c => c.id)).toEqual(['1cefa87', 'c2068b0', '4c63abf', '8ae0619', '3a4b09c']);
   });
 
-  it('erkennt an realen Fixtures: unterschiedliche Texte bei gleichen Widget-IDs (content mode)', () => {
-    // d2427fe hat auf 2618 und 2340 die gleichen Widget-IDs, aber
-    // unterschiedliche Texte — z.B. 1cefa87 title_text:
-    //   2618: "Termine direkt im Kalender"
-    //   2340: "Weniger verpasste Anfragen"
+  it('erkennt an realen Fixtures: unterschiedliche Texte zwischen 2618 und 2340 (content mode)', () => {
+    // 2618 ist Beauty, 2340 ist Handwerk. Gleiche Widget-IDs, andere Texte:
+    //   4c63abf 2618 "Mehr gebuchte Termine"  → 2340 "Weniger Leerlauf im Kalender"
+    //   3a4b09c 2618 "Bessere Auslastung"     → 2340 "Mehr passende Termine"
 
-    const refContent = projectAndExtract(PAGE_2340_ICON_BOX_SECTION_D2427FE, 'content');
+    const refContent = projectAndExtract(PAGE_2618_SECTION4_1C775162, 'content');
+    const variantContent = projectAndExtract(PAGE_2340_SECTION4_1C775162, 'content');
 
-    const refFirst = slotById(refContent, '1cefa87')!;
-    const refText = refFirst.text_fields as Record<string, string>;
+    const ref4 = slotById(refContent, '4c63abf')!;
+    const refText4 = ref4.text_fields as Record<string, string>;
+    const var4 = slotById(variantContent, '4c63abf')!;
+    const varText4 = var4.text_fields as Record<string, string>;
+    expect(refText4.title_text).toBe('Mehr gebuchte Termine');
+    expect(varText4.title_text).toBe('Weniger Leerlauf im Kalender');
 
-    expect(refText.title_text).toBe('Weniger verpasste Anfragen');
-    expect(refText.description_text).toBe('Auch außerhalb der Öffnungszeiten erreichbar.');
+    const ref3 = slotById(refContent, '3a4b09c')!;
+    const refText3 = ref3.text_fields as Record<string, string>;
+    const var3 = slotById(variantContent, '3a4b09c')!;
+    const varText3 = var3.text_fields as Record<string, string>;
+    expect(refText3.title_text).toBe('Bessere Auslastung');
+    expect(varText3.title_text).toBe('Mehr passende Termine');
   });
 
   it('erkennt Text-Diffs bei identischer Struktur ueber content-Projektion (flache Slots)', () => {

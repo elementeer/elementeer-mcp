@@ -18,31 +18,36 @@ amendments:
   - id: A2
     status: resolved
     title: "diff_pages gegen echte daten 2618 vs 2340"
-    resolved_in: HEAD (2026-08-12, 3. Anlauf)
+    resolved_in: HEAD (2026-08-12, 4. Anlauf — beide Seiten gezogen)
     notes: >
-      Drei reale Fixtures via Respira gezogen (Elementor 4.2.2, Pro 4.2.1):
-        - page-2340-icon-box-section-d2427fe.ts: d2427fe ("How It Works")
-        - page-2618-section4-1c775162.ts:  gesamte Sektion 4 inkl. aller
-          Kinder (1c775162 → addfe73 → d963208 → d2427fe)
+      Zwei reale Sektion-4-Fixtures via Respira gezogen (beide Seiten,
+      include=content, explicit gegen pageId 2618 bzw. 2340):
+        - page-2618-section4-1c775162.ts: Beauty-Texte, _path [4]
+        - page-2340-section4-1c775162.ts: Handwerk-Texte, _path [3]
+      zusaetzlich page-2340-icon-box-section-d2427fe.ts (d2427fe/How It Works).
 
-      Befund: Container d2427fe mit 5 Icon-Boxen (1cefa87, c2068b0,
-      4c63abf, 8ae0619, 3a4b09c) existiert auf BEIDEN Seiten identisch.
-      Sektion 4 "Was sich typischerweise sofort verbessert" ist auf
-      2618 und 2340 strukturell gleich (gleicher Container-Tree,
-      gleiche IDs, gleiches children_count).
+      BEFUND (Gegenprobe bestanden — Texte unterscheiden sich,
+      Abfragen liefen korrekt gegen zwei verschiedene Seiten):
+        - Struktur identisch: 1c775162 → addfe73 → d963208 → d2427fe,
+          5 icon-box-Widgets, gleiche IDs (1cefa87, c2068b0, 4c63abf,
+          8ae0619, 3a4b09c), gleiches children_count.
+        - Texte handwerk- vs beauty-spezifisch:
+            4c63abf 2618 "Mehr gebuchte Termine"   → 2340 "Weniger Leerlauf im Kalender"
+            3a4b09c 2618 "Bessere Auslastung"      → 2340 "Mehr passende Termine"
+            c2068b0 "Hin und Her im Chat"          → "Rückfrage-Ketten im Chat."
+            d5b8628 beauty-einleitung               → handwerk-einleitung
 
-      abc1234/def5678/ghi9012 sind rein synthetisch — kommen nirgendwo
-      auf der Live-Site vor. Die Gap-Report-Annahme "3 statt 5
-      Icon-Boxen auf 2340" ist durch die Live-Daten widerlegt.
-      CMS-Ops Ground Truth "5 vs 3" bezieht sich moeglicherweise auf
-      eine andere Widget-Art oder eine andere Seite — an den
-      icon-box-Widgets ist sie nicht belegbar.
+      Die Gap-Report-Annahme "3 statt 5 Icon-Boxen auf 2340" ist
+      widerlegt: BEIDE Seiten haben 5 icon-box-Widgets. Es fehlt kein
+      Widget — die Differenz liegt ausschliesslich im Text. abc1234/
+      def5678/ghi9012 bleiben rein synthetisch.
 
       diff_pages.test.ts (9 Tests, alle gruen):
-      - 'Sektion 4 identisch': prueft Container-Tree inkl. 5 Icon-Boxen
-      - 'd2427fe How It Works identisch': structure-Projektion
-      - 'unterschiedliche Texte': content-Diff bei gleichen Widget-IDs
-      - Synthetische Tests bleiben als Einheitentests erhalten
+      - 'Sektion 4 gleiche Struktur': structure-Projektion beider Fixtures
+        ist identisch (structure enthaelt keine Texte).
+      - 'unterschiedliche Texte': content-Diff 2618 vs 2340 belegt an
+        realen Fixtures (4c63abf, 3a4b09c).
+      - Synthetische Tests bleiben als Einheitentests erhalten.
 
       542 passed / 1 failed (pre-existing) / 234 skipped.
 
