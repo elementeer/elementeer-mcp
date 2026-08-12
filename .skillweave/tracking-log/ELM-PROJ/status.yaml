@@ -42,14 +42,25 @@ amendments:
       Widget — die Differenz liegt ausschliesslich im Text. abc1234/
       def5678/ghi9012 bleiben rein synthetisch.
 
-      diff_pages.test.ts (9 Tests, alle gruen):
+      ZUSATZBEFUND (echter Strukturunterschied, Punkt 3 des Reviews):
+      Auf 2340 fehlt der gesamte Top-Level-Container 2177a59
+      ("So funktioniert's"). 2618 hat 11 Top-Level-Container, 2340 nur
+      10. Deshalb sind ab Index 3 alle Pfade um eins verschoben
+      (2618 4→2340 3, 5→4, 6→5, 7→6, 8→7, 9→8, 10→9). Wer "Sektion 4"
+      nach Position zaehlt, sieht verschiedene Container — das erklaert
+      den urspruenglichen Gap-Report-Irrtum. Neue Fixtures
+      page-2618-toplevel.ts / page-2340-toplevel.ts belegen das.
+
+      diff_pages.test.ts (10 Tests, alle gruen):
       - 'Sektion 4 gleiche Struktur': structure-Projektion beider Fixtures
-        ist identisch (structure enthaelt keine Texte).
-      - 'unterschiedliche Texte': content-Diff 2618 vs 2340 belegt an
-        realen Fixtures (4c63abf, 3a4b09c).
+        identisch (structure traegt keine Texte).
+      - 'unterschiedliche Texte': content-Diff 2618 vs 2340 an realen
+        Fixtures (4c63abf, 3a4b09c).
+      - 'fehlender Top-Level-Container': 2177a59 wird als fehlend auf
+        2340 belegt (missing == ['2177a59']), Rest identisch.
       - Synthetische Tests bleiben als Einheitentests erhalten.
 
-      542 passed / 1 failed (pre-existing) / 234 skipped.
+      543 passed / 1 failed (pre-existing) / 234 skipped.
 
   - id: A3
     status: open

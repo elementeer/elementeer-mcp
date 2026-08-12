@@ -3,6 +3,8 @@ import { projectElementorData } from '../projection.js';
 import { PAGE_2340_ICON_BOX_SECTION_D2427FE } from './fixtures/page-2340-icon-box-section-d2427fe.js';
 import { PAGE_2618_SECTION4_1C775162 } from './fixtures/page-2618-section4-1c775162.js';
 import { PAGE_2340_SECTION4_1C775162 } from './fixtures/page-2340-section4-1c775162.js';
+import { PAGE_2618_TOPLEVEL } from './fixtures/page-2618-toplevel.js';
+import { PAGE_2340_TOPLEVEL } from './fixtures/page-2340-toplevel.js';
 
 function projectAndExtract(data: Record<string, unknown>[], level: 'structure' | 'content' | 'interaction' | 'full'): unknown[] {
   const projected = projectElementorData(data, level, { pageId: 1, post_title: 'Test', revision: '' });
@@ -169,6 +171,33 @@ describe('diff_pages Logik (unit)', () => {
     const varText3 = var3.text_fields as Record<string, string>;
     expect(refText3.title_text).toBe('Bessere Auslastung');
     expect(varText3.title_text).toBe('Mehr passende Termine');
+  });
+
+  it('erkennt an realen Fixtures: fehlender Top-Level-Container auf 2340', () => {
+    // 2340 fehlt der Top-Level-Container 2177a59 ("So funktioniert's").
+    // 2618 hat 11 Top-Level-Container, 2340 nur 10. Alle Indizes ab 3
+    // sind auf 2340 um eins verschoben (4→3, 5→4, 6→5, 8→7, 9→8, 10→9).
+    // Das ist der echte Strukturunterschied zwischen den Seiten.
+
+    const ref = projectAndExtract(PAGE_2618_TOPLEVEL, 'structure');
+    const variant = projectAndExtract(PAGE_2340_TOPLEVEL, 'structure');
+
+    const refIds = (ref as Array<Record<string, unknown>>).map(c => c.id as string);
+    const variantIds = (variant as Array<Record<string, unknown>>).map(c => c.id as string);
+
+    // 2618: 11 Top-Level, 2340: 10.
+    expect(refIds.length).toBe(11);
+    expect(variantIds.length).toBe(10);
+
+    // Der fehlende Container wird belegt, nicht behauptet.
+    const variantIdSet = new Set(variantIds);
+    const missing = refIds.filter(id => !variantIdSet.has(id));
+    expect(missing).toEqual(['2177a59']);
+
+    // Alle übrigen Top-Level-Container sind auf beiden Seiten vorhanden
+    // (nur die Position ist verschoben).
+    const refRest = refIds.filter(id => id !== '2177a59');
+    expect(refRest.sort()).toEqual(variantIds.slice().sort());
   });
 
   it('erkennt Text-Diffs bei identischer Struktur ueber content-Projektion (flache Slots)', () => {
