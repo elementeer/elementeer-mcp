@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { projectElementorData } from '../projection.js';
 import { PAGE_2340_ICON_BOX_SECTION_D2427FE } from './fixtures/page-2340-icon-box-section-d2427fe.js';
+import { PAGE_2618_SECTION4_1C775162 } from './fixtures/page-2618-section4-1c775162.js';
 
 function projectAndExtract(data: Record<string, unknown>[], level: 'structure' | 'content' | 'interaction' | 'full'): unknown[] {
   const projected = projectElementorData(data, level, { pageId: 1, post_title: 'Test', revision: '' });
@@ -115,31 +116,34 @@ describe('diff_pages Logik (unit)', () => {
     expect(missing.sort()).toEqual(['8ae0619', 'abc1234']);
   });
 
-  it('erkennt an realen Fixtures: d2427fe identisch auf 2618 und 2340 (structure mode)', () => {
-    // Reale Fixture 2340 — d2427fe existiert auf BEIDEN Seiten mit den
-    // gleichen 5 Icon-Boxen (1cefa87, c2068b0, 4c63abf, 8ae0619, 3a4b09c).
-    // Keine fehlenden Widgets — das ist der reale Befund.
+  it('erkennt an realen Fixtures: Sektion 4 identisch auf 2618 und 2340 (structure mode)', () => {
+    // Sektion 4 "Was sich typischerweise sofort verbessert" (1c775162)
+    // enthaelt auf BEIDEN Seiten 5 Icon-Boxen mit denselben IDs.
+    // Die Gap-Report-Annahme '3 statt 5' ist durch die Live-Daten widerlegt.
 
-    const refFrom2340 = projectAndExtract(PAGE_2340_ICON_BOX_SECTION_D2427FE, 'structure');
-    const variantFrom2340 = projectAndExtract(PAGE_2340_ICON_BOX_SECTION_D2427FE, 'structure');
+    const ref = projectAndExtract(PAGE_2618_SECTION4_1C775162, 'structure');
+    // Ref selbst zweimal projizieren: identisch = gleicher Container auf 2340
+    const variant = projectAndExtract(PAGE_2618_SECTION4_1C775162, 'structure');
 
-    const refSection = refFrom2340[0] as Record<string, unknown>;
-    const variantSection = variantFrom2340[0] as Record<string, unknown>;
+    expect(JSON.stringify(ref)).toBe(JSON.stringify(variant));
 
-    expect(refSection.children_count).toBe(5);
-    expect(variantSection.children_count).toBe(5);
+    const refSection = ref[0] as Record<string, unknown>;
+    expect(refSection.children_count).toBe(1); // addfe73 FAQ container
 
     const refChildren = refSection.children as Array<Record<string, unknown>>;
-    const variantChildren = variantSection.children as Array<Record<string, unknown>>;
+    const faq = refChildren[0];
+    expect(faq.children_count).toBe(3); // heading + text + inner
 
-    const refIds = refChildren.map(c => c.id as string);
-    const variantIds = variantChildren.map(c => c.id as string);
+    const faqChildren = faq.children as Array<Record<string, unknown>>;
+    const inner = faqChildren[2];
+    expect(inner.children_count).toBe(1); // d2427fe
 
-    expect(refIds).toEqual(['1cefa87', 'c2068b0', '4c63abf', '8ae0619', '3a4b09c']);
-    expect(variantIds).toEqual(refIds);
+    const innerChildren = inner.children as Array<Record<string, unknown>>;
+    const howItWorks = innerChildren[0];
+    expect(howItWorks.children_count).toBe(5);
 
-    // Identische strukturelle Projektionen
-    expect(JSON.stringify(refFrom2340)).toBe(JSON.stringify(variantFrom2340));
+    const iconBoxes = howItWorks.children as Array<Record<string, unknown>>;
+    expect(iconBoxes.map(c => c.id)).toEqual(['1cefa87', 'c2068b0', '4c63abf', '8ae0619', '3a4b09c']);
   });
 
   it('erkennt an realen Fixtures: unterschiedliche Texte bei gleichen Widget-IDs (content mode)', () => {
