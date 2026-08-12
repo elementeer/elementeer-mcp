@@ -968,16 +968,10 @@ export class ElementeerClient {
     },
   ): Promise<{
     post_id: number;
-    content_hash: string;
+    updated: number;
+    not_found: string[];
+    partial: boolean;
     new_hash: string;
-    dry_run: boolean;
-    results: Array<{
-      widget_id: string;
-      updated: boolean;
-      new_hash?: string;
-      error?: string;
-    }>;
-    partial?: boolean;
   }> {
     const res = await this.http.post(`/pages/${id}/widgets/batch`, params);
     return res.data;

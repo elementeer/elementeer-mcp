@@ -113,30 +113,26 @@ export function registerDeltaTools(
       const summaryLines = [
         `Batch widget patch on ${is_template ? 'template' : 'page'} ${post_id}:`,
         `  Total operations: ${operations.length}`,
-        `  Updated: ${result.results.filter(r => r.updated).length}`,
-        `  Failed: ${result.results.filter(r => r.error).length}`,
+        `  Updated: ${result.updated}`,
+        `  Not found: ${result.not_found.length}`,
         `  Mode: ${dry_run ? 'dry-run' : 'live'}`,
       ];
 
       if (result.partial) {
-        summaryLines.push(`  ⚠️ partial=true — some operations failed, check results below.`);
+        summaryLines.push(`  ⚠️ partial=true — some widgets not found, see not_found list.`);
       }
 
-      summaryLines.push('', `New hash: ${result.new_hash}`);
-      summaryLines.push('');
+      summaryLines.push('', `New hash: ${result.new_hash}`, '');
 
-      for (const r of result.results) {
-        if (r.updated) {
-          summaryLines.push(`  ✅ ${r.widget_id} — updated`);
-        } else if (r.error) {
-          summaryLines.push(`  ❌ ${r.widget_id} — ${r.error}`);
-        } else {
-          summaryLines.push(`  - ${r.widget_id} — no change`);
+      if (result.not_found.length > 0) {
+        for (const w of result.not_found) {
+          summaryLines.push(`  ❌ ${w} — not found`);
         }
+      } else {
+        summaryLines.push(`  ✅ All ${result.updated} widget(s) updated.`);
       }
 
-      // If the batch was entirely dry-run, add a note
-      if (dry_run && result.dry_run) {
+      if (dry_run) {
         summaryLines.push('', 'This was a dry-run. No changes were written.');
       }
 
