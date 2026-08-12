@@ -312,4 +312,106 @@ export function registerDeltaTools(
       return { content: [{ type: 'text', text: lines.join('\n') }] };
     },
   );
+
+  // -----------------------------------------------------------------------
+  // insert_widget  (DELTA-003)
+  // -----------------------------------------------------------------------
+  server.tool(
+    'insert_widget',
+    'Insert a new Elementor widget into a container at a specific position on a page. Requires the page content_hash from a recent get_page_data. The widget must be a complete Elementor widget object with id, elType, widgetType, and settings. Use dry_run=true to preview before writing.',
+    {
+      site_id:        z.string().optional().describe('Site ID from config'),
+      post_id:        z.number().int().describe('Target page ID'),
+      widget:         z.record(z.unknown()).describe('Complete widget object: { id, elType, widgetType, settings, ... }'),
+      container_path: z.string().optional().default('root').describe('Dot-separated path to the target container (e.g. "0.1" for sections[0].columns[1]). "root" means the top level.'),
+      position:       z.number().int().optional().default(-1).describe('Insertion index within the container. -1 appends at the end.'),
+      content_hash:   z.string().describe('Content hash from get_page_data. REQUIRED.'),
+      dry_run:        z.boolean().optional().default(false).describe('If true, preview the change without writing.'),
+    },
+    async ({ site_id, post_id, widget, container_path, position, content_hash, dry_run }) => {
+      const client = getClient(site_id);
+      const result = await client.insertWidget(post_id, { widget, container_path, position, content_hash, dry_run });
+      if (dry_run) {
+        return { content: [{ type: 'text', text: `Dry-run insert on page ${post_id}:\n\`\`\`json\n${JSON.stringify(result, null, 2)}\n\`\`\`` }] };
+      }
+      return { content: [{ type: 'text', text: `Widget inserted on page ${post_id} at container "${container_path}" position ${result.position}.\nNew hash: ${result.new_hash}` }] };
+    },
+  );
+
+  // -----------------------------------------------------------------------
+  // remove_widget  (DELTA-003)
+  // -----------------------------------------------------------------------
+  server.tool(
+    'remove_widget',
+    'Remove a widget by its element ID from a page. Requires the page content_hash. Use dry_run=true to preview what would be removed.',
+    {
+      site_id:      z.string().optional().describe('Site ID from config'),
+      post_id:      z.number().int().describe('Target page ID'),
+      widget_id:    z.string().describe('Element ID of the widget to remove (e.g. "a85a3a7")'),
+      content_hash: z.string().describe('Content hash from get_page_data. REQUIRED.'),
+      dry_run:      z.boolean().optional().default(false).describe('If true, preview the change without writing.'),
+    },
+    async ({ site_id, post_id, widget_id, content_hash, dry_run }) => {
+      const client = getClient(site_id);
+      const result = await client.removeWidget(post_id, widget_id, { content_hash, dry_run });
+      if (dry_run) {
+        return { content: [{ type: 'text', text: `Dry-run remove on page ${post_id}:\n\`\`\`json\n${JSON.stringify(result, null, 2)}\n\`\`\`` }] };
+      }
+      return { content: [{ type: 'text', text: `Widget "${widget_id}" removed from page ${post_id}.\nPath: ${result.path}\nNew hash: ${result.new_hash}` }] };
+    },
+  );
+
+  // -----------------------------------------------------------------------
+  // move_widget  (DELTA-003)
+  // -----------------------------------------------------------------------
+  server.tool(
+    'move_widget',
+    'Move a widget from its current container to a different container and position within the same page. Requires the page content_hash.',
+    {
+      site_id:              z.string().optional().describe('Site ID from config'),
+      post_id:              z.number().int().describe('Target page ID'),
+      widget_id:            z.string().describe('Element ID of the widget to move'),
+      target_container_path: z.string().optional().default('root').describe('Dot-separated path to the destination container. "root" = page top level.'),
+      position:             z.number().int().optional().default(-1).describe('Target index within the destination container. -1 = append.'),
+      content_hash:         z.string().describe('Content hash from get_page_data. REQUIRED.'),
+      dry_run:              z.boolean().optional().default(false).describe('If true, preview the change without writing.'),
+    },
+    async ({ site_id, post_id, widget_id, target_container_path, position, content_hash, dry_run }) => {
+      const client = getClient(site_id);
+      const result = await client.moveWidget(post_id, widget_id, { target_container_path, position, content_hash, dry_run });
+      return { content: [{ type: 'text', text: `Widget "${widget_id}" moved on page ${post_id}: ${result.source_path} → ${result.new_path}\nNew hash: ${result.new_hash}` }] };
+    },
+  );
+
+  // -----------------------------------------------------------------------
+  // clone_widget  (DELTA-003)
+  // -----------------------------------------------------------------------
+  server.tool(
+    'clone_widget',
+    'Clone a widget from a source page into a target page at a specific position. The source widget is deep-cloned with a new element ID. Global style references (__globals__, typography bindings) are carried over verbatim — the response includes a global_references list so you can check whether those references exist on the target page. Requires the TARGET page content_hash.',
+    {
+      site_id:        z.string().optional().describe('Site ID from config'),
+      post_id:        z.number().int().describe('TARGET page ID — where the clone will be inserted'),
+      source_page_id: z.number().int().describe('SOURCE page ID — where the original widget lives'),
+      widget_id:      z.string().describe('Element ID of the widget to clone on the source page'),
+      container_path: z.string().optional().default('root').describe('Dot-separated path to the target container. "root" = top level.'),
+      position:       z.number().int().optional().default(-1).describe('Insertion index within the target container. -1 = append.'),
+      content_hash:   z.string().describe('Content hash of the TARGET page from get_page_data. REQUIRED.'),
+      dry_run:        z.boolean().optional().default(false).describe('If true, preview the clone without writing.'),
+    },
+    async ({ site_id, post_id, source_page_id, widget_id, container_path, position, content_hash, dry_run }) => {
+      const client = getClient(site_id);
+      const result = await client.cloneWidget(post_id, { source_page_id, widget_id, container_path, position, content_hash, dry_run });
+      const lines = [
+        `Widget "${result.source_widget_id}" cloned from page ${result.source_page_id} → page ${result.post_id}`,
+        `New widget ID: ${result.new_widget_id}`,
+        `Position: ${result.container_path}[${result.position}]`,
+      ];
+      if (result.global_references.length > 0) {
+        lines.push('', `Global references: ${result.global_references.join(', ')}`, 'Check whether these exist on the target page.');
+      }
+      lines.push('', `New hash: ${result.new_hash}`);
+      return { content: [{ type: 'text', text: lines.join('\n') }] };
+    },
+  );
 }

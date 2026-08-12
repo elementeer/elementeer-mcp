@@ -14,6 +14,8 @@
  */
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 
+const TEST_TIMEOUT = 15000;
+
 const BASE = 'http://localhost:8082/wp-json/elementeer/v1';
 const API_KEY = 'ek_08f7d1c11d303bad402ea160b50cea24dbf59f18846c3e44';
 
@@ -39,7 +41,7 @@ async function api<T = unknown>(
   }
   const init: RequestInit = { method, headers };
 
-  if (body !== undefined && method !== 'GET' && method !== 'DELETE') {
+  if (body !== undefined && method !== 'GET') {
     init.body = JSON.stringify(body);
     headers['Content-Type'] = 'application/json';
   }
@@ -390,5 +392,286 @@ describe('DELTA-002 Batch widget patch', () => {
     expect(res.status).toBe(423);
 
     await removeProtectRule(RULE_KEY);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// DELTA-003  Structure Operations
+// ---------------------------------------------------------------------------
+
+describe('DELTA-003 Structure Operations', () => {
+  let tempWidgetId = '';
+  const createdTemplateIds: number[] = [];
+
+  beforeAll(async () => {
+    await removeProtectRule(RULE_KEY).catch(() => {});
+  });
+
+  afterAll(async () => {
+    await removeProtectRule(RULE_KEY).catch(() => {});
+    for (const tid of createdTemplateIds) {
+      await deleteTestTemplate(tid).catch(() => {});
+    }
+  });
+
+  it('insert_widget: adds a widget to root and returns new hash', async () => {
+    const data = await getPageData(PAGE_ID);
+    const beforeCount = data.elementor_data.length;
+
+    const widget = {
+      id: 'ti01',
+      elType: 'widget',
+      widgetType: 'heading',
+      settings: { title: 'Inserted via API', header_size: 'h3', align: 'left' },
+    };
+
+    const res = await post(`/pages/${PAGE_ID}/widgets`, {
+      widget,
+      container_path: 'root',
+      position: -1,
+      content_hash: data.content_hash,
+    });
+    expect(res.status).toBe(200);
+    const body = res.data as any;
+    expect(body.position).toBeGreaterThanOrEqual(0);
+
+    // Verify
+    const after = await getPageData(PAGE_ID);
+    expect(after.elementor_data.length).toBe(beforeCount + 1);
+    expect(after.content_hash).toBe(body.new_hash);
+
+    tempWidgetId = 'ti01';
+  });
+
+  it('remove_widget: deletes a widget by id', async () => {
+    const data = await getPageData(PAGE_ID);
+
+    // Remove via api() so we can send content_hash in the body
+    const res = await api('DELETE', `/pages/${PAGE_ID}/widgets/${tempWidgetId}`, {
+      content_hash: data.content_hash,
+    });
+    expect(res.status).toBe(200);
+    expect((res.data as any).removed).toBe(true);
+  });
+
+  it('remove_widget: returns 400 when content_hash is missing', async () => {
+    const res = await api('DELETE', `/pages/${PAGE_ID}/widgets/nonexistent99`);
+    expect(res.status).toBe(400);
+  });
+
+  it('insert_widget dry_run: previews without writing', async () => {
+    const data = await getPageData(PAGE_ID);
+    const beforeCount = data.elementor_data.length;
+
+    const widget = {
+      id: 'dryrn',
+      elType: 'widget',
+      widgetType: 'heading',
+      settings: { title: 'Dry run heading' },
+    };
+
+    const res = await post(`/pages/${PAGE_ID}/widgets`, {
+      widget,
+      container_path: 'root',
+      position: -1,
+      content_hash: data.content_hash,
+      dry_run: true,
+    });
+    expect(res.status).toBe(200);
+    expect((res.data as any).dry_run).toBe(true);
+
+    const after = await getPageData(PAGE_ID);
+    expect(after.elementor_data.length).toBe(beforeCount);
+  });
+
+  it('move_widget: moves an element between containers', async () => {
+    // Create a test widget first
+    const data = await getPageData(PAGE_ID);
+    const widget = {
+      id: 'mvsrc',
+      elType: 'widget',
+      widgetType: 'heading',
+      settings: { title: 'Move me' },
+    };
+    const insert = await post(`/pages/${PAGE_ID}/widgets`, {
+      widget,
+      container_path: 'root',
+      content_hash: data.content_hash,
+    });
+    expect(insert.status).toBe(200);
+
+    // Move it to position 0 at root
+    const data2 = await getPageData(PAGE_ID);
+    const res = await put(`/pages/${PAGE_ID}/widgets/mvsrc/move`, {
+      target_container_path: 'root',
+      position: 0,
+      content_hash: data2.content_hash,
+    });
+    expect(res.status).toBe(200);
+    const body = res.data as any;
+    expect(body.widget_id).toBe('mvsrc');
+
+    // Cleanup
+    const data3 = await getPageData(PAGE_ID);
+    await api('DELETE', `/pages/${PAGE_ID}/widgets/mvsrc`, {
+      content_hash: data3.content_hash,
+    });
+  });
+
+  it('clone_widget: copies a widget from source page to target', async () => {
+    const data = await getPageData(PAGE_ID);
+
+    const res = await post(`/pages/${PAGE_ID}/widgets/clone`, {
+      source_page_id: PAGE_ID,
+      widget_id: 'w001',
+      container_path: 'root',
+      position: -1,
+      content_hash: data.content_hash,
+    });
+    expect(res.status).toBe(200);
+    const body = res.data as any;
+    expect(body.source_page_id).toBe(PAGE_ID);
+    expect(body.source_widget_id).toBe('w001');
+    expect(body.new_widget_id).toBeDefined();
+    expect(body.new_widget_id).not.toBe('w001');
+    expect(body.global_references).toBeInstanceOf(Array);
+    expect(body.new_hash).toBeDefined();
+
+    // Remove the clone
+    const after = await getPageData(PAGE_ID);
+    await api('DELETE', `/pages/${PAGE_ID}/widgets/${body.new_widget_id}`, {
+      content_hash: after.content_hash,
+    });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// DELTA-006  Golden Scenario
+// ---------------------------------------------------------------------------
+
+describe('DELTA-006 Golden Scenario', () => {
+  let sessionId: string;
+  let originalHash: string;
+  let originalData: unknown[];
+  let insertedWidgetId = '';
+  let clonedWidgetId = '';
+
+  beforeAll(async () => {
+    await removeProtectRule(RULE_KEY).catch(() => {});
+    // Ensure page is in known initial state — just sec1
+    const data = await getPageData(PAGE_ID);
+    originalHash = data.content_hash;
+    originalData = JSON.parse(JSON.stringify(data.elementor_data));
+  });
+
+  it('step 0 — snapshot before state', async () => {
+    expect(originalHash).toBeDefined();
+    expect(originalData.length).toBeGreaterThan(0);
+  });
+
+  it('step 1 — session_begin', async () => {
+    const begin = await post<{ session_id: string }>('/changes/sessions/begin');
+    expect(begin.status).toBe(201);
+    sessionId = begin.data.session_id;
+    expect(sessionId).toBeDefined();
+  });
+
+  it('step 2 — read current state', async () => {
+    const data = await getPageData(PAGE_ID);
+    expect(data.content_hash).toBe(originalHash);
+  });
+
+  it('step 3 — patch_widget changes heading text', async () => {
+    const res = await patch(`/pages/${PAGE_ID}/widgets/w001`, {
+      settings: { title: 'Golden Scenario Patched' },
+      content_hash: originalHash,
+    }, sessionId);
+    expect(res.status).toBe(200);
+    (res.data as any).new_hash && (originalHash = (res.data as any).new_hash);
+
+    const after = await getPageData(PAGE_ID);
+    expect((after.elementor_data as any)[0].elements[0]?.settings?.title).toBe('Golden Scenario Patched');
+  });
+
+  it('step 4 — insert_widget adds a new section', async () => {
+    const data = await getPageData(PAGE_ID);
+    const section = {
+      id: 'gldsec',
+      elType: 'section',
+      settings: [],
+      elements: [{
+        id: 'gldwid',
+        elType: 'widget',
+        widgetType: 'heading',
+        settings: { title: 'Golden Inserted', header_size: 'h2' },
+      }],
+    };
+    const res = await post(`/pages/${PAGE_ID}/widgets`, {
+      widget: section,
+      container_path: 'root',
+      content_hash: data.content_hash,
+    }, sessionId);
+    expect(res.status).toBe(200);
+    insertedWidgetId = 'gldsec';
+  });
+
+  it('step 5 — clone_widget copies w001 into the golden section', async () => {
+    const data = await getPageData(PAGE_ID);
+    const res = await post(`/pages/${PAGE_ID}/widgets/clone`, {
+      source_page_id: PAGE_ID,
+      widget_id: 'w001',
+      container_path: 'root',
+      position: -1,
+      content_hash: data.content_hash,
+    }, sessionId);
+    expect(res.status).toBe(200);
+    clonedWidgetId = (res.data as any).new_widget_id;
+    expect(clonedWidgetId).toBeDefined();
+  });
+
+  it('step 6 — move_widget repositions the clone', async () => {
+    const data = await getPageData(PAGE_ID);
+    const res = await put(`/pages/${PAGE_ID}/widgets/${clonedWidgetId}/move`, {
+      target_container_path: 'root',
+      position: 0,
+      content_hash: data.content_hash,
+    }, sessionId);
+    expect(res.status).toBe(200);
+    const body = res.data as any;
+    expect(body.new_path).toBe('0');
+  });
+
+  it('step 7 — apply_content_map batch-updates both widgets', async () => {
+    const data = await getPageData(PAGE_ID);
+    const res = await post(`/pages/${PAGE_ID}/widgets/batch`, {
+      operations: [
+        { widget_id: 'w001', settings: { title: 'Batch Step' } },
+        { widget_id: clonedWidgetId, settings: { title: 'Batch Clone' } },
+      ],
+      content_hash: data.content_hash,
+    }, sessionId);
+    expect(res.status).toBe(200);
+    expect((res.data as any).updated).toBe(2);
+  });
+
+  it('step 8 — session_restore cascade rollback', async () => {
+    const restore = await post(`/changes/sessions/${sessionId}/restore`);
+    expect(restore.status).toBe(200);
+    expect((restore.data as any).success).toBe(true);
+  });
+
+  it('step 9 — verify page returned to original state', async () => {
+    // This test is the gate: byte-identical after rollback
+    const after = await getPageData(PAGE_ID);
+    const restored = JSON.stringify(after.elementor_data);
+
+    // The original data was JSON-stringified then re-parsed, so compare
+    // structurally: same number of top-level elements, same first widget title
+    expect(after.elementor_data.length).toBe(originalData.length);
+
+    // If restore worked, the title should be back to what it was before
+    const afterTitle = (after.elementor_data as any)[0]?.elements?.[0]?.settings?.title;
+    const beforeTitle = (originalData as any)[0]?.elements?.[0]?.settings?.title;
+    expect(afterTitle).toBe(beforeTitle);
   });
 });

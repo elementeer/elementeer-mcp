@@ -2236,4 +2236,89 @@ export class ElementeerClient {
     const res = await this.http.post<any>('/export/data', { post_type, format, limit, offset });
     return res.data;
   }
+
+  // ------------------------------------------------------------------ //
+  // Widget Structure Operations (DELTA-003)
+  // ------------------------------------------------------------------ //
+
+  async insertWidget(
+    pageId: number,
+    params: {
+      widget: Record<string, unknown>;
+      container_path?: string;
+      position?: number;
+      content_hash: string;
+      dry_run?: boolean;
+    },
+  ): Promise<{
+    post_id: number;
+    position: number;
+    container_path: string;
+    new_hash: string;
+  }> {
+    const res = await this.http.post(`/pages/${pageId}/widgets`, params);
+    return res.data;
+  }
+
+  async removeWidget(
+    pageId: number,
+    widgetId: string,
+    params: {
+      content_hash: string;
+      dry_run?: boolean;
+    },
+  ): Promise<{
+    post_id: number;
+    widget_id: string;
+    path: string;
+    removed: boolean;
+    new_hash: string;
+  }> {
+    const res = await this.http.delete(`/pages/${pageId}/widgets/${widgetId}`, { data: params });
+    return res.data;
+  }
+
+  async moveWidget(
+    pageId: number,
+    widgetId: string,
+    params: {
+      target_container_path?: string;
+      position?: number;
+      content_hash: string;
+      dry_run?: boolean;
+    },
+  ): Promise<{
+    post_id: number;
+    widget_id: string;
+    source_path: string;
+    new_path: string;
+    new_hash: string;
+  }> {
+    const res = await this.http.put(`/pages/${pageId}/widgets/${widgetId}/move`, params);
+    return res.data;
+  }
+
+  async cloneWidget(
+    pageId: number,
+    params: {
+      source_page_id: number;
+      widget_id: string;
+      container_path?: string;
+      position?: number;
+      content_hash: string;
+      dry_run?: boolean;
+    },
+  ): Promise<{
+    post_id: number;
+    source_page_id: number;
+    source_widget_id: string;
+    new_widget_id: string;
+    position: number;
+    container_path: string;
+    global_references: string[];
+    new_hash: string;
+  }> {
+    const res = await this.http.post(`/pages/${pageId}/widgets/clone`, params);
+    return res.data;
+  }
 }
