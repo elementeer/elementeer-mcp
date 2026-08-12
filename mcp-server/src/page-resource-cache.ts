@@ -2,6 +2,7 @@ import { ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { ElementeerClient } from './client.js';
 import { projectElementorData, type ProjectionLevel } from './projection.js';
+import { getScreenshot, parseScreenshotResourceUri } from './screenshot-cache.js';
 
 const RESOURCE_SIZE_THRESHOLD = 20_000;
 
@@ -127,4 +128,64 @@ export function registerPageResourceTemplates(
       },
     );
   }
+
+  // Screenshot resource (ELM-RENDER-002)
+  const screenshotTemplate = new ResourceTemplate(
+    'elementeer://pages/{pageId}/screenshot/{contentHash}',
+    { list: undefined },
+  );
+  server.registerResource(
+    'page-screenshot',
+    screenshotTemplate,
+    {
+      title: 'Page Screenshot',
+      description: 'A screenshot of a page captured via the rendering bridge. Bound to a specific content_hash — the URI changes when the page is modified.',
+      mimeType: 'image/png',
+    },
+    async (uri: URL) => {
+      const resourceKey = uri.pathname.replace(/^\//, '');
+      const parsed = parseScreenshotResourceUri(resourceKey);
+
+      if (!parsed) {
+        throw new Error(`Unsupported screenshot resource URI: ${resourceKey}`);
+      }
+
+      const cached = getScreenshot(resourceKey);
+
+      if (!cached) {
+        throw new Error(
+          `No screenshot cached for page ${parsed.pageId} with hash ${parsed.contentHash}. ` +
+          `Use request_screenshot to capture one first. ` +
+          `If the page has been edited since capture, the hash will have changed.`,
+        );
+      }
+
+      const { result } = cached;
+
+      if (result.screenshot_base64) {
+        const decoded = Buffer.from(result.screenshot_base64, 'base64');
+        return {
+          contents: [{
+            uri: uri.href,
+            mimeType: 'image/png' as const,
+            blob: decoded.toString('base64'),
+          }],
+        };
+      }
+
+      if (result.screenshot_url) {
+        return {
+          contents: [{
+            uri: uri.href,
+            mimeType: 'image/png' as const,
+            text: `Screenshot URL (content_hash: ${result.content_hash}, captured: ${result.captured_at}):\n${result.screenshot_url}`,
+          }],
+        };
+      }
+
+      throw new Error(
+        `Screenshot for page ${parsed.pageId} has no image data (neither base64 nor URL).`,
+      );
+    },
+  );
 }
