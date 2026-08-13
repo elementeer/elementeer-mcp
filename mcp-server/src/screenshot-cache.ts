@@ -30,25 +30,25 @@ export function getScreenshot(resourceKey: string): CachedScreenshot | undefined
 
 export function screenshotResourceUri(
   pageId: number,
-  contentHash: string,
+  renderHash: string,
 ): string {
-  return `elementeer://pages/${pageId}/screenshot/${contentHash}`;
+  return `elementeer://pages/${pageId}/screenshot/${renderHash}`;
 }
 
 export function parseScreenshotResourceUri(
   uri: string,
-): { pageId: number; contentHash: string } | null {
+): { pageId: number; renderHash: string } | null {
   const match = uri.match(/^pages\/(\d+)\/screenshot\/([a-f0-9]{64})$/);
   if (!match) return null;
   return {
     pageId: parseInt(match[1], 10),
-    contentHash: match[2],
+    renderHash: match[2],
   };
 }
 
 export function screenshotResourceKey(
   pageId: number,
-  contentHash: string,
+  renderHash: string,
 ): string {
-  return `pages/${pageId}/screenshot/${contentHash}`;
+  return `pages/${pageId}/screenshot/${renderHash}`;
 }

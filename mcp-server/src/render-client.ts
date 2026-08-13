@@ -1,5 +1,38 @@
 import axios, { AxiosInstance } from 'axios';
 
+// ElementorTemplate contract mirrors elementeer-bridge packages/contracts/src/elementor.ts.
+// It is duplicated here (not imported) because the MCP does not depend on the
+// bridge's package. The `type` union is the single source of truth on the
+// bridge side; the MCP only ever sends "page" for a rendered page (the
+// request_screenshot tool renders a page, not a header/footer/popup).
+export type TemplateType =
+  | 'page'
+  | 'header'
+  | 'footer'
+  | 'popup'
+  | 'section'
+  | 'single'
+  | 'archive'
+  | 'product'
+  | 'product-archive';
+
+export interface ElementorElement {
+  id: string;
+  elType: 'container' | 'widget' | 'section' | 'column';
+  isInner: boolean;
+  settings: Record<string, unknown>;
+  elements: ElementorElement[];
+  widgetType?: string;
+}
+
+export interface ElementorTemplate {
+  title: string;
+  type: TemplateType;
+  version: '0.4';
+  page_settings: Record<string, unknown>;
+  content: ElementorElement[];
+}
+
 export class BridgeError extends Error {
   constructor(
     message: string,
@@ -19,21 +52,21 @@ export interface ScreenshotViewports {
 
 export interface ScreenshotResult {
   pageId: number;
-  contentHash: string;
+  renderHash: string;
   screenshots: ScreenshotViewports;
   capturedAt: string;
 }
 
 export interface ScreenshotRequest {
   pageId: number;
-  template: string;
-  contentHash?: string;
+  template: ElementorTemplate;
+  renderHash?: string;
   containers?: string[];
 }
 
 interface BridgeScreenshotResponse {
   pageId: number;
-  contentHash: string;
+  renderHash: string;
   screenshots: {
     desktop: string;
     tablet: string;
@@ -66,7 +99,7 @@ export class BridgeClient {
       const body: Record<string, unknown> = {
         template: params.template,
       };
-      if (params.contentHash) body.contentHash = params.contentHash;
+      if (params.renderHash) body.renderHash = params.renderHash;
       if (params.containers?.length) body.containers = params.containers;
 
       const res = await this.http.post<BridgeScreenshotResponse>(
@@ -77,11 +110,11 @@ export class BridgeClient {
       const data = res.data;
       const base = this.baseUrl.replace(/\/$/, '');
 
-      const prefix = `/static/page-screenshots/${data.pageId}/${data.contentHash}`;
+      const prefix = `/static/page-screenshots/${data.pageId}/${data.renderHash}`;
 
       return {
         pageId: data.pageId,
-        contentHash: data.contentHash,
+        renderHash: data.renderHash,
         screenshots: {
           desktop: `${base}${prefix}/desktop.png`,
           tablet: `${base}${prefix}/tablet.png`,

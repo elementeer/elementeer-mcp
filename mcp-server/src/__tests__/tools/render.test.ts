@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { describe, it, expect, vi, beforeEach, afterEach, type MockInstance } from 'vitest';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { registerRenderTools } from '../../tools/render.js';
 import type { ElementeerClient } from '../../client.js';
@@ -11,6 +11,27 @@ import {
   storeScreenshot,
   getScreenshot,
 } from '../../screenshot-cache.js';
+
+// ELM-RENDER-003: the previous tests used `vi.doMock` AFTER `registerRenderTools`
+// had already statically imported `render-client.js`. `doMock` is not hoisted,
+// so it never took effect and the "bridge error" / "hash mismatch" assertions
+// exercised the wrong code path (they got "ELEMENTEER_BRIDGE_URL is not set"),
+// meaning a failure in the real requestScreenshot flow would NOT have made the
+// test red. We use hoisted `vi.mock` instead so the mock module is what both
+// render.ts and the test import.
+const mockRequestScreenshot = vi.hoisted(() => vi.fn());
+const mockGetBridgeClient = vi.hoisted(() => vi.fn());
+const mockGetBridgeUrl = vi.hoisted(() => vi.fn());
+
+vi.mock('../../render-client.js', async (importOriginal) => {
+  const original = await importOriginal<typeof import('../../render-client.js')>();
+  return {
+    ...original,
+    BridgeError: original.BridgeError,
+    getBridgeClient: mockGetBridgeClient,
+    getBridgeUrl: mockGetBridgeUrl,
+  };
+});
 
 function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> = {}): ElementeerClient {
   return {
@@ -34,7 +55,22 @@ function makeClient(overrides: Partial<Record<keyof ElementeerClient, unknown>> 
       post_title: 'Test Page',
       post_type: 'page',
       element_count: 3,
-      elementor_data: [],
+      elementor_data: [
+        {
+          id: 'a1b2c3d4',
+          elType: 'container',
+          settings: { _title: 'Hero' },
+          elements: [
+            {
+              id: 'e5f6g7h8',
+              elType: 'widget',
+              widgetType: 'heading',
+              settings: { title: 'Hello World', header_size: 'h1' },
+              elements: [],
+            },
+          ],
+        },
+      ],
     }),
     createChange: vi.fn(),
     listChanges: vi.fn().mockResolvedValue({ changes: [], total: 0 }),
@@ -66,7 +102,7 @@ describe('Screenshot URI helpers', () => {
     const parsed = parseScreenshotResourceUri(`pages/42/screenshot/${'a'.repeat(64)}`);
     expect(parsed).not.toBeNull();
     expect(parsed!.pageId).toBe(42);
-    expect(parsed!.contentHash).toBe('a'.repeat(64));
+    expect(parsed!.renderHash).toBe('a'.repeat(64));
   });
 
   it('parses cache keys consistently', () => {
@@ -84,7 +120,7 @@ describe('Screenshot URI helpers', () => {
 describe('Screenshot cache', () => {
   const mockResult = {
     pageId: 42,
-    contentHash: 'a'.repeat(64),
+    renderHash: 'a'.repeat(64),
     screenshots: {
       desktop: 'http://localhost:3201/static/page-screenshots/42/aaaa.../desktop.png',
       tablet: 'http://localhost:3201/static/page-screenshots/42/aaaa.../tablet.png',
@@ -98,7 +134,7 @@ describe('Screenshot cache', () => {
     const entry = getScreenshot('pages/42/screenshot/aaaa');
     expect(entry).toBeDefined();
     expect(entry!.result.pageId).toBe(42);
-    expect(entry!.result.contentHash).toBe('a'.repeat(64));
+    expect(entry!.result.renderHash).toBe('a'.repeat(64));
   });
 
   it('returns undefined for unknown keys', () => {
@@ -125,15 +161,20 @@ describe('request_screenshot tool', () => {
       return server as any;
     });
 
-    process.env['ELEMENTEER_BRIDGE_URL'] = 'http://localhost:3201';
-    process.env['ELEMENTEER_BRIDGE_API_KEY'] = 'test-key';
+    mockRequestScreenshot.mockReset();
+    mockGetBridgeClient.mockReset();
+    mockGetBridgeUrl.mockReset();
+    mockGetBridgeUrl.mockReturnValue('http://localhost:3201');
+    mockGetBridgeClient.mockReturnValue({
+      baseUrl: 'http://localhost:3201',
+      apiKey: 'test-key',
+      requestScreenshot: mockRequestScreenshot,
+    });
 
     registerRenderTools(server, getClient);
   });
 
   afterEach(() => {
-    delete process.env['ELEMENTEER_BRIDGE_URL'];
-    delete process.env['ELEMENTEER_BRIDGE_API_KEY'];
     vi.restoreAllMocks();
   });
 
@@ -144,72 +185,101 @@ describe('request_screenshot tool', () => {
   }
 
   it('errors when ELEMENTEER_BRIDGE_URL is not set', async () => {
-    delete process.env['ELEMENTEER_BRIDGE_URL'];
+    mockGetBridgeUrl.mockReturnValue(undefined);
 
     const result = await callTool('request_screenshot', { page_id: 42 });
     expect(result.isError).toBe(true);
     expect(result.content[0].text).toContain('ELEMENTEER_BRIDGE_URL');
   });
 
-  it('returns bridge error details when bridge fails', async () => {
-    const mockBridgeClient = {
-      baseUrl: 'http://localhost:3201',
-      apiKey: 'test-key',
-      requestScreenshot: vi.fn().mockRejectedValue(
-        new BridgeError('Bridge timeout', 504, 'Gateway Timeout'),
-      ),
-    };
+  it('sends the wrapped ElementorTemplate object (breach 1) and returns the resource URI', async () => {
+    const hash = 'a'.repeat(64);
+    mockRequestScreenshot.mockResolvedValue({
+      pageId: 42,
+      renderHash: hash,
+      screenshots: {
+        desktop: `http://localhost:3201/static/page-screenshots/42/${hash}/desktop.png`,
+        tablet: `http://localhost:3201/static/page-screenshots/42/${hash}/tablet.png`,
+        mobile: `http://localhost:3201/static/page-screenshots/42/${hash}/mobile.png`,
+      },
+      capturedAt: '2026-08-12T10:00:00.000Z',
+    });
 
-    vi.doMock('../../render-client.js', () => ({
-      getBridgeClient: () => mockBridgeClient,
-      getBridgeUrl: () => 'http://localhost:3201',
-      BridgeError,
-    }));
+    const result = await callTool('request_screenshot', { page_id: 42, template: 'full_page' });
+    expect(result.isError).toBeFalsy();
+    expect(result.content[0].text).toContain(`elementeer://pages/42/screenshot/${hash}`);
+
+    // Breach 1: template must be an OBJECT (ElementorTemplate), never a string.
+    const sentRequest = mockRequestScreenshot.mock.calls[0][0] as {
+      pageId: number;
+      template: unknown;
+    };
+    expect(sentRequest.pageId).toBe(42);
+    expect(typeof sentRequest.template).toBe('object');
+    expect(sentRequest.template).toEqual(
+      expect.objectContaining({
+        title: 'Test Page',
+        type: 'page',
+        version: '0.4',
+      }),
+    );
+    const template = sentRequest.template as { content: unknown[] };
+    expect(template.content).toHaveLength(1);
+    expect((template.content[0] as { elType: string }).elType).toBe('container');
+    // isInner is normalized so the bridge contract is honored even though the
+    // plugin's raw elementor_data does not carry it.
+    expect((template.content[0] as { isInner: boolean }).isInner).toBe(false);
+  });
+
+  it('returns bridge error details when bridge fails (breach-2 renderHash flow)', async () => {
+    mockRequestScreenshot.mockRejectedValue(
+      new BridgeError('Bridge timeout', 504, 'Gateway Timeout'),
+    );
 
     const result = await callTool('request_screenshot', { page_id: 42, template: 'full_page' });
     expect(result.isError).toBe(true);
     expect(result.content[0].text).toContain('Bridge error');
+    expect(result.content[0].text).toContain('504');
   });
 
-  it('reports content hash mismatch between plugin and bridge', async () => {
-    const pluginHash = 'a'.repeat(64);
+  it('reports render hash mismatch between caller and bridge', async () => {
+    const knownHash = 'a'.repeat(64);
     const bridgeHash = 'b'.repeat(64);
 
-    vi.mocked(client.getPageData).mockResolvedValueOnce({
-      post_id: 42,
-      post_title: 'Modified Page',
-      post_type: 'page',
-      element_count: 3,
-      elementor_data: [],
-      content_hash: pluginHash,
+    mockRequestScreenshot.mockResolvedValue({
+      pageId: 42,
+      renderHash: bridgeHash,
+      screenshots: {
+        desktop: `http://localhost:3201/static/page-screenshots/42/${bridgeHash}/desktop.png`,
+        tablet: '',
+        mobile: '',
+      },
+      capturedAt: '2026-08-12T10:00:00.000Z',
     });
-
-    const mockBridgeClient = {
-      baseUrl: 'http://localhost:3201',
-      apiKey: 'test-key',
-      requestScreenshot: vi.fn().mockResolvedValue({
-        pageId: 42,
-        contentHash: bridgeHash,
-        screenshots: { desktop: 'http://l:3201/x/desktop.png', tablet: '', mobile: '' },
-        capturedAt: '2026-08-12T10:00:00.000Z',
-      }),
-    };
-
-    vi.doMock('../../render-client.js', () => ({
-      getBridgeClient: () => mockBridgeClient,
-      getBridgeUrl: () => 'http://localhost:3201',
-      BridgeError,
-    }));
 
     const result = await callTool('request_screenshot', {
       page_id: 42,
       template: 'full_page',
-      content_hash: pluginHash,
+      render_hash: knownHash,
     });
 
     expect(result.isError).toBe(true);
     expect(result.content[0].text).toContain('mismatch');
-    expect(result.content[0].text).toContain(pluginHash);
+    expect(result.content[0].text).toContain(knownHash);
     expect(result.content[0].text).toContain(bridgeHash);
+  });
+
+  it('rejects viewpoint without containers', async () => {
+    mockRequestScreenshot.mockResolvedValue({
+      pageId: 42,
+      renderHash: 'a'.repeat(64),
+      screenshots: { desktop: '', tablet: '', mobile: '' },
+      capturedAt: '2026-08-12T10:00:00.000Z',
+    });
+
+    const result = await callTool('request_screenshot', { page_id: 42, template: 'viewpoint' });
+    expect(result.isError).toBe(true);
+    expect(result.content[0].text).toContain('template=viewpoint requires');
+    expect(mockRequestScreenshot).not.toHaveBeenCalled();
   });
 });

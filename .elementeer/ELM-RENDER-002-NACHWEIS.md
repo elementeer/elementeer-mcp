@@ -1,20 +1,51 @@
 # ELM-RENDER-002 — Nachweis
 
-Blockiert auf: Playwright-Chromium nicht auf dieser Maschine installierbar (CDN 400).
-Kein Code-Fehler im MCP-Server oder in der Bridge.
+Stand: Vier Vertragsbrueche (ELM-RENDER-001) behoben, Hash-Identitaet entschieden
+(ELM-RENDER-002), Tests repariert (ELM-RENDER-003). Nachweis mit echtem Bild
+folgt, sobald die Bridge laeuft.
 
 ## Was laeuft
-- MCP-Server feature/ELM-RENDER-002-screenshots, Commits 20ea5e0 + e11e4e1 + [NEXT]
-- elementeer-bridge/apps/api, Stand feature/ELM-RENDER-002
+- MCP-Server feature/ELM-RENDER-002-screenshots @ acb85cf + Folge-Commits
+- elementeer-bridge/apps/api feature/ELM-RENDER-002-screenshot-endpoint @ daccfa6
 - Redis 6380, Postgres 5433, MySQL 3307
+
+## Korrektur zur frueheren Fassung (ELM-RENDER-004)
+
+Die fruehere Fassung dieser Datei nannte "Playwright-Chromium nicht installierbar
+(CDN 400)" als Blockade. **Das war falsch.** Der Bridge-Proof
+(`apps/api/src/page-screenshot/PROOF.md`) ist Zeile fuer Zeile reproduzierbar:
+HTTP 200, drei PNGs, Playwright v145.0.7632.6 startet real. Die tatsaechlichen
+Ursachen der fruehen Installationsfehlschlaege waren drei andere — ein 15 Tage
+alter Playwright-Prozess auf dem Verzeichnis-Lock, ein Lock-Heartbeat, der das
+Entpacken von 342 MB nicht ueberlebt, und ein fehlendes zweites Paket
+(`chromium-headless-shell`). Siehe
+`elementeer-bridge/docs/process/playwright-browser-install.md`.
+
+## Hash-Identitaet (entschieden, ELM-RENDER-002)
+
+Zwei Hashes, klar benannt, verschiedene Laengen:
+
+- `content_hash` = `md5(wp_json_encode(_elementor_data))` → **32 hex**.
+  Mutations-Hash, optimistisches Sperren (Plugin `ElementorDocument::contentHash()`).
+- `render_hash` = `sha256(...)` → **64 hex** (volle Laenge). Bindet den
+  Screenshot an den Render. Zutaten: content_hash + globale-Styles-Version +
+  Theme-Identitaet/Version + Schriftarten-Stack. `content_hash` geht als Zutat
+  ein, nicht als Ersatz.
+
+Benannter Rest: Die Bridge erhaelt heute nur das ElementorTemplate; globale
+Styles, Theme und Fonts sind ihr nicht versioniert bekannt. Bis das Plugin sie
+liefert, wird `render_hash` aus dem Template berechnet — diese Einschraenkung ist
+im Service-Kommentar dokumentiert, nicht stillschweigend verschwiegen.
 
 ## Bridge-Vertrag (verbindlich)
 ```
 POST /api/pages/{pageId}/screenshots
-Body:     { template, contentHash?, containers? }
-Response: { pageId, contentHash, screenshots{desktop,tablet,mobile}, capturedAt }
-Static:   /static/page-screenshots/{pageId}/{contentHash}/{viewport}.png
+Body:     { template: ElementorTemplate, renderHash?, containers? }
+Response: { pageId, renderHash, screenshots{desktop,tablet,mobile}, capturedAt }
+Static:   /static/page-screenshots/{pageId}/{renderHash}/{viewport}.png
 ```
+`template` ist ein **Objekt** `{ title, type:"page", version:"0.4",
+page_settings, content }`, kein String. `pageId` ist eine **number** (coerced).
 
 ## Bridge starten
 ```bash
@@ -52,18 +83,19 @@ Seite #290 ("Where Humans & AI Agents Work as One") — URL https://preview.fusi
 ## Erwartetes Ergebnis
 ```
 request_screenshot({ page_id: 290, template: 'full_page' })
-→ MCP resource URI elementeer://pages/290/screenshot/<sha256>
-→ read_mcp_resource liefert PNG blob
-→ content_hash in URI stimmt mit Bridge content_hash ueberein
+→ lädt elementor_data von Seite 290, wrappt in ElementorTemplate
+→ POST /api/pages/290/screenshots gegen laufende Bridge
+→ MCP resource URI elementeer://pages/290/screenshot/<sha256:64hex>
+→ read_mcp_resource liefert PNG blob (desktop viewport)
+→ render_hash in URI stimmt mit Bridge render_hash ueberein
 ```
 
-## Hash-Mismatch-Test
-1. Screenshot holen → Hash H1
-2. Seite via Elementor aendern und speichern
-3. Screenshot erneut holen → Hash H2 != H1
-4. read_mcp_resource mit URI/H1 → "not found" (Cache abgelaufen oder anderer Key)
+## Hash-Mismatch-Test (ELM-RENDER-002 hergestellt)
+1. Screenshot holen → render_hash H1
+2. Seite via Elementor aendern und speichern → erneut holen → H2 != H1
+3. Zwei verschiedene Seiten mit demselben (handgeschriebenen) Template → zwei verschiedene render_hash (pageId/Elemente sind Zutat)
+4. read_mcp_resource mit URI/H1 → "not found" (render_hash gebunden)
 
 ## Fehlerfall
 1. Bridge stoppen
-2. request_screenshot → "Bridge error: Bridge unreachable" (isError: true)
-3. Kein leeres Bild, kein Platzhalter
+2. request_screenshot → "Bridge error" (isError: true), kein leeres Bild

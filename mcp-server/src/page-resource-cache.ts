@@ -2,7 +2,7 @@ import { ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { ElementeerClient } from './client.js';
 import { projectElementorData, type ProjectionLevel } from './projection.js';
-import { getScreenshot, parseScreenshotResourceUri } from './screenshot-cache.js';
+import { getScreenshot, screenshotResourceKey } from './screenshot-cache.js';
 
 const RESOURCE_SIZE_THRESHOLD = 20_000;
 
@@ -131,7 +131,7 @@ export function registerPageResourceTemplates(
 
   // Screenshot resource (ELM-RENDER-002)
   const screenshotTemplate = new ResourceTemplate(
-    'elementeer://pages/{pageId}/screenshot/{contentHash}',
+    'elementeer://pages/{pageId}/screenshot/{renderHash}',
     { list: undefined },
   );
   server.registerResource(
@@ -139,22 +139,31 @@ export function registerPageResourceTemplates(
     screenshotTemplate,
     {
       title: 'Page Screenshot',
-      description: 'A screenshot of a page captured via the rendering bridge. Bound to a specific content_hash — the URI changes when the page is modified. Returns the desktop-viewport PNG image.',
+      description: 'A screenshot of a page captured via the rendering bridge. Bound to a specific render_hash — the URI changes when the page is modified. Returns the desktop-viewport PNG image.',
       mimeType: 'image/png',
     },
-    async (uri: URL) => {
-      const resourceKey = uri.pathname.replace(/^\//, '');
-      const parsed = parseScreenshotResourceUri(resourceKey);
+    async (uri: URL, variables: Record<string, string | string[]>) => {
+      // ELM-RENDER-001 breach 4: do NOT re-parse `uri.pathname`. The SDK parses
+      // our custom scheme with `new URL(...)`, which turns `elementeer://pages/290/...`
+      // into hostname="pages" and pathname="/290/...", dropping the "pages/"
+      // prefix. The template match (already done by the SDK) has the correct
+      // values — use `variables` instead.
+      const pageIdRaw = Array.isArray(variables.pageId) ? variables.pageId[0] : variables.pageId;
+      const renderHashRaw = Array.isArray(variables.renderHash) ? variables.renderHash[0] : variables.renderHash;
 
-      if (!parsed) {
-        throw new Error(`Unsupported screenshot resource URI: ${resourceKey}`);
+      if (!pageIdRaw || !renderHashRaw) {
+        throw new Error(`Screenshot resource missing template variables: ${JSON.stringify(variables)}`);
       }
+
+      const pageId = parseInt(pageIdRaw, 10);
+      const renderHash = renderHashRaw;
+      const resourceKey = screenshotResourceKey(pageId, renderHash);
 
       const cached = getScreenshot(resourceKey);
 
       if (!cached) {
         throw new Error(
-          `No screenshot cached for page ${parsed.pageId} with hash ${parsed.contentHash}. ` +
+          `No screenshot cached for page ${pageId} with hash ${renderHash}. ` +
           `Use request_screenshot to capture one first. ` +
           `If the page has been edited since capture, the hash will have changed.`,
         );
@@ -165,7 +174,7 @@ export function registerPageResourceTemplates(
       const desktopUrl = result.screenshots.desktop;
       if (!desktopUrl) {
         throw new Error(
-          `Screenshot for page ${parsed.pageId} has no desktop image URL.`,
+          `Screenshot for page ${pageId} has no desktop image URL.`,
         );
       }
 
@@ -205,7 +214,7 @@ export function registerPageResourceTemplates(
           contents: [{
             uri: uri.href,
             mimeType: 'text/plain' as const,
-            text: `Screenshot for page ${parsed.pageId} (hash: ${parsed.contentHash}):\n` +
+            text: `Screenshot for page ${pageId} (hash: ${renderHash}):\n` +
               `  Desktop: ${desktopUrl}\n` +
               `  Tablet:  ${result.screenshots.tablet}\n` +
               `  Mobile:  ${result.screenshots.mobile}\n\n` +
