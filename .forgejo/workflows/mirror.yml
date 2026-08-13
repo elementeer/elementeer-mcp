@@ -1,43 +1,116 @@
+# unified-mirror.yml — single Mirror to GitHub workflow for every mirrored repo.
+# Decided by ADR-0001 (lvc-ops, OPS-001). Deploy as `.forgejo/workflows/mirror.yml`
+# verbatim in every repo that has one. The GitHub target is derived from the
+# repository variable GH_REPOSITORY (set once per repo); falls back to
+# ${{ github.repository }} when the Forgejo org and GitHub org match.
+#
+# Two entry points:
+#   1. push event  -> exact-ref: force-push ONLY the triggering ref.
+#      This is the default, per-event copy. It never prunes, so it never
+#      deletes the GitHub default branch or GitHub-managed refs.
+#   2. workflow_dispatch -> STATE SYNC: clone --mirror the canonical source and
+#      force-push ALL refs. The clone IS the health gate: if Forgejo cannot be
+#      read the step fails and NO ref is touched. Deletion propagation is a
+#      separate, explicit mode below.
+#
+# Deletion propagation (OPS-005): pass `prune=true` on dispatch to synchronize
+# deletions too. It is opt-in because a healthy-source gate is required before
+# pruning anything from the mirror (ADR D.2 / D.3): the mirror is a recovery copy,
+# so an unverified source must never be allowed to wipe it. Deleted refs are the
+# ones present on GitHub (in the cloned mirror) but absent on the freshly cloned
+# canonical state. These are always excluded from pruning, even under prune=true:
+#   - the GitHub default branch (GitHub refuses to delete it -> job would fail)
+#   - GitHub-managed refs: gh-pages and any 'refs/heads' matching the mirror-only
+#     set declared per repo.
+#
+# Forgejo Actions secrets (org-level):
+#   GH_MIRROR_TOKEN  — required. GitHub PAT with push access to the mirror.
+#                      Name is fixed across orgs to keep mirror.yml identical.
+
 name: Mirror to GitHub
+
 on:
   push:
-    branches: [main]
+    branches: ["**"]
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Exact ref to mirror (default: all refs). Example: refs/tags/v2.3.0"
+        required: false
+        default: ""
+        type: string
+      prune:
+        description: "true = also delete GitHub refs absent on Forgejo (OPS-005, health-gated). false = catch-up only."
+        required: false
+        default: "false"
+        type: boolean
+
+# The GitHub destination is a per-repo repository VARIABLE named GH_REPOSITORY
+# (e.g. "LangeVC/lvc-ops", "LangeVC/skillweave", "Fusionaize/faigate", mapped in
+# config.yml). Fallback when the variable is unset: ${{ github.repository }} —
+# correct only when the Forgejo org == GitHub org (e.g. langevc/lvc-ops).
+# Setting GH_REPOSITORY once per repo keeps this file byte-identical everywhere.
 
 jobs:
   mirror:
     runs-on: ubuntu-latest
     steps:
-      - name: Install checkout deps
-        run: apk add --no-cache nodejs npm git bash curl
-      - uses: actions/checkout@v4
+      - name: Checkout the triggering ref (needed for the event-path push)
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Inject mirror marker (read-only notice)
-        run: |
-          target="elementeer-mcp"
-          cat > _MIRROR_IS_READONLY.md << EOF
-          # This is a mirror — read only
-
-          **Source of Truth:** [git.langevc.com](https://git.langevc.com/elementeer/${target})
-
-          This repository is automatically mirrored from the official Elementeer Forgejo instance.
-          Pull requests, issues, and contributions are **not accepted here**.
-
-          → [Open an issue](https://git.langevc.com/elementeer/${target}/issues)
-          → [Read the docs](https://docs.elementeer.xyz)
-          EOF
-
-      - name: Remove GitHub-specific config
-        run: rm -rf .github 2>/dev/null || true
-
-      - name: Push to GitHub (public mirror)
+      - name: Push triggering ref to GitHub mirror (exact-ref, event path)
+        if: github.event_name == 'push'
         env:
-          GH_TOKEN: ${{ secrets.GH_MIRROR_TOKEN }}
+          GH_MIRROR_TOKEN: ${{ secrets.GH_MIRROR_TOKEN }}
+          GH_REPOSITORY: ${{ vars.GH_REPOSITORY || github.repository }}
         run: |
-          target="elementeer-mcp"
-          git add -f _MIRROR_IS_READONLY.md
-          git add -u .github 2>/dev/null || true
-          git -c user.name="Elementeer Mirror" -c user.email="mirror@elementeer.langevc.com" commit -m "mirror: mark as read-only, remove .github (auto-generated)" --allow-empty || true
-          git remote add github-mirror https://x-access-token:${GH_TOKEN}@github.com/elementeer/${target}.git
-          git push github-mirror main --tags --force
+          remote="https://x-access-token:${GH_MIRROR_TOKEN}@github.com/${GH_REPOSITORY}.git"
+          git push --force "$remote" "+${GITHUB_REF}:${GITHUB_REF}"
+
+      - name: State sync — copy all refs from canonical source + optional prune
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_MIRROR_TOKEN: ${{ secrets.GH_MIRROR_TOKEN }}
+          FORGEJO_TOKEN: ${{ github.token }}
+          GH_REPOSITORY: ${{ vars.GH_REPOSITORY || github.repository }}
+          PRUNE: ${{ github.event.inputs.prune }}
+          TARGET: "https://x-access-token:${GH_MIRROR_TOKEN}@github.com/${GH_REPOSITORY}.git"
+        run: |
+          set -euo pipefail
+          tmp="$(mktemp -d)"
+          # Health gate: if the canonical source is not readable the clone fails
+          # and we touch nothing. The mirror is a recovery copy; we never prune
+          # from an unverified source (ADR D.2/D.3).
+          git clone --mirror "http://x-access-token:${FORGEJO_TOKEN}@forgejo:3000/${{ github.repository }}.git" "$tmp/s.git"
+          git clone --mirror "$TARGET" "$tmp/d.git" 2>/dev/null || true
+
+          # Always push every canonical ref (catch-up; no prune by default).
+          git -C "$tmp/s.git" push --force "$TARGET" \
+            '+refs/heads/*:refs/heads/*' '+refs/tags/*:refs/tags/*'
+
+          # Git list of refs to DELETE from the mirror.
+          if [ "${PRUNE:-false}" = "true" ]; then
+            deletes=()
+            while IFS= read -r _ref; do
+              case "$_ref" in
+                # never delete the GitHub default branch or GitHub-managed refs
+                refs/heads/main|refs/heads/master|refs/heads/gh-pages) continue ;;
+              esac
+              # delete only refs PRESENT on the mirror but ABSENT on canonical
+              if git -C "$tmp/d.git" rev-parse --verify "$_ref" >/dev/null 2>&1 && \
+                 ! git -C "$tmp/s.git" rev-parse --verify "$_ref" >/dev/null 2>&1; then
+                deletes+=(":$_ref")
+                echo "::notice::prune: ${_ref} deleted on Forgejo, removing from mirror"
+              fi
+            done < <(git -C "$tmp/d.git" for-each-ref --format='%(refname)' refs/heads refs/tags)
+
+            if [ "${#deletes[@]}" -gt 0 ]; then
+              git -C "$tmp/s.git" push --force "$TARGET" "${deletes[@]}"
+            else
+              echo "prune: no refs to delete"
+            fi
+          fi
+          rm -rf "$tmp"
