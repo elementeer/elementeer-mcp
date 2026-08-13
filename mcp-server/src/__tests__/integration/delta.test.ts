@@ -14,7 +14,9 @@
  */
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 
-const TEST_TIMEOUT = 15000;
+// The live-container integration tests share a global testTimeout of 30000 ms
+// (vitest.config.ts); per-test timeouts below are kept only where an operation
+// can legitimately exceed the container's own latency.
 
 const BASE = 'http://localhost:8082/wp-json/elementeer/v1';
 const API_KEY = 'ek_08f7d1c11d303bad402ea160b50cea24dbf59f18846c3e44';
@@ -118,6 +120,29 @@ async function getPageData(pageId: number): Promise<{ content_hash: string; elem
 
 const PAGE_ID = 131;   // pre-existing test page with heading w001
 const RULE_KEY = 'delta-test-protect';
+
+// ---------------------------------------------------------------------------
+// Global cleanup: reset page 131 to a known state so repeated runs are stable.
+// DELTA-005 patches w001.title and never restores it; without this, the title
+// drifts between runs and cascades into later assertions.
+// ---------------------------------------------------------------------------
+
+afterAll(async () => {
+  await removeProtectRule(RULE_KEY).catch(() => {});
+  try {
+    const before = await getPageData(PAGE_ID);
+    const first = (before.elementor_data as any[])?.[0];
+    const w001 = first?.elements?.[0];
+    if (w001) {
+      await patch(`/pages/${PAGE_ID}/widgets/w001`, {
+        settings: { title: 'Delta Test Page' },
+        content_hash: before.content_hash,
+      });
+    }
+  } catch {
+    // Best-effort reset: never fail the suite on cleanup.
+  }
+});
 
 // ---------------------------------------------------------------------------
 // DELTA-005  Protection enforcement
@@ -240,6 +265,44 @@ describe('DELTA-005 Protection enforcement', () => {
 
     await removeProtectRule(RULE_KEY);
   });
+
+  it('rule entry carries version, owner, expires_at', async () => {
+    await setProtectRule(RULE_KEY, [PAGE_ID]);
+
+    const res = await get<Array<any>>('/site/memory');
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.data)).toBe(true);
+    const entry = (res.data as any[]).find((e) => e.key === RULE_KEY);
+    expect(entry).toBeDefined();
+    expect(entry.version).toBe(1);
+    expect(entry.owner).toBe('agent');
+    expect(entry.expires_at).toBeNull();
+
+    await removeProtectRule(RULE_KEY);
+  });
+
+  it('expired rule no longer blocks (expires_at enforcement)', async () => {
+    // Set a rule already past expiry
+    const res = await put(`/site/memory/${RULE_KEY}`, {
+      type: 'rule',
+      content: 'Expired protection',
+      owner: 'agent',
+      expires_at: '2000-01-01T00:00:00+00:00',
+      rule: { protect: { post_ids: [PAGE_ID] } },
+    });
+    expect(res.status).toBe(200);
+    expect((res.data as any).expires_at).toBe('2000-01-01T00:00:00+00:00');
+
+    // Write must succeed — rule is expired
+    const data = await getPageData(PAGE_ID);
+    const patchRes = await patch(`/pages/${PAGE_ID}/widgets/w001`, {
+      settings: { title: 'Write after expiry' },
+      content_hash: data.content_hash,
+    });
+    expect(patchRes.status).toBe(200);
+
+    await removeProtectRule(RULE_KEY);
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -304,7 +367,10 @@ describe('DELTA-004 Change Sessions', () => {
     // Restore session
     const restore = await post(`/changes/sessions/${sid}/restore`);
     expect(restore.status).toBe(200);
-    expect((restore.data as any).success).toBe(true);
+    const body = restore.data as any;
+    expect(body.success).toBe(true);
+    expect(body.restored).toBe(body.total);
+    expect(body.restored).toBeGreaterThan(0);
 
     // Verify title is back to original (before session)
     const dataRestored = await getPageData(PAGE_ID);
@@ -425,6 +491,14 @@ describe('DELTA-002 Batch widget patch', () => {
 
 // ---------------------------------------------------------------------------
 // DELTA-003  Structure Operations
+//
+// NOTE (teilerfuellt): these are SMOKE tests on the local page 131. They
+// exercise insert/remove/move/clone mechanics, NOT the real acceptance
+// fixture. The real criterion — cloning the missing top-level container
+// 2177a59 "So funktioniert's" that 2340 lacks relative to 2618 (11 vs 10
+// containers, 135 vs 106 elements) — requires the production pages 2340 and
+// 2618, which do not exist in the wp-test-env container. Do not read this
+// green suite as DELTA-003 passing.
 // ---------------------------------------------------------------------------
 
 describe('DELTA-003 Structure Operations', () => {
@@ -575,6 +649,13 @@ describe('DELTA-003 Structure Operations', () => {
 
 // ---------------------------------------------------------------------------
 // DELTA-006  Golden Scenario
+//
+// NOTE (teilerfuellt): this runs on local page 131, NOT the production
+// reference pages 2340/2618. It exercises the full tool chain (begin → read
+// → patch → insert → clone → move → batch → restore → verify) as a smoke
+// test only. The real acceptance criteria — diff against 2340, detect the
+// missing container 2177a59, restore AND re-apply — are gated behind the
+// production rollout of 2.4.0. Do not read this as DELTA-006 passing.
 // ---------------------------------------------------------------------------
 
 describe('DELTA-006 Golden Scenario', () => {

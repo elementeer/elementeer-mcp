@@ -1009,9 +1009,8 @@ export class ElementeerClient {
 
   async restoreChangeSession(sessionId: string): Promise<{
     success: boolean;
-    session_id: string;
-    restored_count: number;
-    changes?: Array<Record<string, unknown>>;
+    restored: number;
+    total: number;
   }> {
     const res = await this.http.post(`/changes/sessions/${sessionId}/restore`);
     return res.data;
@@ -1037,6 +1036,9 @@ export class ElementeerClient {
     key: string;
     type: string;
     content: string;
+    version: number;
+    owner: string;
+    expires_at: string | null;
     set_at: string;
     rule?: Record<string, unknown>;
   }>> {
@@ -1049,12 +1051,18 @@ export class ElementeerClient {
     params: {
       type: 'fact' | 'preference' | 'lesson' | 'rule';
       content: string;
+      owner?: 'agent' | 'user';
+      version?: number;
+      expires_at?: string | null;
       rule?: { protect?: { post_ids?: number[]; slugs?: string[] } };
     },
   ): Promise<{
     key: string;
     type: string;
     content: string;
+    version: number;
+    owner: string;
+    expires_at: string | null;
     set_at: string;
     rule?: Record<string, unknown>;
   }> {

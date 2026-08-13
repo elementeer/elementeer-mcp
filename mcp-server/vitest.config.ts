@@ -5,6 +5,12 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     include: ['src/__tests__/**/*.test.ts'],
+    // Integration tests hammer a live WordPress container with sequential
+    // HTTP round-trips (4–6 per test). The vitest default (5000 ms) is not
+    // enough under host load — 30 s gives the container room without hiding
+    // a genuine hang.
+    testTimeout: 30000,
+    hookTimeout: 30000,
     exclude: [
       'docs/**',
       '**/docs/archive/**',

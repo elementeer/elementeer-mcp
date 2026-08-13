@@ -148,7 +148,7 @@ export function registerDeltaTools(
   // -----------------------------------------------------------------------
   server.tool(
     'session_begin',
-    'Begin a new change session. All writes made while this session is active are grouped together so they can be rolled back as a unit with session_restore. Use session_end to close the session normally. Sessions auto-expire after 30 minutes of inactivity.',
+    'Begin a new change session. All writes made while this session is active are grouped together so they can be rolled back as a unit with session_restore. Use session_end to close the session normally. Sessions are stored server-side and capped at a bounded count (oldest ended/rolled-back sessions are evicted first).',
     {
       site_id: z.string().optional().describe('Site ID from config'),
     },
@@ -182,7 +182,7 @@ export function registerDeltaTools(
       return {
         content: [{
           type: 'text',
-          text: `Session "${session_id}" ended.\nWrites made during this session are preserved.\nTo undo them, use session_restore with the same session_id before the session auto-expires.`,
+          text: `Session "${session_id}" ended.\nWrites made during this session are preserved.\nTo undo them, use session_restore with the same session_id.`,
         }],
       };
     },
@@ -209,15 +209,9 @@ export function registerDeltaTools(
         };
       }
       const lines = [
-        `Session "${session_id}" fully rolled back.`,
-        `Restored ${result.restored_count} object(s) to pre-session state.`,
+        `Session "${session_id}" rolled back.`,
+        `Restored ${result.restored} of ${result.total} object(s) to pre-session state.`,
       ];
-      if (result.changes?.length) {
-        lines.push('', 'Changes that were reversed:');
-        for (const c of result.changes) {
-          lines.push(`  - ${(c as any).resource_type ?? '?'} #${(c as any).resource_id ?? '?'}`);
-        }
-      }
       return { content: [{ type: 'text', text: lines.join('\n') }] };
     },
   );
@@ -234,12 +228,16 @@ export function registerDeltaTools(
       rule_note: z.string().describe('Human-readable note explaining why these pages are protected.'),
       post_ids:  z.array(z.number().int()).optional().describe('Page/template IDs to protect from writes.'),
       slugs:     z.array(z.string()).optional().describe('Page slugs to protect from writes.'),
+      owner:     z.enum(['agent', 'user']).optional().default('agent').describe('Who set this rule. Default "agent".'),
+      expires_at: z.string().optional().describe('Optional ISO-8601 timestamp after which this rule stops blocking writes. Omit for no expiry.'),
     },
-    async ({ site_id, rule_key, rule_note, post_ids, slugs }) => {
+    async ({ site_id, rule_key, rule_note, post_ids, slugs, owner, expires_at }) => {
       const client = getClient(site_id);
       const result = await client.setSiteMemoryEntry(rule_key, {
         type: 'rule',
         content: rule_note,
+        owner,
+        expires_at: expires_at ?? null,
         rule: { protect: { post_ids, slugs } },
       });
 
@@ -249,6 +247,8 @@ export function registerDeltaTools(
       ];
       if (post_ids?.length) lines.push(`  Protected post IDs: ${post_ids.join(', ')}`);
       if (slugs?.length) lines.push(`  Protected slugs: ${slugs.join(', ')}`);
+      lines.push(`  Owner: ${result.owner}`);
+      if (result.expires_at) lines.push(`  Expires: ${result.expires_at}`);
       lines.push('', 'The plugin will now refuse writes (423 Locked) to these pages. Use site_unprotect to remove this rule.');
 
       return { content: [{ type: 'text', text: lines.join('\n') }] };
@@ -304,6 +304,8 @@ export function registerDeltaTools(
           if (p.post_ids?.length) lines.push(`     Protected IDs: ${p.post_ids.join(', ')}`);
           if (p.slugs?.length) lines.push(`     Protected slugs: ${p.slugs.join(', ')}`);
         }
+        lines.push(`     Owner: ${r.owner}`);
+        if (r.expires_at) lines.push(`     Expires: ${r.expires_at}`);
         lines.push(`     Set: ${r.set_at}`);
         lines.push('');
       }
@@ -318,7 +320,7 @@ export function registerDeltaTools(
   // -----------------------------------------------------------------------
   server.tool(
     'insert_widget',
-    'Insert a new Elementor widget into a container at a specific position on a page. Requires the page content_hash from a recent get_page_data. The widget must be a complete Elementor widget object with id, elType, widgetType, and settings. Use dry_run=true to preview before writing.',
+    'Insert a new Elementor widget into a container at a specific position on a page. Requires the page content_hash from a recent get_page_data. The widget must be a complete Elementor widget object with id, elType, widgetType, and settings. Use dry_run=true to preview before writing. NOTE: not idempotent — a repeated call inserts a second copy (no idempotency key, no retry).',
     {
       site_id:        z.string().optional().describe('Site ID from config'),
       post_id:        z.number().int().describe('Target page ID'),
@@ -388,7 +390,7 @@ export function registerDeltaTools(
   // -----------------------------------------------------------------------
   server.tool(
     'clone_widget',
-    'Clone a widget from a source page into a target page at a specific position. The source widget is deep-cloned with a new element ID. Global style references (__globals__, typography bindings) are carried over verbatim — the response includes a global_references list so you can check whether those references exist on the target page. Requires the TARGET page content_hash.',
+    'Clone a widget from a source page into a target page at a specific position. The source widget is deep-cloned with a new element ID. Global style references (__globals__, typography bindings) are carried over verbatim — the response includes a global_references list (enumeration only, NOT validated against the target page). Requires the TARGET page content_hash. NOTE: not idempotent — a repeated call inserts a second copy (no idempotency key, no retry).',
     {
       site_id:        z.string().optional().describe('Site ID from config'),
       post_id:        z.number().int().describe('TARGET page ID — where the clone will be inserted'),
