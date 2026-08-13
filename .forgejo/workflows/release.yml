@@ -55,13 +55,15 @@ jobs:
       - name: Create Forgejo Release
         run: |
           TAG="${GITHUB_REF##*/}"
+          CHANGELOG="$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo HEAD^)"
+          BODY="Release v$VERSION.\n\n### Changes\n$(git log "$CHANGELOG"..HEAD --oneline 2>/dev/null || echo 'Initial release')"
+          printf '%b' "$BODY" > /tmp/release-body.txt
+          jq -n --arg tag "$TAG" --arg name "Elementeer MCP Server v$VERSION" --rawfile body /tmp/release-body.txt \
+            '{tag_name: $tag, name: $name, body: $body}' > /tmp/release-payload.json
           curl -X POST "https://git.langevc.com/api/v1/repos/$GITHUB_REPOSITORY/releases" \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d "$(jq -n --arg tag "$TAG" --arg name "Elementeer MCP Server v$VERSION" --arg body "Release v$VERSION.
-
-### Changes
-$(git log $(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo 'HEAD^')..HEAD --oneline 2>/dev/null || echo 'Initial release')" '{tag_name: $tag, name: $name, body: $body}')" \
+            -d @/tmp/release-payload.json \
             > /tmp/release-response.json
           RELEASE_ID=$(jq -r '.id' /tmp/release-response.json)
           echo "RELEASE_ID=$RELEASE_ID" >> $GITHUB_ENV
