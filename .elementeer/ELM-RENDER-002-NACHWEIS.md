@@ -1,8 +1,8 @@
 # ELM-RENDER-002 — Nachweis
 
 Stand: Vier Vertragsbrueche (ELM-RENDER-001) behoben, Hash-Identitaet entschieden
-(ELM-RENDER-002), Tests repariert (ELM-RENDER-003). Nachweis mit echtem Bild
-folgt, sobald die Bridge laeuft.
+(ELM-RENDER-002), Tests repariert (ELM-RENDER-003). End-to-End-Nachweis
+unabhaengig reproduziert (render_hash d8a2da07..., 843 KB PNG).
 
 ## Was laeuft
 - MCP-Server feature/ELM-RENDER-002-screenshots @ acb85cf + Folge-Commits
@@ -28,14 +28,18 @@ Zwei Hashes, klar benannt, verschiedene Laengen:
 - `content_hash` = `md5(wp_json_encode(_elementor_data))` → **32 hex**.
   Mutations-Hash, optimistisches Sperren (Plugin `ElementorDocument::contentHash()`).
 - `render_hash` = `sha256(...)` → **64 hex** (volle Laenge). Bindet den
-  Screenshot an den Render. Zutaten: content_hash + globale-Styles-Version +
-  Theme-Identitaet/Version + Schriftarten-Stack. `content_hash` geht als Zutat
-  ein, nicht als Ersatz.
+  Screenshot an den Render. **Heute hasht render_hash NUR das
+  ElementorTemplate** (elementor_data plus Titel) — siehe `service.ts`
+  `computeRenderHash(input.template)`. content_hash, globale Styles, Theme,
+  Fonts und pageId sind NICHT darin.
 
 Benannter Rest: Die Bridge erhaelt heute nur das ElementorTemplate; globale
 Styles, Theme und Fonts sind ihr nicht versioniert bekannt. Bis das Plugin sie
-liefert, wird `render_hash` aus dem Template berechnet — diese Einschraenkung ist
-im Service-Kommentar dokumentiert, nicht stillschweigend verschwiegen.
+liefert, wird `render_hash` aus dem Template allein berechnet. Konsequenz fuer
+die Frische: Ein Screenshot **veraltet nicht**, wenn sich nur globale Farben,
+Theme oder Schriftarten aendern, und meldet sich trotzdem als aktuell. Das ist
+eine bewusst in Kauf genommene Luecke, keine Frischezusage — im
+Service-Kommentar dokumentiert, nicht stillschweigend verschwiegen.
 
 ## Bridge-Vertrag (verbindlich)
 ```
@@ -92,9 +96,15 @@ request_screenshot({ page_id: 290, template: 'full_page' })
 
 ## Hash-Mismatch-Test (ELM-RENDER-002 hergestellt)
 1. Screenshot holen → render_hash H1
-2. Seite via Elementor aendern und speichern → erneut holen → H2 != H1
-3. Zwei verschiedene Seiten mit demselben (handgeschriebenen) Template → zwei verschiedene render_hash (pageId/Elemente sind Zutat)
-4. read_mcp_resource mit URI/H1 → "not found" (render_hash gebunden)
+2. Seite via Elementor aendern (z. B. Widget-Titel) und speichern → erneut holen → H2 != H1
+3. read_mcp_resource mit URI/H1 → "not found" (render_hash gebunden)
+
+Hinweis zur Ressourcenidentitaet: Zwei verschiedene Seiten mit denselben
+`elementor_data` teilen denselben render_hash — ihre Ressourcen sind aber
+disjunkt, weil `pageId` im Pfad und URI steht
+(`.../page-screenshots/{pageId}/{renderHash}/...` bzw.
+`elementeer://pages/{pageId}/screenshot/{renderHash}`). Deshalb ist pageId in
+den Hash aufzunehmen nicht noetig; die Ressourcenidentitaet kollidiert nicht.
 
 ## Fehlerfall
 1. Bridge stoppen
