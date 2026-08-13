@@ -108,6 +108,26 @@ async function setProtectRule(key: string, postIds: number[], slugs?: string[]):
     rule: { protect },
   });
   if (!res.ok) throw new Error(`Failed to set protect rule: ${res.status}`);
+
+  // The rule is stored via update_option, which is not guaranteed to be
+  // immediately observable on the very next request (object cache flush lag
+  // under load). A writer that hits `refuseIfProtected` before the option is
+  // visible falls through to the content_hash guard and returns 409 instead of
+  // 423 — the "set delay" the reviewer reproduced at load 8-12. Poll the
+  // listing until the entry is actually visible before returning.
+  await waitForRule(key);
+}
+
+async function waitForRule(key: string): Promise<void> {
+  const deadline = Date.now() + 2000;
+  while (Date.now() < deadline) {
+    const list = await get<Array<{ key: string }>>('/site/memory');
+    if (list.ok && Array.isArray(list.data) && list.data.some((e) => e.key === key)) {
+      return;
+    }
+    await new Promise((r) => setTimeout(r, 50));
+  }
+  throw new Error(`Protect rule "${key}" never became observable in /site/memory`);
 }
 
 async function removeProtectRule(key: string): Promise<void> {
@@ -192,10 +212,15 @@ describe('DELTA-005 Protection enforcement', () => {
     // Protect page 131
     await setProtectRule(RULE_KEY, [PAGE_ID]);
 
-    // Try to patch — expect 423
+    // Use the REAL content_hash. With a fake hash ('any-hash') the write
+    // would return 409 on the content_hash guard whenever the protect rule
+    // had not yet materialised, so the test would read "409" instead of a
+    // clean "423 protects / 200 unprotected" signal. A real hash means a
+    // missing rule surfaces as 200, which is unambiguous.
+    const data = await getPageData(PAGE_ID);
     const res = await patch(`/pages/${PAGE_ID}/widgets/w001`, {
       settings: { title: 'SHOULD FAIL' },
-      content_hash: 'any-hash',
+      content_hash: data.content_hash,
     });
     expect(res.status).toBe(423);
 
@@ -209,9 +234,11 @@ describe('DELTA-005 Protection enforcement', () => {
 
     await setProtectRule(RULE_KEY, [tid]);
 
+    // Real hash; see the page-variant comment for why 'any-hash' is wrong.
+    const tdata = await get<{ content_hash: string }>(`/templates/${tid}/data`);
     const res = await patch(`/templates/${tid}/widgets/w001`, {
       settings: { title: 'SHOULD FAIL' },
-      content_hash: 'any-hash',
+      content_hash: (tdata.data as { content_hash: string }).content_hash,
     });
     expect(res.status).toBe(423);
 
@@ -310,6 +337,21 @@ describe('DELTA-005 Protection enforcement', () => {
     await removeProtectRule(RULE_KEY);
   });
 
+  // Contract-coverage test for the deleteSiteMemoryEntry client type. The
+  // plugin returns { key, deleted: true } (a boolean `deleted` plus the key,
+  // not a string `deleted`). That shape had no reader until now, which is what
+  // let it drift in the first place (the original returned { deleted: <key> }
+  // and delta.ts read result.key as "undefined"). Asserting it here binds the
+  // contract against the live response.
+  it('delete site memory entry returns { key, deleted: true }', async () => {
+    await setProtectRule(RULE_KEY, [PAGE_ID]);
+
+    const res = await del<{ key: string; deleted: boolean }>(`/site/memory/${RULE_KEY}`);
+    expect(res.status).toBe(200);
+    expect(res.data.key).toBe(RULE_KEY);
+    expect(res.data.deleted).toBe(true);
+  });
+
   it('expired rule no longer blocks (expires_at enforcement)', async () => {
     // Set a rule already past expiry
     const res = await put(`/site/memory/${RULE_KEY}`, {
@@ -370,6 +412,36 @@ describe('DELTA-004 Change Sessions', () => {
     const detail = await get(`/changes/sessions/${sid}`);
     expect(detail.status).toBe(200);
     expect((detail.data as any).session_id).toBe(sid);
+  });
+
+  // Contract-coverage test for the getChangeSession client type. That type had
+  // no reader before this test (it returned the session body but nobody
+  // asserted the field names), so it silently drifted away from the plugin's
+  // response (started_at/change_count vs created_at/snapshot_uuids). This
+  // binds every field the client type declares against the live JSON, so the
+  // drift cannot recur without tripping the suite.
+  it('get session exposes created_at and snapshot_uuids (getChangeSession contract)', async () => {
+    const begin = await post<{ session_id: string }>('/changes/sessions/begin');
+    const sid = (begin.data as any).session_id;
+
+    const detail = await get<{
+      session_id: string;
+      snapshot_uuids: string[];
+      status: string;
+      created_at: string;
+      ended_at?: string;
+      rolled_back_at?: string;
+    }>(`/changes/sessions/${sid}`);
+
+    expect(detail.status).toBe(200);
+    const s = detail.data;
+    expect(s.session_id).toBe(sid);
+    expect(typeof s.status).toBe('string');
+    // created_at is the field the client type declares; snapshot_uuids is the
+    // array of attached snapshots (empty for a fresh session).
+    expect(typeof s.created_at).toBe('string');
+    expect(Array.isArray(s.snapshot_uuids)).toBe(true);
+    expect(s.snapshot_uuids).toEqual([]);
   });
 
   it('restore rolls back writes within the session', { timeout: 30000 }, async () => {
@@ -515,6 +587,52 @@ describe('DELTA-002 Batch widget patch', () => {
     expect(res.status).toBe(423);
 
     await removeProtectRule(RULE_KEY);
+  });
+
+  // Regression guard for the P0 TypeError fixed in the Auflage review: a
+  // widget_id that is a purely-numeric string ("21181856") used to be coerced
+  // by PHP to an int array key, which made updateById() throw
+  // "Argument #1 ($element_id) must be of type string, int given". The batch
+  // path now carries [widget_id, settings] LIST entries instead of a map, so
+  // numeric ids stay strings. This test inserts a widget whose id is purely
+  // numeric and patches it through batch — before the fix it 500'd.
+  it('batch patch accepts a purely-numeric widget_id (string, no TypeError)', async () => {
+    let data = await getPageData(PAGE_ID);
+
+    // Insert a widget with an all-digit id directly at the root.
+    const insert = await post(`/pages/${PAGE_ID}/widgets`, {
+      widget: { id: '21181856', elType: 'widget', widgetType: 'heading', settings: { title: 'Numeric' } },
+      container_path: 'root',
+      position: -1,
+      content_hash: data.content_hash,
+    });
+    expect(insert.status).toBe(200);
+
+    data = await getPageData(PAGE_ID);
+
+    const res = await post(`/pages/${PAGE_ID}/widgets/batch`, {
+      operations: [
+        { widget_id: '21181856', settings: { title: 'Numeric Fixed' } },
+      ],
+      content_hash: data.content_hash,
+    });
+    expect(res.status).toBe(200);
+    const body = res.data as any;
+    expect(body.updated).toBe(1);
+    expect(body.updated_ids).toEqual(['21181856']);
+
+    // Verify the numeric widget's title actually changed (and no TypeError).
+    // The widget was inserted at container_path 'root', so it is a TOP-LEVEL
+    // element (elementor_data[1]), not a child of sec1. Search the tree.
+    const after = await getPageData(PAGE_ID);
+    const roots = after.elementor_data as any[];
+    const widget =
+      roots.find((e) => e.id === '21181856') ??
+      roots
+        .map((r) => (r.elements ?? []).find((e: any) => e.id === '21181856'))
+        .find((e) => e !== undefined);
+    expect(widget).toBeDefined();
+    expect(widget.settings.title).toBe('Numeric Fixed');
   });
 });
 
