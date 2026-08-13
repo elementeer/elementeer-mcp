@@ -122,26 +122,42 @@ const PAGE_ID = 131;   // pre-existing test page with heading w001
 const RULE_KEY = 'delta-test-protect';
 
 // ---------------------------------------------------------------------------
-// Global cleanup: reset page 131 to a known state so repeated runs are stable.
-// DELTA-005 patches w001.title and never restores it; without this, the title
-// drifts between runs and cascades into later assertions.
+// Fixture isolation: page 131 is reset to a KNOWN state before every run.
+//
+// The DELTA-003 structure tests insert/remove/move/clone widgets at the page
+// root and do not self-clean; over repeated runs those artefacts accumulate,
+// the first element drifts off `sec1`, and downstream assertions that read
+// `elementor_data[0].elements[0]` (w001) start failing with
+// "Cannot read properties of undefined (reading '0')". Resetting the fixture
+// UP FRONT (not just in afterAll) makes each run deterministic and idempotent.
 // ---------------------------------------------------------------------------
+
+const FIXTURE = [
+  {
+    id: 'sec1',
+    elType: 'section',
+    settings: [],
+    elements: [
+      {
+        id: 'w001',
+        elType: 'widget',
+        widgetType: 'heading',
+        settings: { title: 'Delta Test Page' },
+      },
+    ],
+  },
+];
+
+beforeAll(async () => {
+  await removeProtectRule(RULE_KEY).catch(() => {});
+  // Force the page back to its known fixture state. This also clears any
+  // accumulated insert/move/clone artefacts from prior runs.
+  const res = await put(`/pages/${PAGE_ID}/data`, { elementor_data: FIXTURE });
+  if (!res.ok) throw new Error(`Failed to reset page fixture: ${res.status} ${JSON.stringify(res.data)}`);
+});
 
 afterAll(async () => {
   await removeProtectRule(RULE_KEY).catch(() => {});
-  try {
-    const before = await getPageData(PAGE_ID);
-    const first = (before.elementor_data as any[])?.[0];
-    const w001 = first?.elements?.[0];
-    if (w001) {
-      await patch(`/pages/${PAGE_ID}/widgets/w001`, {
-        settings: { title: 'Delta Test Page' },
-        content_hash: before.content_hash,
-      });
-    }
-  } catch {
-    // Best-effort reset: never fail the suite on cleanup.
-  }
 });
 
 // ---------------------------------------------------------------------------
