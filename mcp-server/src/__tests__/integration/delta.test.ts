@@ -119,7 +119,18 @@ async function setProtectRule(key: string, postIds: number[], slugs?: string[]):
 }
 
 async function waitForRule(key: string): Promise<void> {
-  const deadline = Date.now() + 2000;
+  // Budget rationale: the observed time for a `set` to become observable via
+  // `GET /site/memory` was MEASURED across TWO host-load regimes, not guessed:
+  //   - target band 12–14 (reviewer): 293–1116 ms
+  //   - 30-user burst (host load ~50): max 28.0 s (probe-1 = 28033 ms)
+  //   - 30-user burst (host load ~77): max 38.8 s (q-6 = 38830 ms), spread
+  //     2.6–38.8 s, all 10/10 eventually observable
+  // The rule ALWAYS becomes observable; it is the latency that varies, and it
+  // does not respect a tight ceiling when the host is saturated. A 2 s budget
+  // therefore reads as "never observable" purely on lag. 60 s covers the
+  // measured maximum with headroom and lets the test report the rule truly
+  // missing as a hard failure rather than a misread status code.
+  const deadline = Date.now() + 60000;
   while (Date.now() < deadline) {
     const list = await get<Array<{ key: string }>>('/site/memory');
     if (list.ok && Array.isArray(list.data) && list.data.some((e) => e.key === key)) {
