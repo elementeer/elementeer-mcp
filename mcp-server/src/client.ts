@@ -1018,11 +1018,11 @@ export class ElementeerClient {
 
   async getChangeSession(sessionId: string): Promise<{
     session_id: string;
+    snapshot_uuids: string[];
     status: string;
-    started_at: string;
+    created_at: string;
     ended_at?: string;
-    change_count: number;
-    changes: Array<Record<string, unknown>>;
+    rolled_back_at?: string;
   }> {
     const res = await this.http.get(`/changes/sessions/${sessionId}`);
     return res.data;

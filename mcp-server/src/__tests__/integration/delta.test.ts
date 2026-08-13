@@ -12,11 +12,13 @@
  *   - Plugin includes deployed from feature/ELM-DELTA-plugin-endpoints
  *   - Page 131 exists with an Elementor heading widget "w001"
  */
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
 
 // The live-container integration tests share a global testTimeout of 30000 ms
-// (vitest.config.ts); per-test timeouts below are kept only where an operation
-// can legitimately exceed the container's own latency.
+// (vitest.config.ts); per-test timeouts below are set to 30000 as well —
+// never lower than the global value, because a local { timeout: 15000 } would
+// OVERRIDE the global 30000 downward and cut the multi-roundtrip restore test
+// short (it needs six sequential HTTP roundtrips).
 
 const BASE = 'http://localhost:8082/wp-json/elementeer/v1';
 const API_KEY = 'ek_08f7d1c11d303bad402ea160b50cea24dbf59f18846c3e44';
@@ -160,6 +162,17 @@ afterAll(async () => {
   await removeProtectRule(RULE_KEY).catch(() => {});
 });
 
+// Abort-safe rule cleanup. A test that times out mid-run can leave the
+// RULE_KEY rule set (it was created with setProtectRule but the trailing
+// removeProtectRule never ran). That orphan would then refuse writes with
+// 423 for every subsequent test in the file — the "200 vs 423" intermittency.
+// afterEach removes the rule after EVERY test, so no single abort can leak
+// protection into the rest of the run. Idempotent: removeProtectRule 404s are
+// swallowed, and the per-describe afterAll hooks also still clear up.
+afterEach(async () => {
+  await removeProtectRule(RULE_KEY).catch(() => {});
+});
+
 // ---------------------------------------------------------------------------
 // DELTA-005  Protection enforcement
 // ---------------------------------------------------------------------------
@@ -217,7 +230,7 @@ describe('DELTA-005 Protection enforcement', () => {
     await removeProtectRule(RULE_KEY);
   });
 
-  it('blocks delete_template on a protected template (HTTP 423)', { timeout: 15000 }, async () => {
+  it('blocks delete_template on a protected template (HTTP 423)', { timeout: 30000 }, async () => {
     const tid = await createTestTemplate('Delta Protect Delete Tpl');
     createdTemplateIds.push(tid);
 
@@ -241,7 +254,7 @@ describe('DELTA-005 Protection enforcement', () => {
     await removeProtectRule(RULE_KEY);
   });
 
-  it('allows writes after protection is removed', { timeout: 15000 }, async () => {
+  it('allows writes after protection is removed', { timeout: 30000 }, async () => {
     const tid = await createTestTemplate('Delta Unprotect Tpl');
     createdTemplateIds.push(tid);
 
@@ -359,7 +372,7 @@ describe('DELTA-004 Change Sessions', () => {
     expect((detail.data as any).session_id).toBe(sid);
   });
 
-  it('restore rolls back writes within the session', { timeout: 15000 }, async () => {
+  it('restore rolls back writes within the session', { timeout: 30000 }, async () => {
     // Read the current title — this is the value we expect after rollback
     const dataBefore = await getPageData(PAGE_ID);
     const originalTitle = (dataBefore.elementor_data as any)[0]
@@ -395,7 +408,7 @@ describe('DELTA-004 Change Sessions', () => {
     expect(restoredTitle).toBe(originalTitle);
   });
 
-  it('a write without session header does not attach to the open session', { timeout: 15000 }, async () => {
+  it('a write without session header does not attach to the open session', { timeout: 30000 }, async () => {
     // Two sessions simultaneously open — write with neither header,
     // verify restore of both sessions reports 0 snapshots
     const begin = await post('/changes/sessions/begin');
@@ -515,6 +528,13 @@ describe('DELTA-002 Batch widget patch', () => {
 // containers, 135 vs 106 elements) — requires the production pages 2340 and
 // 2618, which do not exist in the wp-test-env container. Do not read this
 // green suite as DELTA-003 passing.
+//
+// CORRECTED PREMISE (misread guard): the original acceptance wording was
+// "two icon boxes missing". That was wrong. Both source (2618) and target
+// (2340) already carry the FIVE icon boxes from container 1c775162; what
+// 2340 actually lacks is the TOP-LEVEL CONTAINER 2177a59 "So funktioniert's"
+// (11 vs 10 containers, 135 vs 106 elements). Do not read the green suite as
+// "icon boxes produced" — the missing object is the container, not its boxes.
 // ---------------------------------------------------------------------------
 
 describe('DELTA-003 Structure Operations', () => {
@@ -672,6 +692,11 @@ describe('DELTA-003 Structure Operations', () => {
 // test only. The real acceptance criteria — diff against 2340, detect the
 // missing container 2177a59, restore AND re-apply — are gated behind the
 // production rollout of 2.4.0. Do not read this as DELTA-006 passing.
+//
+// CORRECTED PREMISE (misread guard): the missing object is the TOP-LEVEL
+// CONTAINER 2177a59, NOT icon boxes. Both pages carry the five icon boxes
+// from 1c775162; the diff target is the container itself. Do not read any
+// green result here as "icon boxes reconciled" — that reading was refuted.
 // ---------------------------------------------------------------------------
 
 describe('DELTA-006 Golden Scenario', () => {

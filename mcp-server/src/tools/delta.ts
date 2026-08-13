@@ -320,7 +320,7 @@ export function registerDeltaTools(
   // -----------------------------------------------------------------------
   server.tool(
     'insert_widget',
-    'Insert a new Elementor widget into a container at a specific position on a page. Requires the page content_hash from a recent get_page_data. The widget must be a complete Elementor widget object with id, elType, widgetType, and settings. Use dry_run=true to preview before writing. NOTE: not idempotent — a repeated call inserts a second copy (no idempotency key, no retry).',
+    'Insert a new Elementor widget into a container at a specific position on a page. Requires the page content_hash from a recent get_page_data. The widget must be a complete Elementor widget object with id, elType, widgetType, and settings. Use dry_run=true to preview before writing. NOTE: not idempotent — a repeated call inserts a second copy (no idempotency key, no retry). See ELM-IDEMP-001 for whether content_hash already covers the retry case before adding a second mechanism.',
     {
       site_id:        z.string().optional().describe('Site ID from config'),
       post_id:        z.number().int().describe('Target page ID'),
@@ -390,7 +390,7 @@ export function registerDeltaTools(
   // -----------------------------------------------------------------------
   server.tool(
     'clone_widget',
-    'Clone a widget from a source page into a target page at a specific position. The source widget is deep-cloned with a new element ID. Global style references (__globals__, typography bindings) are carried over verbatim — the response includes a global_references list (enumeration only, NOT validated against the target page). Requires the TARGET page content_hash. NOTE: not idempotent — a repeated call inserts a second copy (no idempotency key, no retry).',
+    'Clone a widget from a source page into a target page at a specific position. The source widget is deep-cloned with a new element ID. Global style references (__globals__, typography bindings) are carried over verbatim — the response includes a global_references list (enumeration only, NOT validated against the target page). Requires the TARGET page content_hash. NOTE: not idempotent — a repeated call inserts a second copy (no idempotency key, no retry). See ELM-IDEMP-001 for whether content_hash already covers the retry case before adding a second mechanism.',
     {
       site_id:        z.string().optional().describe('Site ID from config'),
       post_id:        z.number().int().describe('TARGET page ID — where the clone will be inserted'),
