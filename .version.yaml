@@ -19,3 +19,10 @@ locations:
   - path: readme.txt
     pattern: '^Stable tag:\s*([^#\s]+)'
     required: false
+    # Befund LVC-209 (offenes Ticket, nicht hier begraben): readme.txt steht
+    # auf Stable tag 2.0.1, vier Minor hinter 2.4.x. "informativ" ist eine
+    # Produktentscheidung, keine technische — ein readme mit einer vier
+    # Versionen alten Zahl liest jemand. Erst die Produktfrage klaeren
+    # (folgt der Stable tag dem Plugin-Zyklus oder der Node-Version?),
+    # dann diesen Ort entweder verbindlich machen oder mit --include-informational
+    # aus der Release-Linie ziehen.
