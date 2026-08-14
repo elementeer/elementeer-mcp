@@ -36,6 +36,7 @@ describe('ElementeerClient', () => {
     put: ReturnType<typeof vi.fn>;
     delete: ReturnType<typeof vi.fn>;
     interceptors: {
+      request:  { use: ReturnType<typeof vi.fn> };
       response: { use: ReturnType<typeof vi.fn> };
     };
   };
@@ -48,6 +49,7 @@ describe('ElementeerClient', () => {
       put: vi.fn(),
       delete: vi.fn(),
       interceptors: {
+        request:  { use: vi.fn() },
         response: { use: vi.fn() },
       },
     };

@@ -1,0 +1,74 @@
+# ELM-PROJ Merge-Status
+
+branch: feature/ELM-PROJ-content-projection
+review: PASS_WITH_REQUIRED_AMENDMENTS (R-PROJ auf 8fa6bd4)
+target: needs merge when all amendments resolved
+
+amendments:
+  - id: A1
+    status: open
+    title: "Projektionsmessung an ganzer Seite (nicht Hero-Container)"
+    blocked_on:
+      - "operator: realer Content-Ops-Durchlauf auf preview.fusionaize.com"
+    notes: >
+      Die rauchmessung misst bislang nur am hero-container b9149c (11.091 chars).
+      A1 verlangt messung an einer ganzen seite (2618 hat ~185KB elementor_data).
+      Dieselbe messung die A3 braucht. Nicht aus hero-fixture hochrechnen.
+
+  - id: A2
+    status: resolved
+    title: "diff_pages gegen echte daten 2618 vs 2340"
+    resolved_in: HEAD (2026-08-12, 4. Anlauf — beide Seiten gezogen)
+    notes: >
+      Zwei reale Sektion-4-Fixtures via Respira gezogen (beide Seiten,
+      include=content, explicit gegen pageId 2618 bzw. 2340):
+        - page-2618-section4-1c775162.ts: Beauty-Texte, _path [4]
+        - page-2340-section4-1c775162.ts: Handwerk-Texte, _path [3]
+      zusaetzlich page-2340-icon-box-section-d2427fe.ts (d2427fe/How It Works).
+
+      BEFUND (Gegenprobe bestanden — Texte unterscheiden sich,
+      Abfragen liefen korrekt gegen zwei verschiedene Seiten):
+        - Struktur identisch: 1c775162 → addfe73 → d963208 → d2427fe,
+          5 icon-box-Widgets, gleiche IDs (1cefa87, c2068b0, 4c63abf,
+          8ae0619, 3a4b09c), gleiches children_count.
+        - Texte handwerk- vs beauty-spezifisch:
+            4c63abf 2618 "Mehr gebuchte Termine"   → 2340 "Weniger Leerlauf im Kalender"
+            3a4b09c 2618 "Bessere Auslastung"      → 2340 "Mehr passende Termine"
+            c2068b0 "Hin und Her im Chat"          → "Rückfrage-Ketten im Chat."
+            d5b8628 beauty-einleitung               → handwerk-einleitung
+
+      Die Gap-Report-Annahme "3 statt 5 Icon-Boxen auf 2340" ist
+      widerlegt: BEIDE Seiten haben 5 icon-box-Widgets. Es fehlt kein
+      Widget — die Differenz liegt ausschliesslich im Text. abc1234/
+      def5678/ghi9012 bleiben rein synthetisch.
+
+      ZUSATZBEFUND (echter Strukturunterschied, Punkt 3 des Reviews):
+      Auf 2340 fehlt der gesamte Top-Level-Container 2177a59
+      ("So funktioniert's"). 2618 hat 11 Top-Level-Container, 2340 nur
+      10. Deshalb sind ab Index 3 alle Pfade um eins verschoben
+      (2618 4→2340 3, 5→4, 6→5, 7→6, 8→7, 9→8, 10→9). Wer "Sektion 4"
+      nach Position zaehlt, sieht verschiedene Container — das erklaert
+      den urspruenglichen Gap-Report-Irrtum. Neue Fixtures
+      page-2618-toplevel.ts / page-2340-toplevel.ts belegen das.
+
+      diff_pages.test.ts (10 Tests, alle gruen):
+      - 'Sektion 4 gleiche Struktur': structure-Projektion beider Fixtures
+        identisch (structure traegt keine Texte).
+      - 'unterschiedliche Texte': content-Diff 2618 vs 2340 an realen
+        Fixtures (4c63abf, 3a4b09c).
+      - 'fehlender Top-Level-Container': 2177a59 wird als fehlend auf
+        2340 belegt (missing == ['2177a59']), Rest identisch.
+      - Synthetische Tests bleiben als Einheitentests erhalten.
+
+      543 passed / 1 failed (pre-existing) / 234 skipped.
+
+  - id: A3
+    status: open
+    title: "Sitzungslog eines realen Content-Ops-Durchlaufs"
+    blocked_on:
+      - "operator: realer Content-Ops-Durchlauf auf preview.fusionaize.com"
+    notes: >
+      PROJ-006 messrahmen (measure-baseline.ts) steht, trockenlauf lauffaehig.
+      Kein Sitzungslog vorhanden → alle drei metriken "unbestimmt".
+      Erst messung moeglich wenn ein content-ops-agents gegen
+      preview.fusionaize.com laeuft und sein log parset.

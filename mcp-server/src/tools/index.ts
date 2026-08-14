@@ -58,8 +58,11 @@ import { registerCharityTools } from './charity.js';
 import { registerBookingTools, registerBookingAdvancedTools } from "./booking.js";
 import { registerVoxelTools } from './voxel.js';
 import { registerCreatePopupTools } from './create-popup.js';
+import { registerDiffPagesTool } from './diff-pages.js';
 import { registerCreateFormTools } from './create-form.js';
 import { registerWooCommerceTools } from './woocommerce.js';
+import { registerDeltaTools } from './delta.js';
+import { registerRenderTools } from './render.js';
 
 interface ToolRegistrationOptions {
   includeAdvanced?: boolean;
@@ -81,6 +84,7 @@ const FREE_TOOL_REGISTRARS = [
   registerPremiumAddonsFreeTools,
   registerThePlusAddonsFreeTools,
   registerPageTools,
+  registerDiffPagesTool,
   registerMenuTools,
   registerMediaTools,
   registerSettingsTools,
@@ -104,6 +108,8 @@ const FREE_TOOL_REGISTRARS = [
   registerValidationTools,
   registerModuleWizards,
   registerCreateFormTools,
+  registerDeltaTools,
+  registerRenderTools,
 ] as const;
 
 const ADVANCED_TOOL_REGISTRARS = [

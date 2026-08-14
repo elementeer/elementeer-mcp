@@ -538,6 +538,8 @@ export interface ListTemplatesParams {
 export class ElementeerClient {
   private http: AxiosInstance;
   private availableRoutes: Map<string, string[]> | null = null;
+  /** Active change session id — sent as X-Elementeer-Session header on every write. */
+  private currentSessionId: string | null = null;
 
   constructor(siteUrl: string, apiKey: string) {
     const baseURL = siteUrl.replace(/\/$/, '') + '/wp-json/elementeer/v1';
@@ -553,6 +555,14 @@ export class ElementeerClient {
       timeout: 30_000,
     });
 
+    // Interceptor: inject X-Elementeer-Session header on every request
+    this.http.interceptors.request.use((config) => {
+      if (this.currentSessionId) {
+        config.headers['X-Elementeer-Session'] = this.currentSessionId;
+      }
+      return config;
+    });
+
     // Response interceptor — normalize errors
     this.http.interceptors.response.use(
       (res) => res,
@@ -560,6 +570,10 @@ export class ElementeerClient {
         throw this.handleError(err);
       },
     );
+  }
+
+  setSession(sessionId: string | null): void {
+    this.currentSessionId = sessionId;
   }
 
   // ------------------------------------------------------------------ //
@@ -915,8 +929,8 @@ export class ElementeerClient {
   // Template data (Elementor JSON)
   // ------------------------------------------------------------------ //
 
-  async getTemplateData(id: number): Promise<{ id: number; elementor_data: unknown[] }> {
-    const res = await this.http.get<{ id: number; elementor_data: unknown[] }>(
+  async getTemplateData(id: number): Promise<{ id: number; elementor_data: unknown[]; content_hash?: string }> {
+    const res = await this.http.get<{ id: number; elementor_data: unknown[]; content_hash?: string }>(
       `/templates/${id}/data`,
     );
     return res.data;
@@ -929,6 +943,135 @@ export class ElementeerClient {
     const res = await this.http.put<{ id: number; updated: true }>(`/templates/${id}/data`, {
       elementor_data: elementorData,
     });
+    return res.data;
+  }
+
+  // ------------------------------------------------------------------ //
+  // Widget patching (DELTA-001, DELTA-002)
+  // ------------------------------------------------------------------ //
+
+  async patchWidget(
+    id: number,
+    widgetId: string,
+    params: {
+      settings: Record<string, unknown>;
+      content_hash: string;
+      dry_run?: boolean;
+    },
+  ): Promise<{
+    post_id: number;
+    widget_id: string;
+    path: string;
+    updated: boolean;
+    new_hash: string;
+  }> {
+    const res = await this.http.patch(`/pages/${id}/widgets/${widgetId}`, params);
+    return res.data;
+  }
+
+  async patchWidgetsBatch(
+    id: number,
+    params: {
+      operations: Array<{
+        widget_id: string;
+        settings: Record<string, unknown>;
+      }>;
+      content_hash: string;
+      dry_run?: boolean;
+      partial?: boolean;
+    },
+  ): Promise<{
+    post_id: number;
+    updated: number;
+    updated_ids: string[];
+    results: Array<{ widget_id: string; path: string; updated: boolean }>;
+    not_found: string[];
+    partial: boolean;
+    new_hash: string;
+  }> {
+    const res = await this.http.post(`/pages/${id}/widgets/batch`, params);
+    return res.data;
+  }
+
+  // ------------------------------------------------------------------ //
+  // Change Sessions (DELTA-004)
+  // ------------------------------------------------------------------ //
+
+  async beginChangeSession(): Promise<{ session_id: string; status: string }> {
+    const res = await this.http.post('/changes/sessions/begin');
+    return res.data;
+  }
+
+  async endChangeSession(sessionId: string): Promise<{ session_id: string; status: string }> {
+    const res = await this.http.post(`/changes/sessions/${sessionId}/end`);
+    return res.data;
+  }
+
+  async restoreChangeSession(sessionId: string): Promise<{
+    success: boolean;
+    restored: number;
+    total: number;
+  }> {
+    const res = await this.http.post(`/changes/sessions/${sessionId}/restore`);
+    return res.data;
+  }
+
+  async getChangeSession(sessionId: string): Promise<{
+    session_id: string;
+    snapshot_uuids: string[];
+    status: string;
+    created_at: string;
+    ended_at?: string;
+    rolled_back_at?: string;
+  }> {
+    const res = await this.http.get(`/changes/sessions/${sessionId}`);
+    return res.data;
+  }
+
+  // ------------------------------------------------------------------ //
+  // Site Memory (DELTA-005)
+  // ------------------------------------------------------------------ //
+
+  async listSiteMemory(): Promise<Array<{
+    key: string;
+    type: string;
+    content: string;
+    version: number;
+    owner: string;
+    expires_at: string | null;
+    set_at: string;
+    rule?: Record<string, unknown>;
+  }>> {
+    const res = await this.http.get('/site/memory');
+    return res.data;
+  }
+
+  async setSiteMemoryEntry(
+    key: string,
+    params: {
+      type: 'fact' | 'preference' | 'lesson' | 'rule';
+      content: string;
+      owner?: 'agent' | 'user';
+      version?: number;
+      expires_at?: string | null;
+      rule?: { protect?: { post_ids?: number[]; slugs?: string[] } };
+    },
+  ): Promise<{
+    key: string;
+    type: string;
+    content: string;
+    version: number;
+    owner: string;
+    expires_at: string | null;
+    set_at: string;
+    rule?: Record<string, unknown>;
+  }> {
+    const res = await this.http.put(`/site/memory/${key}`, params);
+    return res.data;
+  }
+
+  async deleteSiteMemoryEntry(key: string): Promise<{ deleted: boolean; key: string }> {
+    const res = await this.http.delete(`/site/memory/${key}`);
     return res.data;
   }
 
@@ -2101,6 +2244,91 @@ export class ElementeerClient {
     offset: number;
   }): Promise<any> {
     const res = await this.http.post<any>('/export/data', { post_type, format, limit, offset });
+    return res.data;
+  }
+
+  // ------------------------------------------------------------------ //
+  // Widget Structure Operations (DELTA-003)
+  // ------------------------------------------------------------------ //
+
+  async insertWidget(
+    pageId: number,
+    params: {
+      widget: Record<string, unknown>;
+      container_path?: string;
+      position?: number;
+      content_hash: string;
+      dry_run?: boolean;
+    },
+  ): Promise<{
+    post_id: number;
+    position: number;
+    container_path: string;
+    new_hash: string;
+  }> {
+    const res = await this.http.post(`/pages/${pageId}/widgets`, params);
+    return res.data;
+  }
+
+  async removeWidget(
+    pageId: number,
+    widgetId: string,
+    params: {
+      content_hash: string;
+      dry_run?: boolean;
+    },
+  ): Promise<{
+    post_id: number;
+    widget_id: string;
+    path: string;
+    removed: boolean;
+    new_hash: string;
+  }> {
+    const res = await this.http.delete(`/pages/${pageId}/widgets/${widgetId}`, { data: params });
+    return res.data;
+  }
+
+  async moveWidget(
+    pageId: number,
+    widgetId: string,
+    params: {
+      target_container_path?: string;
+      position?: number;
+      content_hash: string;
+      dry_run?: boolean;
+    },
+  ): Promise<{
+    post_id: number;
+    widget_id: string;
+    source_path: string;
+    new_path: string;
+    new_hash: string;
+  }> {
+    const res = await this.http.put(`/pages/${pageId}/widgets/${widgetId}/move`, params);
+    return res.data;
+  }
+
+  async cloneWidget(
+    pageId: number,
+    params: {
+      source_page_id: number;
+      widget_id: string;
+      container_path?: string;
+      position?: number;
+      content_hash: string;
+      dry_run?: boolean;
+    },
+  ): Promise<{
+    post_id: number;
+    source_page_id: number;
+    source_widget_id: string;
+    new_widget_id: string;
+    position: number;
+    container_path: string;
+    global_references: string[];
+    new_hash: string;
+  }> {
+    const res = await this.http.post(`/pages/${pageId}/widgets/clone`, params);
     return res.data;
   }
 }
