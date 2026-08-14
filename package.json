@@ -20,5 +20,5 @@
     "release:free-mirror:gate": "npm run build && npm run test:free-contracts && npm run verify:free-mirror && npm run prepare:free-mirror && npm run verify:free-release",
     "plugin-mirror:gate": "npm run verify:plugin-mirror && npm run prepare:plugin-mirror"
   },
-  "version": "2.4.1"
+  "version": "2.4.2"
 }
