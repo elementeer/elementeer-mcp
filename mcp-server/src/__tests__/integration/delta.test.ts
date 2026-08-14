@@ -15,11 +15,16 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
 import { ElementeerClient } from '../../client.js';
 
-// The live-container integration tests share a global testTimeout of 30000 ms
-// (vitest.config.ts); per-test timeouts below are set to 30000 as well —
+// The live-container integration tests share a global testTimeout of 90000 ms
+// (vitest.config.ts); per-test timeouts below are set to 90000 as well —
 // never lower than the global value, because a local { timeout: 15000 } would
-// OVERRIDE the global 30000 downward and cut the multi-roundtrip restore test
+// OVERRIDE the global downward and cut the multi-roundtrip restore test
 // short (it needs six sequential HTTP roundtrips).
+//
+// 90000 is not a round number picked for comfort: waitForRule below polls for
+// 60 s, derived from a measured set-delay of up to 38.8 s under load ~77. A
+// harness timeout below the poll budget would kill the test before the poll
+// gives up, which is exactly the failure this budget exists to prevent.
 
 const BASE = 'http://localhost:8082/wp-json/elementeer/v1';
 const API_KEY = 'ek_08f7d1c11d303bad402ea160b50cea24dbf59f18846c3e44';
@@ -274,7 +279,7 @@ describe('DELTA-005 Protection enforcement', () => {
     await removeProtectRule(RULE_KEY);
   });
 
-  it('blocks delete_template on a protected template (HTTP 423)', { timeout: 30000 }, async () => {
+  it('blocks delete_template on a protected template (HTTP 423)', { timeout: 90000 }, async () => {
     const tid = await createTestTemplate('Delta Protect Delete Tpl');
     createdTemplateIds.push(tid);
 
@@ -298,7 +303,7 @@ describe('DELTA-005 Protection enforcement', () => {
     await removeProtectRule(RULE_KEY);
   });
 
-  it('allows writes after protection is removed', { timeout: 30000 }, async () => {
+  it('allows writes after protection is removed', { timeout: 90000 }, async () => {
     const tid = await createTestTemplate('Delta Unprotect Tpl');
     createdTemplateIds.push(tid);
 
@@ -453,7 +458,7 @@ describe('DELTA-004 Change Sessions', () => {
     expect(s.snapshot_uuids).toEqual([]);
   });
 
-  it('restore rolls back writes within the session', { timeout: 30000 }, async () => {
+  it('restore rolls back writes within the session', { timeout: 90000 }, async () => {
     // Read the current title — this is the value we expect after rollback
     const dataBefore = await getPageData(PAGE_ID);
     const originalTitle = (dataBefore.elementor_data as any)[0]
@@ -489,7 +494,7 @@ describe('DELTA-004 Change Sessions', () => {
     expect(restoredTitle).toBe(originalTitle);
   });
 
-  it('a write without session header does not attach to the open session', { timeout: 30000 }, async () => {
+  it('a write without session header does not attach to the open session', { timeout: 90000 }, async () => {
     // Two sessions simultaneously open — write with neither header,
     // verify restore of both sessions reports 0 snapshots
     const begin = await post('/changes/sessions/begin');
