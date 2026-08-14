@@ -13,6 +13,7 @@
  *   - Page 131 exists with an Elementor heading widget "w001"
  */
 import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
+import { ElementeerClient } from '../../client.js';
 
 // The live-container integration tests share a global testTimeout of 30000 ms
 // (vitest.config.ts); per-test timeouts below are set to 30000 as well —
@@ -22,6 +23,11 @@ import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
 
 const BASE = 'http://localhost:8082/wp-json/elementeer/v1';
 const API_KEY = 'ek_08f7d1c11d303bad402ea160b50cea24dbf59f18846c3e44';
+
+// A live client (not a mock) so the type-contract tests below exercise the
+// real typed methods — a pure client-type drift should NOT be able to stay
+// green, per the review note that raw del/get leaves that class uncovered.
+const client = new ElementeerClient('http://localhost:8082', API_KEY);
 
 interface ApiResponse<T = unknown> {
   ok: boolean;
@@ -352,15 +358,16 @@ describe('DELTA-005 Protection enforcement', () => {
   // plugin returns { key, deleted: true } (a boolean `deleted` plus the key,
   // not a string `deleted`). That shape had no reader until now, which is what
   // let it drift in the first place (the original returned { deleted: <key> }
-  // and delta.ts read result.key as "undefined"). Asserting it here binds the
-  // contract against the live response.
+  // and delta.ts read result.key as "undefined"). Asserting it here — through
+  // the TYPED client method, not a raw del — binds the contract against the
+  // live response AND the client type, so a pure client-type drift trips the
+  // suite.
   it('delete site memory entry returns { key, deleted: true }', async () => {
     await setProtectRule(RULE_KEY, [PAGE_ID]);
 
-    const res = await del<{ key: string; deleted: boolean }>(`/site/memory/${RULE_KEY}`);
-    expect(res.status).toBe(200);
-    expect(res.data.key).toBe(RULE_KEY);
-    expect(res.data.deleted).toBe(true);
+    const result = await client.deleteSiteMemoryEntry(RULE_KEY);
+    expect(result.key).toBe(RULE_KEY);
+    expect(result.deleted).toBe(true);
   });
 
   it('expired rule no longer blocks (expires_at enforcement)', async () => {
@@ -428,24 +435,15 @@ describe('DELTA-004 Change Sessions', () => {
   // Contract-coverage test for the getChangeSession client type. That type had
   // no reader before this test (it returned the session body but nobody
   // asserted the field names), so it silently drifted away from the plugin's
-  // response (started_at/change_count vs created_at/snapshot_uuids). This
-  // binds every field the client type declares against the live JSON, so the
-  // drift cannot recur without tripping the suite.
+  // response (started_at/change_count vs created_at/snapshot_uuids). This binds
+  // every field the client type declares against both the live JSON AND the
+  // TYPED client method, so the drift cannot recur without tripping the suite.
   it('get session exposes created_at and snapshot_uuids (getChangeSession contract)', async () => {
     const begin = await post<{ session_id: string }>('/changes/sessions/begin');
     const sid = (begin.data as any).session_id;
 
-    const detail = await get<{
-      session_id: string;
-      snapshot_uuids: string[];
-      status: string;
-      created_at: string;
-      ended_at?: string;
-      rolled_back_at?: string;
-    }>(`/changes/sessions/${sid}`);
+    const s = await client.getChangeSession(sid);
 
-    expect(detail.status).toBe(200);
-    const s = detail.data;
     expect(s.session_id).toBe(sid);
     expect(typeof s.status).toBe('string');
     // created_at is the field the client type declares; snapshot_uuids is the
