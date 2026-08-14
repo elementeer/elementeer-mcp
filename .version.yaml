@@ -1,0 +1,21 @@
+# Elementeer MCP — Versionsorte.
+schema: 1
+source_of_truth: package.json
+# readme.txt ist absichtlich KEIN automatischer Bump-Ort: der Stable tag
+# referenziert die WordPress-seitige Plugin-Distribution (elementeer, nicht
+# elementeer-mcp) und folgt deren Zyklus, nicht der Node-Version.
+# shared/package.json traegt eine eigenstaendige Workspace-Version (0.1.0)
+# und ist ebenfalls kein Ort der Release-Linie.
+locations:
+  - path: package.json
+    pattern: '"version":\s*"([^"]+)"'
+    required: true
+  - path: mcp-server/package.json
+    pattern: '"version":\s*"([^"]+)"'
+    required: true
+  - path: capability.yaml
+    pattern: '^version:\s*([^#\s]+)'
+    required: true
+  - path: readme.txt
+    pattern: '^Stable tag:\s*([^#\s]+)'
+    required: false

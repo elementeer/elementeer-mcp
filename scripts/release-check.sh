@@ -9,18 +9,20 @@ set -euo pipefail
 
 FORCE="${1:-}"
 
-# 1. Read versions
-PKG_VER=$(python3 -c "import json; print(json.load(open('package.json'))['version'])" 2>/dev/null || echo "MISSING")
-CAP_VER=$(grep "^version:" capability.yaml 2>/dev/null | awk '{print $2}' || echo "MISSING")
-
-echo "  package.json:     $PKG_VER"
-echo "  capability.yaml:  $CAP_VER"
-
-# 2. Version sync gate
-if [ "$PKG_VER" != "$CAP_VER" ]; then
-    echo "❌ VERSION MISMATCH: package.json ($PKG_VER) != capability.yaml ($CAP_VER)"
+# LVC-209: the version locations live in .version.yaml. Both this gate and the
+# bump tool read the SAME declaration via version-sync.py, so they cannot
+# drift from each other. This replaces the old 2-way package.json vs
+# capability.yaml grep, which never saw mcp-server/package.json and
+# silently ignored readme.txt.
+echo "  version-sync:"
+if ! python3 scripts/version-sync.py check; then
+    echo "❌ VERSION SYNC FAILED: required version locations drifted"
     exit 1
 fi
+
+PKG_VER=$(python3 -c "import json; print(json.load(open('package.json'))['version'])" 2>/dev/null || echo "MISSING")
+
+echo "  package.json:     $PKG_VER"
 
 TAG="v$PKG_VER"
 echo "  tag:              $TAG"
