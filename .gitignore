@@ -163,3 +163,4 @@ __pycache__/
 # SkillWeave: only agents.md is durable; everything else is runtime and ignored
 .skillweave/*
 !.skillweave/agents.md
+pnpm-lock.yaml
