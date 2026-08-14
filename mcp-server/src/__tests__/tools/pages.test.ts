@@ -59,6 +59,72 @@ describe('Page tools', () => {
   }
 
   // ------------------------------------------------------------------ //
+  // ELM-PROJ: the read path must surface the token the write path needs.
+  //
+  // Every DELTA write tool requires content_hash and its description names
+  // get_page_data as the source. The plugin returns it on the default
+  // /pages/{id}/data branch, but the projection layer built its metadata
+  // from post_id/post_title/post_modified only — so the value arrived and
+  // was discarded, and the documented write path was unreachable in every
+  // projection including "full".
+  //
+  // Both sides were internally consistent; the fault lived in the seam.
+  // Same class as ELM-INT-001. These tests are the execution that keeps
+  // the contract from drifting back.
+  // ------------------------------------------------------------------ //
+
+  describe('get_page_data surfaces content_hash (ELM-PROJ)', () => {
+    const PAGE = {
+      post_id: 2340,
+      post_title: 'Handwerk',
+      post_type: 'page',
+      post_modified: '2026-08-14T00:00:00+02:00',
+      element_count: 1,
+      elementor_data: [
+        { id: 'sec1', elType: 'container', settings: {}, elements: [
+          { id: 'w001', elType: 'widget', widgetType: 'heading', settings: { title: 'Hallo' }, elements: [] },
+        ] },
+      ],
+      content_hash: 'a1b2c3d4e5f6',
+    };
+
+    function withPage(page: Record<string, unknown>): void {
+      client = makeClient({ getPageData: vi.fn().mockResolvedValue(page) });
+      (getClient as ReturnType<typeof vi.fn>).mockReturnValue(client);
+    }
+
+    for (const projection of ['content', 'structure', 'interaction', 'style_tokens'] as const) {
+      it(`projection="${projection}" carries the hash through`, async () => {
+        withPage(PAGE);
+        const text = (await callTool('get_page_data', { id: 2340, projection })).content[0]!.text;
+
+        // A payload large enough to be offloaded reports a resource URI
+        // instead of the JSON. The fixture is deliberately small, so the
+        // inline form is expected — if that ever changes this must fail
+        // loudly rather than silently pass on the resource notice.
+        expect(text).not.toContain('stored as MCP resource');
+        expect(JSON.parse(text).content_hash).toBe('a1b2c3d4e5f6');
+      });
+    }
+
+    it('projection="full" names the hash in the header', async () => {
+      withPage(PAGE);
+      const text = (await callTool('get_page_data', { id: 2340, projection: 'full' })).content[0]!.text;
+      expect(text).toContain('content_hash: a1b2c3d4e5f6');
+    });
+
+    it('omits the key entirely when the plugin sent none', async () => {
+      // extract="all" and extract="section" carry no hash. An empty string
+      // would look like a usable token and fail as a 409 on the first
+      // write; an absent key is honest.
+      const { content_hash: _drop, ...withoutHash } = PAGE;
+      withPage(withoutHash);
+      const text = (await callTool('get_page_data', { id: 2340, projection: 'content' })).content[0]!.text;
+      expect(Object.keys(JSON.parse(text))).not.toContain('content_hash');
+    });
+  });
+
+  // ------------------------------------------------------------------ //
   // list_elementor_pages
   // ------------------------------------------------------------------ //
   describe('list_elementor_pages', () => {

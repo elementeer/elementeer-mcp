@@ -58,6 +58,18 @@ export interface ProjectedPage {
   projection: ProjectionLevel;
   post_title: string;
   element_count: number;
+  /**
+   * Optimistic-locking token from the plugin. Every DELTA write tool
+   * (patch_widget, patch_widgets_batch, insert_widget, remove_widget,
+   * move_widget, clone_widget) REQUIRES it and points the caller at
+   * get_page_data as its source — so a projection that omits it makes the
+   * whole write path unreachable through the documented route.
+   *
+   * Optional because the plugin only returns it on the default
+   * /pages/{id}/data branch; the extract="all" and extract="section"
+   * branches do not carry one.
+   */
+  content_hash?: string;
   data: StructureEntry[] | ContentSlot[] | InteractionEntry[] | StyleTokenSummary[] | ElementorElement[];
 }
 
@@ -284,7 +296,7 @@ function walkElements<T>(
 export function projectElementorData(
   data: ElementorElement[],
   level: ProjectionLevel,
-  meta: { pageId: number; post_title: string; revision: string },
+  meta: { pageId: number; post_title: string; revision: string; content_hash?: string },
 ): ProjectedPage {
   const base = {
     pageId: meta.pageId,
@@ -292,6 +304,10 @@ export function projectElementorData(
     projection: level,
     post_title: meta.post_title,
     element_count: data.length,
+    // Only emitted when the caller actually had one. An absent key is
+    // honest; an empty string would look like a usable token and produce
+    // a 409 on the first write.
+    ...(meta.content_hash ? { content_hash: meta.content_hash } : {}),
     data: [] as unknown[],
   };
 
