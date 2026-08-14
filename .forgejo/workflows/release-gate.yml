@@ -13,8 +13,6 @@ jobs:
   pre-build:
     runs-on: ubuntu-latest
     steps:
-      - name: Install checkout deps
-        run: apk add --no-cache nodejs npm git bash curl
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
@@ -29,8 +27,6 @@ jobs:
     needs: pre-build
     runs-on: ubuntu-latest
     steps:
-      - name: Install checkout deps
-        run: apk add --no-cache nodejs npm git bash curl
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
