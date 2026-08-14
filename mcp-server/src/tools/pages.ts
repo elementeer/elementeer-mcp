@@ -58,7 +58,7 @@ export function registerPageTools(
           const projected = projectElementorData(
             result.elements.map((el: { data: Record<string, unknown> }) => el.data),
             projection,
-            { pageId: result.post_id ?? id, post_title: result.post_title, revision: result.post_modified ?? '' },
+            { pageId: result.post_id ?? id, post_title: result.post_title, revision: result.post_modified ?? '', content_hash: result.content_hash },
           );
           const plaintext = JSON.stringify(projected, null, 2);
           const resource = resolvePayloadViaResource(projected, plaintext, projection, {
@@ -92,7 +92,7 @@ export function registerPageTools(
           const projected = projectElementorData(
             [result.element],
             projection,
-            { pageId: result.post_id ?? id, post_title: result.post_title, revision: result.post_modified ?? '' },
+            { pageId: result.post_id ?? id, post_title: result.post_title, revision: result.post_modified ?? '', content_hash: result.content_hash },
           );
           const plaintext = JSON.stringify(projected, null, 2);
           const resource = resolvePayloadViaResource(projected, plaintext, projection, {
@@ -124,7 +124,7 @@ export function registerPageTools(
         const projected = projectElementorData(
           rawData,
           projection,
-          { pageId: result.post_id ?? id, post_title: result.post_title, revision: result.post_modified ?? '' },
+          { pageId: result.post_id ?? id, post_title: result.post_title, revision: result.post_modified ?? '', content_hash: result.content_hash },
         );
         const plaintext = JSON.stringify(projected, null, 2);
         const resource = resolvePayloadViaResource(projected, plaintext, projection, {
@@ -147,7 +147,7 @@ export function registerPageTools(
       return {
         content: [{
           type: 'text',
-          text: `Page: "${result.post_title}" (${result.element_count} top-level elements)\n\n${JSON.stringify(rawData, null, 2)}`,
+          text: `Page: "${result.post_title}" (${result.element_count} top-level elements)${result.content_hash ? `\ncontent_hash: ${result.content_hash}` : ''}\n\n${JSON.stringify(rawData, null, 2)}`,
         }],
       };
     },
