@@ -90,9 +90,14 @@ describe('Content tools', () => {
 
       await callTool('update_template_data', { id: 3, elementor_data: jsonStr });
 
+      // IMP-001 (7c2fac1) made the queue hold the PARSED array, not the raw
+      // string, and taught the apply path normalizeElementorData() so it
+      // accepts either form. That commit updated change-queue.test.ts but not
+      // this file, so this assertion kept expecting the old shape and dev has
+      // been red ever since — the test name already said "parses".
       expect(client.createChange).toHaveBeenCalledWith({
         operation: 'update_template_data',
-        params: { id: 3, elementor_data: jsonStr },
+        params: { id: 3, elementor_data: data },
         note: 'Auto-queued by governance level L2',
       });
       expect(client.updateTemplateData).not.toHaveBeenCalled();

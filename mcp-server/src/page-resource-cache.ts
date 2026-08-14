@@ -63,8 +63,27 @@ export function registerPageResourceTemplates(
         description: `Reads the ${projection} projection for a page on demand. Falls back to cache; computes from the WordPress API on cache miss.`,
         mimeType: 'application/json',
       },
-      async (uri: URL) => {
-        const resourceKey = uri.pathname.replace(/^\//, '');
+      async (uri: URL, variables: Record<string, string | string[]>) => {
+        // Same breach as ELM-RENDER-001 breach 4 below, and it was fixed
+        // there but never carried over to this handler: the SDK parses our
+        // custom scheme with `new URL(...)`, so `elementeer://pages/2340/...`
+        // becomes hostname="pages" and pathname="/2340/...". Re-parsing the
+        // pathname therefore yields "2340/data/structure" — without the
+        // "pages/" prefix the regex below can never match, and EVERY read of
+        // a projection resource failed with "Unsupported resource URI".
+        //
+        // The SDK has already matched the template. Use its variables.
+        const pageIdRaw = Array.isArray(variables.pageId) ? variables.pageId[0] : variables.pageId;
+        if (!pageIdRaw || !/^\d+$/.test(pageIdRaw)) {
+          throw new Error(
+            `Page projection resource missing or malformed pageId: ${JSON.stringify(variables)}`,
+          );
+        }
+
+        const pageId = parseInt(pageIdRaw, 10);
+        const resourceProjection = projection;
+        const resourceKey = `pages/${pageId}/data/${resourceProjection}`;
+
         const cached = cache.get(resourceKey);
         if (cached) {
           return {
@@ -75,14 +94,6 @@ export function registerPageResourceTemplates(
             }],
           };
         }
-
-        const match = resourceKey.match(/^pages\/(\d+)\/data\/(structure|content|interaction|style_tokens|full)$/);
-        if (!match) {
-          throw new Error(`Unsupported resource URI: ${resourceKey}`);
-        }
-
-        const pageId = parseInt(match[1], 10);
-        const resourceProjection = match[2] as ProjectionLevel;
 
         try {
           const client = getClient();

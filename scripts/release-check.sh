@@ -55,8 +55,17 @@ if [ -n "$HIGHEST_TAG" ]; then
 fi
 
 # 4. GitHub mirror check (secondary — warn only)
-GITHUB_URL=$(git remote get-url origin 2>/dev/null | grep -c "github" || echo "0")
-if [ "$GITHUB_URL" -gt 0 ]; then
+#
+# `grep -c` already prints 0 when nothing matches — it just exits 1 while
+# doing so. The old `|| echo "0"` therefore appended a SECOND zero, and the
+# variable held "0\n0". Every release run then printed
+#   release-check.sh: line 59: [: 0 0: integer expected
+# because `[` cannot compare a two-line value. Harmless in effect (an errored
+# `[` counts as false inside `if`, so the check silently did nothing), but it
+# was noise in every single run and the check itself never actually ran.
+# `|| true` keeps grep's own 0 and swallows only the exit status.
+GITHUB_URL=$(git remote get-url origin 2>/dev/null | grep -c "github" || true)
+if [ "${GITHUB_URL:-0}" -gt 0 ]; then
     echo "⚠️  Remote origin points to GitHub, not Forgejo!"
     echo "   Forgejo (git.langevc.com) is the source of truth."
     echo "   Tag pushes should go to Forgejo first, then mirror to GitHub."
