@@ -7,6 +7,7 @@ on:
       - 'mirror/**'
       - 'scripts/**'
       - 'capability.yaml'
+      - '.version.yaml'
       - '.forgejo/workflows/release-gate.yml'
 
 jobs:
