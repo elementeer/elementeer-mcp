@@ -9,20 +9,33 @@ set -euo pipefail
 
 FORCE="${1:-}"
 
-# 1. Read versions
-PKG_VER=$(python3 -c "import json; print(json.load(open('package.json'))['version'])" 2>/dev/null || echo "MISSING")
-CAP_VER=$(grep "^version:" capability.yaml 2>/dev/null | awk '{print $2}' || echo "MISSING")
+# LVC-209: the version locations live in .version.yaml. Both this gate and the
+# bump tool read the SAME declaration via version-sync.py, so they cannot
+# drift from each other. This replaces the old 2-way package.json vs
+# capability.yaml grep, which never saw mcp-server/package.json and
+# silently ignored readme.txt.
+#
+# The pushed tag is read from GITHUB_REF (refs/tags/vX.Y.Z). check-tag runs
+# `check` internally (locations vs each other) AND compares source_of_truth
+# against the tag. That second compare is the CAP-CI-001 case: a vX tag
+# pointing at a commit whose package.json still said an older version. Without
+# it, `check` passes a tag-vs-location drift, and the old derived-TAG logic
+# would then check the WRONG tag's existence on origin and pass.
+PUSHED_TAG="${GITHUB_REF##*/}"   # v2.4.2
+TAG_VER="${PUSHED_TAG#v}"        # 2.4.2
 
-echo "  package.json:     $PKG_VER"
-echo "  capability.yaml:  $CAP_VER"
-
-# 2. Version sync gate
-if [ "$PKG_VER" != "$CAP_VER" ]; then
-    echo "❌ VERSION MISMATCH: package.json ($PKG_VER) != capability.yaml ($CAP_VER)"
+echo "  version-sync:"
+if ! python3 scripts/version-sync.py check-tag "$TAG_VER"; then
+    echo "❌ VERSION SYNC FAILED: locations drifted or source_of_truth != tag"
     exit 1
 fi
 
+PKG_VER=$(python3 -c "import json; print(json.load(open('package.json'))['version'])" 2>/dev/null || echo "MISSING")
+
+echo "  package.json:     $PKG_VER"
+
 TAG="v$PKG_VER"
+TAG="${PUSHED_TAG:-$TAG}"
 echo "  tag:              $TAG"
 
 # 3. Check tag on origin (Forgejo source of truth)

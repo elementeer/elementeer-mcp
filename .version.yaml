@@ -1,0 +1,28 @@
+# Elementeer MCP — Versionsorte.
+schema: 1
+source_of_truth: package.json
+# readme.txt ist absichtlich KEIN automatischer Bump-Ort: der Stable tag
+# referenziert die WordPress-seitige Plugin-Distribution (elementeer, nicht
+# elementeer-mcp) und folgt deren Zyklus, nicht der Node-Version.
+# shared/package.json traegt eine eigenstaendige Workspace-Version (0.1.0)
+# und ist ebenfalls kein Ort der Release-Linie.
+locations:
+  - path: package.json
+    pattern: '"version":\s*"([^"]+)"'
+    required: true
+  - path: mcp-server/package.json
+    pattern: '"version":\s*"([^"]+)"'
+    required: true
+  - path: capability.yaml
+    pattern: '^version:\s*([^#\s]+)'
+    required: true
+  - path: readme.txt
+    pattern: '^Stable tag:\s*([^#\s]+)'
+    required: false
+    # Befund LVC-209 (offenes Ticket, nicht hier begraben): readme.txt steht
+    # auf Stable tag 2.0.1, vier Minor hinter 2.4.x. "informativ" ist eine
+    # Produktentscheidung, keine technische — ein readme mit einer vier
+    # Versionen alten Zahl liest jemand. Erst die Produktfrage klaeren
+    # (folgt der Stable tag dem Plugin-Zyklus oder der Node-Version?),
+    # dann diesen Ort entweder verbindlich machen oder mit --include-informational
+    # aus der Release-Linie ziehen.
