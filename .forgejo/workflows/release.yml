@@ -20,8 +20,6 @@ jobs:
       - name: Install dependencies
         run: |
           cd mcp-server && npm ci
-      - name: Prepare plugin mirror
-        run: node scripts/prepare-plugin-mirror.mjs
       - name: Pre-build quality gate
         run: bash scripts/release-check.sh --pre-build
 
