@@ -6,6 +6,8 @@ source_of_truth: package.json
 # elementeer-mcp) und folgt deren Zyklus, nicht der Node-Version.
 # shared/package.json traegt eine eigenstaendige Workspace-Version (0.1.0)
 # und ist ebenfalls kein Ort der Release-Linie.
+# package-lock.json wird durch npm verwaltet und ist KEIN Regex-Bump-Ort,
+# da naive Textmuster Drittanbieter-Pakete korrumpieren (REL-002 validiert).
 locations:
   - path: package.json
     pattern: '"version":\s*"([^"]+)"'

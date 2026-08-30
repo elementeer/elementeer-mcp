@@ -21,13 +21,21 @@ FORCE="${1:-}"
 # pointing at a commit whose package.json still said an older version. Without
 # it, `check` passes a tag-vs-location drift, and the old derived-TAG logic
 # would then check the WRONG tag's existence on origin and pass.
-PUSHED_TAG="${GITHUB_REF##*/}"   # v2.4.2
-TAG_VER="${PUSHED_TAG#v}"        # 2.4.2
-
-echo "  version-sync:"
-if ! python3 scripts/version-sync.py check-tag "$TAG_VER"; then
-    echo "❌ VERSION SYNC FAILED: locations drifted or source_of_truth != tag"
-    exit 1
+PUSHED_TAG="${GITHUB_REF:-}"
+if [ -n "$PUSHED_TAG" ] && [[ "$PUSHED_TAG" =~ (^refs/tags/v|^v)[0-9] ]]; then
+    TAG_VER="${PUSHED_TAG##*/}"
+    TAG_VER="${TAG_VER#v}"
+    echo "  version-sync (check-tag $TAG_VER):"
+    if ! python3 scripts/version-sync.py check-tag "$TAG_VER"; then
+        echo "❌ VERSION SYNC FAILED: locations drifted or source_of_truth != tag"
+        exit 1
+    fi
+else
+    echo "  version-sync (check):"
+    if ! python3 scripts/version-sync.py check; then
+        echo "❌ VERSION SYNC FAILED: required locations drifted"
+        exit 1
+    fi
 fi
 
 PKG_VER=$(python3 -c "import json; print(json.load(open('package.json'))['version'])" 2>/dev/null || echo "MISSING")
