@@ -20,10 +20,6 @@
     "docs/blueprints/free-product-surface.md"
   ],
   "privateDocumentation": [
-    "docs/blueprints/advanced-product-surface.md",
-    "docs/blueprints/free-advanced-launch-prd.md",
-    "docs/blueprints/free-advanced-launch-prd.json",
-    "docs/blueprints/tier-capability-map.md",
     "docs/architecture/free-mirror-export.md",
     "docs/architecture/library-provider-boundary.md",
     "docs/architecture/research-track-integration-decision.md",
