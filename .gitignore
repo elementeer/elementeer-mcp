@@ -160,7 +160,6 @@ vite.config.ts.timestamp-*
 .DS_Store
 __pycache__/
 
-# SkillWeave: only agents.md is durable; everything else is runtime and ignored
-.skillweave/*
-!.skillweave/agents.md
+# SkillWeave planning state belongs in the private planning repo
+.skillweave/
 pnpm-lock.yaml
