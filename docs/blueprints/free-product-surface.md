@@ -53,11 +53,11 @@ Why this belongs in Free:
 
 Current technical basis:
 
-- [assessment.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/assessment.ts)
-- [recommendations.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/recommendations.ts)
-- [fingerprint.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/fingerprint.ts)
-- [destination.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/destination.ts)
-- [validation.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/tools/validation.ts)
+- [assessment.ts](../../mcp-server/src/tools/assessment.ts)
+- [recommendations.ts](../../mcp-server/src/tools/recommendations.ts)
+- [fingerprint.ts](../../mcp-server/src/tools/fingerprint.ts)
+- [destination.ts](../../mcp-server/src/tools/destination.ts)
+- [validation.ts](../../mcp-server/src/tools/validation.ts)
 
 ### 3. Brand setup and site foundation
 
@@ -189,8 +189,8 @@ Within the runtime layer:
 - Free must never promise cloud-library or Studio semantics.
 - Free may recommend curated skill profiles and free addon profiles, but must not collapse into extension inflation.
 - The Free mirror must stay aligned with `registerFreeTools`, the public docs list, and the staged `free-tool-surface.json` snapshot produced from the runtime build.
-- The public onboarding path lives in [docs/quickstart/free.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/quickstart/free.md).
-- The public release checklist lives in [docs/release/free-public-release-checklist.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/release/free-public-release-checklist.md).
+- The public onboarding path lives in [docs/quickstart/free.md](../../docs/quickstart/free.md).
+- The public release checklist lives in [docs/release/free-public-release-checklist.md](../../docs/release/free-public-release-checklist.md).
 
 ## Strategic Interpretation
 
@@ -204,6 +204,6 @@ It is:
 - the first real operational value layer
 - the first useful stack-bootstrap layer
 
-For a short public-facing summary, see [docs/public/free-includes-excludes.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/public/free-includes-excludes.md).
+For a short public-facing summary, see [docs/public/free-includes-excludes.md](../../docs/public/free-includes-excludes.md).
 
 That only works if Free feels strong on its own.

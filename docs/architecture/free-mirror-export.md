@@ -7,8 +7,6 @@ This document defines how the private Forgejo primary repository can be mirrored
 It complements:
 
 - [free-product-surface.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-product-surface.md)
-- [advanced-product-surface.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/advanced-product-surface.md)
-- [tier-capability-map.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/tier-capability-map.md)
 - [free-mirror.manifest.json](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mirror/free-mirror.manifest.json)
 
 ## Mirror Model

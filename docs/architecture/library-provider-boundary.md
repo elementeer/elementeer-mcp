@@ -14,7 +14,6 @@ Relevant implementation points:
 
 - [library-providers.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/mcp-server/src/library-providers.ts)
 - [library.ts](/Users/andrelange/Documents/repositories/github/elementeer-mcp/shared/src/types/library.ts)
-- [advanced-product-surface.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/advanced-product-surface.md)
 - [free-product-surface.md](/Users/andrelange/Documents/repositories/github/elementeer-mcp/docs/blueprints/free-product-surface.md)
 
 ## Provider Roles
