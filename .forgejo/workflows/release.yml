@@ -50,37 +50,8 @@ jobs:
           tar czf /tmp/release/elementeer-mcp-v$VERSION.tgz .
           echo "TGZ=/tmp/release/elementeer-mcp-v$VERSION.tgz" >> $GITHUB_ENV
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-      - name: Create Forgejo Release
-        run: |
-          TAG="${GITHUB_REF##*/}"
-          CHANGELOG="$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo HEAD^)"
-          BODY="Release v$VERSION.\n\n### Changes\n$(git log "$CHANGELOG"..HEAD --oneline 2>/dev/null || echo 'Initial release')"
-          printf '%b' "$BODY" > /tmp/release-body.txt
-          jq -n --arg tag "$TAG" --arg name "Elementeer MCP Server v$VERSION" --rawfile body /tmp/release-body.txt \
-            '{tag_name: $tag, name: $name, body: $body}' > /tmp/release-payload.json
-          curl -X POST "https://git.langevc.com/api/v1/repos/$GITHUB_REPOSITORY/releases" \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d @/tmp/release-payload.json \
-            > /tmp/release-response.json
-          RELEASE_ID=$(jq -r '.id' /tmp/release-response.json)
-          echo "RELEASE_ID=$RELEASE_ID" >> $GITHUB_ENV
-      - name: Upload Release Asset
-        run: |
-          TGZNAME="elementeer-mcp-v$VERSION.tgz"
-          curl -X POST "https://git.langevc.com/api/v1/repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID/assets?name=$TGZNAME" \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Content-Type: application/gzip" \
-            --data-binary "@$TGZ"
-          echo "Asset uploaded: $TGZNAME"
-      - name: Mirror Release to GitHub
-        env:
-          GH_TOKEN: ${{ secrets.GH_MIRROR_TOKEN }}
-        run: |
-          TAG="${GITHUB_REF##*/}"
-          gh release create "$TAG" \
-            --repo elementeer/elementeer-mcp \
-            --title "Elementeer MCP Server v$VERSION" \
-            --notes "Release v$VERSION." \
-            "$TGZ#Elementeer MCP Server v$VERSION" \
-            || echo "Mirror release skipped (token may lack permissions)"
+      # The release object is not created here. The ops-engine ReleaseHandler
+      # publishes it on tag_push from .ops.yaml (destinations forgejo and
+      # github) and attaches the .tgz it collects (RFL-004 marks the asset
+      # "engine takes over"). This workflow keeps the two quality gates and the
+      # packaging.
