@@ -6,6 +6,16 @@ on:
   create:
     tags:
       - 'v*'
+  # A manual dispatch backfills an existing tag (A1): the same job runs, but
+  # against the tag named here instead of the pushed/created ref. The input is
+  # required and is validated against the v* pattern in pre-build's first step,
+  # then proven to exist on origin, before any release object is touched.
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing release tag to run for (e.g. v2.4.3)'
+        required: true
+        type: string
 
 jobs:
   pre-build:
@@ -13,7 +23,53 @@ jobs:
     steps:
       - name: Install checkout deps
         run: apk add --no-cache nodejs npm git bash curl jq
+      # The dispatch input is a gate, checked before anything is checked out or
+      # published: it must match the release tag pattern v* (release.tag_pattern
+      # in .ops.yaml), so a value outside it never reaches checkout. On a tag
+      # push or tag create this step is skipped (the trigger filter already
+      # bounds the ref), leaving those runs byte-identical to before.
+      - name: Validate the release tag pattern before any publish
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          TAG_NAME: "${{ github.event.inputs.tag || github.ref_name }}"
+        run: |
+          set -euo pipefail
+
+          case "$TAG_NAME" in
+            v*) ;;
+            *)
+              echo "TagPatternError: release tag '$TAG_NAME' does not match 'v*'; refusing before any publish." >&2
+              exit 2
+              ;;
+          esac
+          echo "release tag pattern validated: $TAG_NAME"
+      # Checkout the ref the run is for: on a tag push or tag create that is the
+      # triggering ref (github.ref, actions/checkout's own default, so those
+      # runs are unchanged); on a manual dispatch it is the tag named in the
+      # input. Both resolve to the tagged commit, so a backfill builds from
+      # exactly the tagged tree (D2). A tag that does not exist fails here,
+      # before any release object or asset is touched.
       - uses: actions/checkout@v4
+        with:
+          ref: "${{ github.event.inputs.tag || github.ref }}"
+      # Prove a dispatched tag exists on origin after checkout: the checked-out
+      # ref must resolve to a tag ref there. A dispatch naming a tag that is not
+      # on origin fails with a named error before pre-build's gates or
+      # post-build's attach run. Skipped for tag push/create, which are already
+      # for a tag that exists.
+      - name: Verify the release tag exists on origin
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          TAG_NAME: "${{ github.event.inputs.tag || github.ref_name }}"
+        run: |
+          set -euo pipefail
+
+          found="$(git ls-remote --tags --refs origin "refs/tags/$TAG_NAME")"
+          if [ -z "$found" ]; then
+            echo "UnknownReleaseTagError: tag '$TAG_NAME' does not exist on origin; refusing before any publish." >&2
+            exit 2
+          fi
+          echo "release tag verified: $TAG_NAME -> $found"
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -29,7 +85,14 @@ jobs:
     steps:
       - name: Install checkout deps
         run: apk add --no-cache nodejs npm git bash curl jq
+      # Same ref the pre-build job checked out: the triggering ref on a tag
+      # push or create (github.ref, the checkout default, unchanged), the input
+      # tag on a manual dispatch. The package built below is therefore the
+      # tagged tree, and the attach step publishes under the same tag on both
+      # forges.
       - uses: actions/checkout@v4
+        with:
+          ref: "${{ github.event.inputs.tag || github.ref }}"
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -109,7 +172,7 @@ jobs:
       # body is composed by the engine, not restated here.
       - name: Attach the packaged tgz to the release on both forges
         env:
-          TAG_NAME: "${{ github.ref_name }}"
+          TAG_NAME: "${{ github.event.inputs.tag || github.ref_name }}"
           FORGEJO_BASE_URL: "${{ github.server_url }}"
           FORGEJO_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           GH_MIRROR_TOKEN: "${{ secrets.GH_MIRROR_TOKEN }}"
