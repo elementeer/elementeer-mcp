@@ -83,7 +83,14 @@ jobs:
       - name: Install dependencies
         run: |
           cd mcp-server && npm ci
+      # The gate reads the tag from RELEASE_TAG on a manual dispatch (not from
+      # GITHUB_REF, which is the default branch there) and keeps the version-sync
+      # comparison against it; the not-exists and newer-than checks are skipped
+      # for a backfill of an existing tag. On a tag push or create the input is
+      # empty and the script derives the tag from GITHUB_REF exactly as before.
       - name: Pre-build quality gate
+        env:
+          RELEASE_TAG: "${{ github.event.inputs.tag || '' }}"
         run: bash scripts/release-check.sh --pre-build
 
   post-build:
@@ -111,7 +118,11 @@ jobs:
       - name: Build MCP server
         run: |
           cd mcp-server && npm run build
+      # Same tag source as the pre-build gate: the dispatch input on a manual
+      # dispatch, GITHUB_REF on a tag push or create (where the input is empty).
       - name: Post-build quality gate
+        env:
+          RELEASE_TAG: "${{ github.event.inputs.tag || '' }}"
         run: bash scripts/release-check.sh --post-build
       - name: Package MCP server
         run: |
