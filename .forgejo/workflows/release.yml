@@ -21,8 +21,15 @@ jobs:
   pre-build:
     runs-on: ubuntu-latest
     steps:
+      # The runner image is Ubuntu (catthehacker/ubuntu:act-latest), which uses
+      # apt-get. The inherited dependency step targeted an Alpine image and
+      # failed with "command not found" (run 48584) before any other step ran,
+      # so the same tools are installed through apt-get; python3-venv is added
+      # for the engine venv.
       - name: Install checkout deps
-        run: apk add --no-cache nodejs npm git bash curl jq
+        run: |
+          apt-get update -qq
+          DEBIAN_FRONTEND=noninteractive apt-get install -y -qq nodejs npm git bash curl jq python3 python3-venv
       # The dispatch input is a gate, checked before anything is checked out or
       # published: it must match the release tag pattern v* (release.tag_pattern
       # in .ops.yaml), so a value outside it never reaches checkout. On a tag
@@ -84,7 +91,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install checkout deps
-        run: apk add --no-cache nodejs npm git bash curl jq
+        run: |
+          apt-get update -qq
+          DEBIAN_FRONTEND=noninteractive apt-get install -y -qq nodejs npm git bash curl jq python3 python3-venv
       # Same ref the pre-build job checked out: the triggering ref on a tag
       # push or create (github.ref, the checkout default, unchanged), the input
       # tag on a manual dispatch. The package built below is therefore the
@@ -164,6 +173,28 @@ jobs:
               sys.exit(2)
           sys.stdout.write("engine: ops-engine %s\n" % got)
           ENGINE_VERSION_PY
+
+      # A manual dispatch checks out the tag, and that tree predates the release
+      # block (v2.4.3's .ops.yaml has no release: key), so the engine would read
+      # an empty name_template and rewrite an existing release title. On a
+      # dispatch, overlay .ops.yaml from the default branch (fetched, not the tag
+      # tree) so release.name_template, the release block, destinations and
+      # forge_hosts are present. The tgz packaged above is still the tag tree's
+      # build (D2); a tag push or create leaves the tree as checked out.
+      - name: Use the default branch .ops.yaml on a manual dispatch
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          DEFAULT_BRANCH: "${{ github.event.repository.default_branch }}"
+        run: |
+          set -euo pipefail
+
+          git fetch --no-tags --depth=1 origin "$DEFAULT_BRANCH"
+          git checkout FETCH_HEAD -- .ops.yaml
+          if ! grep -q '^release:' .ops.yaml; then
+            echo "MissingReleaseBlockError: .ops.yaml from '$DEFAULT_BRANCH' has no release: block; refusing to attach with an empty name_template." >&2
+            exit 2
+          fi
+          echo "using .ops.yaml from $DEFAULT_BRANCH ($(git rev-parse --short FETCH_HEAD))"
 
       # The notes are the CHANGELOG entry for this tag, never commit subjects:
       # the engine composes the release body from them plus the product heading
