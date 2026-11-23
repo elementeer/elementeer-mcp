@@ -50,8 +50,138 @@ jobs:
           tar czf /tmp/release/elementeer-mcp-v$VERSION.tgz .
           echo "TGZ=/tmp/release/elementeer-mcp-v$VERSION.tgz" >> $GITHUB_ENV
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-      # The release object is not created here. The ops-engine ReleaseHandler
-      # publishes it on tag_push from .ops.yaml (destinations forgejo and
-      # github) and attaches the .tgz it collects (RFL-004 marks the asset
-      # "engine takes over"). This workflow keeps the two quality gates and the
-      # packaging.
+      # The release object is not created or edited here, and the .tgz is not
+      # attached by this workflow's own logic: publication is handed to the
+      # ops-engine's release-attach entry point, which finds or creates the
+      # release on every destination declared in .ops.yaml, converges its
+      # title and body, and attaches the built directory — verifying the
+      # declared asset set (RFL-004, EP-006). This workflow keeps the two
+      # quality gates, the packaging and the engine call.
+      #
+      # The engine is pinned by version AND content hash. The version selects
+      # the wheel URL; the hash is checked on the downloaded file before it is
+      # installed, so a wheel whose bytes changed under a fixed version is
+      # refused here rather than at publication.
+      - name: Install the pinned ops-engine (v3.7.2, hash-verified)
+        run: |
+          set -euo pipefail
+          WHEEL_URL="https://github.com/LangeVC/ops-engine/releases/download/v3.7.2/ops_engine-3.7.2-py3-none-any.whl"
+          WHEEL_SHA256="c58a5890c314db1e4ebe1ae2fb3a8b501d6bb81c6bc3797af39e57e02a26018f"
+          WHEEL_DIR="$(mktemp -d)"
+          WHEEL_FILE="$WHEEL_DIR/ops_engine-3.7.2-py3-none-any.whl"
+          curl -fsSL "$WHEEL_URL" -o "$WHEEL_FILE"
+          GOT="$(python3 -c 'import hashlib,sys; print(hashlib.sha256(open(sys.argv[1],"rb").read()).hexdigest())' "$WHEEL_FILE")"
+          if [ "$GOT" != "$WHEEL_SHA256" ]; then
+            echo "WheelHashError: ops-engine 3.7.2 wheel sha256 $GOT != pinned $WHEEL_SHA256" >&2
+            exit 2
+          fi
+          echo "wheel sha256 verified: $GOT"
+          ENGINE_VENV="$(mktemp -d)/engine-venv"
+          python3 -m venv "$ENGINE_VENV"
+          "$ENGINE_VENV/bin/python" -m pip install --quiet "$WHEEL_FILE"
+          echo "ENGINE_VENV=$ENGINE_VENV" >> "$GITHUB_ENV"
+
+      # Prove what was installed. The version is read back from the same
+      # interpreter that runs the CLI below, so a wheel that installed but left
+      # a stale version behind is named here rather than at publication.
+      - name: Prove the pinned engine version
+        run: |
+          set -euo pipefail
+          "$ENGINE_VENV/bin/python" - <<'ENGINE_VERSION_PY'
+          import importlib.metadata as md
+          import sys
+
+          REQUIRED = "3.7.2"
+          got = md.version("ops-engine")
+          if got != REQUIRED:
+              sys.stderr.write(
+                  "EngineVersionError: installed ops-engine %s, required %s.\n"
+                  % (got, REQUIRED)
+              )
+              sys.exit(2)
+          sys.stdout.write("engine: ops-engine %s\n" % got)
+          ENGINE_VERSION_PY
+
+      # The notes are the CHANGELOG entry for this tag, never commit subjects:
+      # the engine composes the release body from them plus the product heading
+      # rendered from .ops.yaml's release.name_template and the CHANGELOG link
+      # derived from forge_hosts. The workflow passes only --notes-file, so the
+      # body is composed by the engine, not restated here.
+      - name: Attach the packaged tgz to the release on both forges
+        env:
+          TAG_NAME: "${{ github.ref_name }}"
+          FORGEJO_BASE_URL: "${{ github.server_url }}"
+          FORGEJO_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          GH_MIRROR_TOKEN: "${{ secrets.GH_MIRROR_TOKEN }}"
+        run: |
+          set -euo pipefail
+
+          NOTES_FILE="$(mktemp)"
+          trap 'rm -f "$NOTES_FILE"' EXIT
+          python3 - "$TAG_NAME" > "$NOTES_FILE" <<'NOTES_PY'
+          import re
+          import sys
+
+          HEADER_PATTERN = re.compile(
+              r"^##\s+"
+              r"(?:\[)?(?:[\w-]+\s+)?v?"
+              r"(\d+\.\d+\.\d+(?:[-.\w]*)?)"
+              r"(?:\])?"
+              r".*$",
+              re.MULTILINE,
+          )
+
+          tag = sys.argv[1]
+          version = tag.lstrip("v")
+          with open("CHANGELOG.md", encoding="utf-8") as fh:
+              content = fh.read()
+          matches = list(HEADER_PATTERN.finditer(content))
+          target_match = None
+          target_idx = -1
+          for idx, m in enumerate(matches):
+              if m.group(1) == version:
+                  target_match = m
+                  target_idx = idx
+                  break
+          if target_match is None:
+              sys.stderr.write(
+                  "MissingChangelogEntryError: no '## %s' section in CHANGELOG.md; "
+                  "a release with no notes would post commit subjects, so the "
+                  "release is refused.\n" % version
+              )
+              sys.exit(2)
+          start = target_match.end()
+          if target_idx + 1 < len(matches):
+              end = matches[target_idx + 1].start()
+          else:
+              end = len(content)
+          notes = content[start:end].strip()
+          if not notes:
+              sys.stderr.write(
+                  "MissingChangelogEntryError: the '## %s' section in CHANGELOG.md "
+                  "is empty; the release is refused.\n" % version
+              )
+              sys.exit(2)
+          sys.stdout.write(notes)
+          NOTES_PY
+
+          # Stage the tgz so its basename equals the declared asset name
+          # (release.assets[0].name = elementeer-mcp-v<version>.tgz resolved
+          # against the tag). The engine attaches the directory and verifies
+          # that declared name is present.
+          mkdir -p release-assets
+          cp "$TGZ" release-assets/
+          ls -l release-assets
+
+          # The name template is the repository's declared value, read from the
+          # same .ops.yaml the engine reads, so the release title the engine
+          # renders matches the existing release object ("Elementeer MCP vX").
+          NAME_TEMPLATE="$("$ENGINE_VENV/bin/python" -c 'import yaml; d = yaml.safe_load(open(".ops.yaml", encoding="utf-8")); print(((d.get("release") or {}).get("name_template")) or "")')"
+
+          "$ENGINE_VENV/bin/python" -m ops_engine.release_attach \
+            --repo "${{ github.repository }}" \
+            --tag "$TAG_NAME" \
+            --artifacts release-assets \
+            --repo-dir . \
+            --name-template "$NAME_TEMPLATE" \
+            --notes-file "$NOTES_FILE"

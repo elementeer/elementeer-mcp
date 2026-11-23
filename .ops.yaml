@@ -42,6 +42,33 @@ destinations:
 # `forge_hosts:` line.
 forge_hosts: [git.langevc.com]
 
+# The release block, declared whole: the layer-3 merge replaces this model
+# field as a value, so every sub-key it needs is restated here rather than
+# inherited from a layer-2 default (EP-006, RFL-004).
+#
+# The asset name is read from the packaging step in
+# .forgejo/workflows/release.yml, not guessed:
+#   tar czf /tmp/release/elementeer-mcp-v$VERSION.tgz .
+# with VERSION from mcp-server/package.json. That file is exactly the one
+# in the directory release_attach is handed, so the declaration only fills
+# in the tag-derived version: <version> is substituted with the tag without
+# its leading "v" (v2.4.3 -> 2.4.3), giving elementeer-mcp-v2.4.3.tgz.
+#
+# `type` is the form of the file, not its extension. The engine's release
+# types are github_release_zip for a release-object file and
+# github_release_tarball for a plain text file the release carries (the fleet
+# reading: a .tar.gz sdist is declared github_release_zip, SHA256SUMS is
+# declared github_release_tarball). The .tgz is a gzipped tar attached as a
+# release-object file, so its type is github_release_zip.
+release:
+  enabled: true
+  trigger: tag_push
+  tag_pattern: "v*"
+  name_template: "Elementeer MCP {tag_name}"
+  assets:
+    - type: github_release_zip
+      name: "elementeer-mcp-v<version>.tgz"
+
 # Deliberately NOT declared here:
 #   - tracker_prefixes: the engine's audience gate refuses nothing when the
 #     list is empty, which is the documented default. This repository's history
