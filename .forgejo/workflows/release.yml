@@ -83,6 +83,26 @@ jobs:
       - name: Install dependencies
         run: |
           cd mcp-server && npm ci
+      # A manual dispatch checks out the tag, and that tree predates this fix
+      # (v2.4.3's scripts/release-check.sh still reads the tag from GITHUB_REF,
+      # a branch on a dispatch, and requires the tag to be absent — run 48598).
+      # On a dispatch, overlay the gate script from the default branch so the
+      # gate understands a backfill of an existing tag. A tag push or create
+      # leaves the tree as checked out.
+      - name: Use the default branch release gate on a manual dispatch
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          DEFAULT_BRANCH: "${{ github.event.repository.default_branch }}"
+        run: |
+          set -euo pipefail
+
+          git fetch --no-tags --depth=1 origin "$DEFAULT_BRANCH"
+          git checkout FETCH_HEAD -- scripts/release-check.sh
+          if ! grep -q 'RELEASE_TAG' scripts/release-check.sh; then
+            echo "StaleReleaseGateScriptError: scripts/release-check.sh from '$DEFAULT_BRANCH' does not read RELEASE_TAG; refusing to run the dispatch with the GITHUB_REF-only gate." >&2
+            exit 2
+          fi
+          echo "using scripts/release-check.sh from $DEFAULT_BRANCH ($(git rev-parse --short FETCH_HEAD))"
       # The gate reads the tag from RELEASE_TAG on a manual dispatch (not from
       # GITHUB_REF, which is the default branch there) and keeps the version-sync
       # comparison against it; the not-exists and newer-than checks are skipped
@@ -118,6 +138,23 @@ jobs:
       - name: Build MCP server
         run: |
           cd mcp-server && npm run build
+      # Same overlay as the pre-build job: the tag tree carries the old gate, so
+      # on a dispatch the fixed script is taken from the default branch; a tag
+      # push or create leaves the tree as checked out.
+      - name: Use the default branch release gate on a manual dispatch
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          DEFAULT_BRANCH: "${{ github.event.repository.default_branch }}"
+        run: |
+          set -euo pipefail
+
+          git fetch --no-tags --depth=1 origin "$DEFAULT_BRANCH"
+          git checkout FETCH_HEAD -- scripts/release-check.sh
+          if ! grep -q 'RELEASE_TAG' scripts/release-check.sh; then
+            echo "StaleReleaseGateScriptError: scripts/release-check.sh from '$DEFAULT_BRANCH' does not read RELEASE_TAG; refusing to run the dispatch with the GITHUB_REF-only gate." >&2
+            exit 2
+          fi
+          echo "using scripts/release-check.sh from $DEFAULT_BRANCH ($(git rev-parse --short FETCH_HEAD))"
       # Same tag source as the pre-build gate: the dispatch input on a manual
       # dispatch, GITHUB_REF on a tag push or create (where the input is empty).
       - name: Post-build quality gate
