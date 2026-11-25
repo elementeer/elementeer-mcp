@@ -30,6 +30,7 @@ function makeNetworkError(message: string): AxiosError {
 describe('ElementeerClient', () => {
   let client: ElementeerClient;
   let mockHttp: {
+    defaults: { baseURL: string };
     get: ReturnType<typeof vi.fn>;
     post: ReturnType<typeof vi.fn>;
     patch: ReturnType<typeof vi.fn>;
@@ -43,6 +44,7 @@ describe('ElementeerClient', () => {
 
   beforeEach(() => {
     mockHttp = {
+      defaults: { baseURL: 'https://example.com/wp-json/elementeer/v1' },
       get: vi.fn(),
       post: vi.fn(),
       patch: vi.fn(),
@@ -115,6 +117,26 @@ describe('ElementeerClient', () => {
       expect(mockedAxios.create).toHaveBeenCalledWith(
         expect.objectContaining({ timeout: 30_000 }),
       );
+    });
+  });
+
+  describe('route discovery preflight', () => {
+    it('matches WordPress named-regex routes to MCP placeholder routes', async () => {
+      mockedAxios.get = vi.fn().mockResolvedValue({
+        data: {
+          routes: {
+            '/elementeer/v1/pages/(?P<id>\\d+)/data': { methods: ['GET', 'PUT'] },
+          },
+        },
+      });
+
+      await client.discoverRoutes();
+
+      expect(client.preflightRoute('update_page_data')).toEqual({
+        route: '/pages/{id}/data',
+        method: 'PUT',
+        available: true,
+      });
     });
   });
 

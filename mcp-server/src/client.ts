@@ -626,16 +626,20 @@ export class ElementeerClient {
 
   isRouteAvailable(route: string, method: string): boolean {
     if (!this.availableRoutes) return true;
-    const methods = this.availableRoutes.get(route);
-    if (!methods) {
-      const altRoute = '/elementeer/v1' + route;
-      const altMethods = this.availableRoutes.get(altRoute);
-      if (altMethods) {
-        return altMethods.includes(method.toUpperCase()) || altMethods.includes(method);
+    const expected = route.replace(/^\/elementeer\/v1/, '');
+    const expectedMethod = method.toUpperCase();
+
+    for (const [registeredRoute, methods] of this.availableRoutes) {
+      const normalizedRoute = registeredRoute
+        .replace(/^\/elementeer\/v1/, '')
+        .replace(/\(\?P<([^>]+)>[^)]+\)/g, '{$1}');
+
+      if (normalizedRoute === expected) {
+        return methods.some((registeredMethod) => registeredMethod.toUpperCase() === expectedMethod);
       }
-      return false;
     }
-    return methods.includes(method.toUpperCase()) || methods.includes(method);
+
+    return false;
   }
 
   preflightRoute(operation: string): { route: string; method: string; available: boolean } {
