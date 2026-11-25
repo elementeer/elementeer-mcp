@@ -7,6 +7,17 @@ import { ElementeerClient } from './client.js';
 
 const DEFAULT_CONFIG_PATH = path.join(os.homedir(), '.elementeer', 'config.json');
 
+interface ClientCacheEntry {
+  url: string;
+  apiKey: string;
+  client: ElementeerClient;
+}
+
+// Tool handlers are invoked independently, but a change session belongs to the
+// long-lived MCP server connection. Reuse one client per configured site so the
+// session header set by session_begin is present on subsequent write calls.
+const clients = new Map<string, ClientCacheEntry>();
+
 function getConfigPath(): string {
   return process.env['ELEMENTEER_CONFIG_PATH']
     ? path.resolve(process.env['ELEMENTEER_CONFIG_PATH'].replace(/^~/, os.homedir()))
@@ -72,7 +83,16 @@ export function getActiveSite(siteId?: string): SiteConfig {
 
 export function getClient(siteId?: string): ElementeerClient {
   const site = getActiveSite(siteId);
-  return new ElementeerClient(site.url, site.apiKey);
+  const cacheKey = `${getConfigPath()}\0${site.id}`;
+  const cached = clients.get(cacheKey);
+
+  if (cached && cached.url === site.url && cached.apiKey === site.apiKey) {
+    return cached.client;
+  }
+
+  const client = new ElementeerClient(site.url, site.apiKey);
+  clients.set(cacheKey, { url: site.url, apiKey: site.apiKey, client });
+  return client;
 }
 
 export function saveConfig(config: ElementeerConfig): void {

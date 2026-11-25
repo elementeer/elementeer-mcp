@@ -161,6 +161,35 @@ describe('getClient', () => {
     const client = getClient('site-b');
     expect(client).toBeDefined();
   });
+
+  it('reuses the client for subsequent tool calls on the same site', async () => {
+    writeConfig(sampleConfig);
+    const { getClient } = await importConfig();
+
+    expect(getClient('site-a')).toBe(getClient('site-a'));
+  });
+
+  it('keeps clients isolated between sites', async () => {
+    writeConfig(sampleConfig);
+    const { getClient } = await importConfig();
+
+    expect(getClient('site-a')).not.toBe(getClient('site-b'));
+  });
+
+  it('replaces a cached client when its site credentials change', async () => {
+    writeConfig(sampleConfig);
+    const { getClient } = await importConfig();
+    const original = getClient('site-a');
+
+    writeConfig({
+      ...sampleConfig,
+      sites: sampleConfig.sites.map((site) =>
+        site.id === 'site-a' ? { ...site, apiKey: 'ek_rotated' } : site,
+      ),
+    });
+
+    expect(getClient('site-a')).not.toBe(original);
+  });
 });
 
 describe('saveConfig + setDefaultSite', () => {
