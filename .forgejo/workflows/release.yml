@@ -182,17 +182,17 @@ jobs:
       # the wheel URL; the hash is checked on the downloaded file before it is
       # installed, so a wheel whose bytes changed under a fixed version is
       # refused here rather than at publication.
-      - name: Install the pinned ops-engine (v3.7.3, hash-verified)
+      - name: Install the pinned ops-engine (v3.7.4, hash-verified)
         run: |
           set -euo pipefail
-          WHEEL_URL="https://github.com/LangeVC/ops-engine/releases/download/v3.7.3/ops_engine-3.7.3-py3-none-any.whl"
-          WHEEL_SHA256="865fdd6f15b525123b3b5fc7f40193afd959be50244be8c4dab8c15668798959"
+          WHEEL_URL="https://github.com/LangeVC/ops-engine/releases/download/v3.7.4/ops_engine-3.7.4-py3-none-any.whl"
+          WHEEL_SHA256="bd8aef500bd61a5cc8325b0997cbb4147822c296e7fabe5a1d62da779076ddc2"
           WHEEL_DIR="$(mktemp -d)"
-          WHEEL_FILE="$WHEEL_DIR/ops_engine-3.7.3-py3-none-any.whl"
+          WHEEL_FILE="$WHEEL_DIR/ops_engine-3.7.4-py3-none-any.whl"
           curl -fsSL "$WHEEL_URL" -o "$WHEEL_FILE"
           GOT="$(python3 -c 'import hashlib,sys; print(hashlib.sha256(open(sys.argv[1],"rb").read()).hexdigest())' "$WHEEL_FILE")"
           if [ "$GOT" != "$WHEEL_SHA256" ]; then
-            echo "WheelHashError: ops-engine 3.7.3 wheel sha256 $GOT != pinned $WHEEL_SHA256" >&2
+            echo "WheelHashError: ops-engine 3.7.4 wheel sha256 $GOT != pinned $WHEEL_SHA256" >&2
             exit 2
           fi
           echo "wheel sha256 verified: $GOT"
@@ -211,7 +211,7 @@ jobs:
           import importlib.metadata as md
           import sys
 
-          REQUIRED = "3.7.3"
+          REQUIRED = "3.7.4"
           got = md.version("ops-engine")
           if got != REQUIRED:
               sys.stderr.write(
