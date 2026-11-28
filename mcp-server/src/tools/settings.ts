@@ -2,6 +2,12 @@ import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { ElementeerClient } from '../client.js';
 import { GOVERNANCE_LEVELS } from '../product-tiers.js';
+import {
+  assertPublishOrHomepageAllowed,
+  defaultEditabilityGateStore,
+  EditabilityGateError,
+} from '../editability-gate.js';
+import { formatGateErrorResult } from './editability.js';
 
 export function registerSettingsTools(
   server: McpServer,
@@ -97,6 +103,21 @@ export function registerSettingsTools(
       }
       
       // L0/L1: Execute directly
+      if (updates.homepage !== undefined && updates.homepage > 0) {
+        try {
+          await assertPublishOrHomepageAllowed({
+            client,
+            pageId: updates.homepage,
+            store: defaultEditabilityGateStore,
+          });
+        } catch (err) {
+          if (err instanceof EditabilityGateError) {
+            return formatGateErrorResult(err);
+          }
+          throw err;
+        }
+      }
+
       const result = await client.updateSiteSettings(updates);
 
       const lines = [

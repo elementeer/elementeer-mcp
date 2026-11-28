@@ -1999,6 +1999,16 @@ export class ElementeerClient {
     return res.data;
   }
 
+  async publishPage(
+    id: number,
+    params: { status?: 'publish' | 'draft' | 'pending' | 'private' } = { status: 'publish' },
+  ): Promise<{ id: number; status: string; updated?: boolean }> {
+    const res = await this.http.put(`/pages/${id}/status`, {
+      status: params.status ?? 'publish',
+    });
+    return res.data;
+  }
+
   async createPost(params: {
     title: string;
     content?: string;

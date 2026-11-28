@@ -63,6 +63,7 @@ import { registerCreateFormTools } from './create-form.js';
 import { registerWooCommerceTools } from './woocommerce.js';
 import { registerDeltaTools } from './delta.js';
 import { registerRenderTools } from './render.js';
+import { registerEditabilityTools } from './editability.js';
 
 interface ToolRegistrationOptions {
   includeAdvanced?: boolean;
@@ -110,6 +111,7 @@ const FREE_TOOL_REGISTRARS = [
   registerCreateFormTools,
   registerDeltaTools,
   registerRenderTools,
+  registerEditabilityTools,
 ] as const;
 
 const ADVANCED_TOOL_REGISTRARS = [

@@ -8,6 +8,11 @@ import type {
 } from '../client.js';
 import { GOVERNANCE_LEVELS } from '../product-tiers.js';
 import type { ElementeerTemplate } from '@elementeer/shared';
+import {
+  assertNativeWriteAllowed,
+  assertPublishOrHomepageAllowed,
+  defaultEditabilityGateStore,
+} from '../editability-gate.js';
 
 export interface BrandSetupWizardInput {
   auto_execute?: boolean;
@@ -138,6 +143,11 @@ export async function runBrandSetupWizard(
     steps.push({
       label: `Set homepage → Page ID: ${homepage_page_id}`,
       fn: async () => {
+        await assertPublishOrHomepageAllowed({
+          client,
+          pageId: homepage_page_id,
+          store: defaultEditabilityGateStore,
+        });
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const _r = await client.updateSiteSettings({ homepage: homepage_page_id });
         return `✅ Homepage set to page ID: ${homepage_page_id}`;
@@ -352,6 +362,10 @@ export async function runCreatorMode(
   }
 
   if (write_to_page) {
+    assertNativeWriteAllowed({
+      pageId: write_to_page.page_id,
+      elements: composed,
+    });
     await client.updatePageData(write_to_page.page_id, composed);
     lines.push(`  ✅ Page ${write_to_page.page_id} updated. Elementor cache cleared.`);
   }

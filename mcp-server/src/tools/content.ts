@@ -2,6 +2,21 @@ import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { ElementeerClient } from '../client.js';
 import { GOVERNANCE_LEVELS } from '../product-tiers.js';
+import {
+  computeContentHash,
+  defaultEditabilityGateStore,
+  EditabilityGateError,
+  validateOperatorOverride,
+} from '../editability-gate.js';
+import {
+  assertModeEnvironmentCompatible,
+  DELIVERY_ENVIRONMENTS,
+  DELIVERY_MODES,
+  NativeDeliveryError,
+  resolveDeliveryEnvironment,
+  resolveDeliveryMode,
+} from '../native-delivery-mode.js';
+import { formatGateErrorResult } from './editability.js';
 
 export function registerContentTools(
   server: McpServer,
@@ -195,8 +210,53 @@ export function registerContentTools(
       parent: z.number().int().nonnegative().optional().describe('Parent page ID'),
       elementor_ready: z.boolean().default(false).describe('Set Elementor edit mode to builder and initialize empty Elementor data'),
       site_id: z.string().optional().describe('Site ID from config'),
+      mode: z.enum(DELIVERY_MODES).optional().describe("Delivery mode (defaults to 'native-elementor')"),
+      environment: z.enum(DELIVERY_ENVIRONMENTS).optional().describe("Delivery environment (defaults to 'production')"),
+      operator_override: z.object({
+        operator: z.string().min(1),
+        reason: z.string().min(1),
+        pageId: z.union([z.number().int(), z.string().min(1)]),
+        contentHash: z.string().min(1),
+        scope: z.string().min(1),
+        createdAt: z.string().min(1),
+      }).optional().describe('Audited OperatorOverride if publishing bounded fallback content'),
     },
-    async ({ title, content, status, parent, elementor_ready, site_id }) => {
+    async ({ title, content, status, parent, elementor_ready, site_id, mode, environment, operator_override }) => {
+      if (status === 'publish') {
+        try {
+          const resolvedMode = resolveDeliveryMode(mode);
+          const resolvedEnv = resolveDeliveryEnvironment(environment);
+          assertModeEnvironmentCompatible(resolvedMode, resolvedEnv);
+
+          const rawContent = (content ?? '').trim();
+          if (rawContent.length > 0 && resolvedMode !== 'prototype-embed') {
+            const syntheticHash = computeContentHash([
+              { id: 'raw-content', elType: 'widget', widgetType: 'html', settings: { html: rawContent } },
+            ]);
+            const ovCheck = operator_override
+              ? validateOperatorOverride(operator_override, operator_override.pageId, syntheticHash)
+              : null;
+            if (!ovCheck || !ovCheck.valid) {
+              throw new EditabilityGateError(
+                'FULL_PAGE_HTML_MONOLITH_FORBIDDEN',
+                `Cannot publish raw HTML content via create_page in '${resolvedMode}' (${resolvedEnv}) mode without native Elementor evaluation or audited OperatorOverride.`,
+              );
+            }
+          } else if (resolvedMode === 'native-elementor') {
+            // Fail closed: newly created pages have no evaluated editability gate report yet
+            defaultEditabilityGateStore.assertAllowed({
+              pageId: 'new-page',
+              contentHash: computeContentHash([]),
+            });
+          }
+        } catch (err) {
+          if (err instanceof EditabilityGateError || err instanceof NativeDeliveryError) {
+            return formatGateErrorResult(err);
+          }
+          throw err;
+        }
+      }
+
       const client = getClient(site_id);
       const result = await client.createPage({
         title,

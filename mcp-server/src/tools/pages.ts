@@ -5,6 +5,9 @@ import { GOVERNANCE_LEVELS } from '../product-tiers.js';
 import { projectElementorData, type ProjectionLevel } from '../projection.js';
 import { resolvePayloadViaResource } from '../page-resource-cache.js';
 import { describeWidgetType } from '../widget-schemas.js';
+import { assertNativeWriteAllowed, EditabilityGateError } from '../editability-gate.js';
+import { formatGateErrorResult } from './editability.js';
+import { DELIVERY_ENVIRONMENTS, DELIVERY_MODES, NativeDeliveryError } from '../native-delivery-mode.js';
 
 export function registerPageTools(
   server: McpServer,
@@ -294,8 +297,35 @@ export function registerPageTools(
                        .describe('Optional note for queued changes (auto-queued for L2 governance)'),
       consent:        z.boolean().optional()
                        .describe('Explicit consent required for L3 operations (not needed for L2 auto-queue)'),
+      mode:           z.enum(DELIVERY_MODES).optional()
+                       .describe("Delivery mode (defaults to 'native-elementor')"),
+      environment:    z.enum(DELIVERY_ENVIRONMENTS).optional()
+                       .describe("Delivery environment (defaults to 'production')"),
+      operator_override: z.object({
+        operator: z.string().min(1),
+        reason: z.string().min(1),
+        pageId: z.union([z.number().int(), z.string().min(1)]),
+        contentHash: z.string().min(1),
+        scope: z.string().min(1),
+        createdAt: z.string().min(1),
+      }).optional().describe('Audited OperatorOverride required for bounded monolith exceptions'),
     },
-    async ({ site_id, id, elementor_data, note, consent }) => {
+    async ({ site_id, id, elementor_data, note, consent, mode, environment, operator_override }) => {
+      try {
+        assertNativeWriteAllowed({
+          pageId: id,
+          elements: elementor_data,
+          mode,
+          environment,
+          override: operator_override,
+        });
+      } catch (err) {
+        if (err instanceof EditabilityGateError || err instanceof NativeDeliveryError) {
+          return formatGateErrorResult(err);
+        }
+        throw err;
+      }
+
       const client = getClient(site_id);
       const toolName = 'update_page_data';
       const level = GOVERNANCE_LEVELS[toolName] || 'L0';
@@ -472,6 +502,10 @@ export function registerPageTools(
 
       // Step 3: write to page
       if (write_to_page) {
+        assertNativeWriteAllowed({
+          pageId: write_to_page.page_id,
+          elements: composed,
+        });
         await client.updatePageData(write_to_page.page_id, composed);
         results.push(`✅ Written to page ${write_to_page.page_id}. Elementor cache cleared.`);
       }

@@ -220,6 +220,9 @@ export const REGISTERED_TOOL_NAMES = [
   'addon_ecosystem_wizard',
   'describe_widget_type',
   'diff_pages',
+  'evaluate_page_editability',
+  'publish_page',
+  'set_homepage',
 ] as const;
 
 export type RegisteredToolName = (typeof REGISTERED_TOOL_NAMES)[number];
@@ -1969,6 +1972,9 @@ export const TOOL_TIER_ASSIGNMENTS: ProductSurfaceAssignment[] = [
   { id: 'list_forms', label: 'List forms', tier: 'advanced', visibility: 'public', kind: 'tool', rationale: 'Advanced should enumerate Elementor Pro forms, their field structures, and active integrations.' },
   { id: 'queue_cleanup', label: 'Queue cleanup', tier: 'advanced', visibility: 'public', kind: 'tool', rationale: 'Advanced should remove stale, orphaned, or applied change-queue entries safely with audit trail.' },
   { id: 'queue_stats', label: 'Queue stats', tier: 'advanced', visibility: 'public', kind: 'tool', rationale: 'Advanced should surface change-queue metrics: pending, approved, rejected, per-environment, per-user.' },
+  { id: 'evaluate_page_editability', label: 'Evaluate page editability', tier: 'free', visibility: 'public', kind: 'tool', rationale: 'Free must evaluate native-elementor editability, fallback budgets, and deterministic content hashes before publishing.' },
+  { id: 'publish_page', label: 'Publish page with editability gate', tier: 'free', visibility: 'public', kind: 'tool', rationale: 'Free must enforce fail-closed hash-bound editability gates before publishing pages.' },
+  { id: 'set_homepage', label: 'Set homepage with editability gate', tier: 'free', visibility: 'public', kind: 'tool', rationale: 'Free must enforce fail-closed hash-bound editability gates before assigning page_on_front.' },
 ];
 
 const GOVERNANCE_LEVEL_OVERRIDES: Record<string, 'L0' | 'L1' | 'L2' | 'L3'> = {
@@ -2041,6 +2047,8 @@ const GOVERNANCE_LEVEL_OVERRIDES: Record<string, 'L0' | 'L1' | 'L2' | 'L3'> = {
   'create_term': 'L1',
   'update_term': 'L1',
   'update_media': 'L1',
+  'publish_page': 'L1',
+  'set_homepage': 'L1',
 };
 
 export const GOVERNANCE_LEVELS: Record<string, 'L0' | 'L1' | 'L2' | 'L3'> = Object.fromEntries(

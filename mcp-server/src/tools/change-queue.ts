@@ -11,6 +11,11 @@ import type {
 } from '../client.js';
 import { GOVERNANCE_LEVELS } from '../product-tiers.js';
 import { QueueV2 } from '../queue-v2.js';
+import {
+  assertNativeWriteAllowed,
+  assertPublishOrHomepageAllowed,
+  defaultEditabilityGateStore,
+} from '../editability-gate.js';
 
 function normalizeElementorData(value: unknown): unknown[] {
   const parsed = typeof value === 'string' ? JSON.parse(value) : value;
@@ -39,8 +44,18 @@ const OPERATION_EXECUTORS: Record<string, Executor> = {
     ),
   update_template_data: (c, p) =>
     c.updateTemplateData(p['id'] as number, normalizeElementorData(p['elementor_data'])),
-  update_page_data: (c, p) =>
-    c.updatePageData(p['id'] as number, normalizeElementorData(p['elementor_data'])),
+  update_page_data: (c, p) => {
+    const pageId = p['id'] as number;
+    const elements = normalizeElementorData(p['elementor_data']);
+    assertNativeWriteAllowed({
+      pageId,
+      elements,
+      mode: p['mode'],
+      environment: p['environment'],
+      override: p['operator_override'],
+    });
+    return c.updatePageData(pageId, elements);
+  },
   create_template: (c, p) =>
     c.createTemplate(p as unknown as CreateTemplateInput),
   set_site_logo: (c, p) =>
@@ -53,8 +68,19 @@ const OPERATION_EXECUTORS: Record<string, Executor> = {
     c.optimizeElementorAssets(),
   update_seo_meta: (c, p) =>
     c.updateSeoMeta(p as { post_id: number; title?: string; description?: string; focus_keyword?: string }),
-  update_site_settings: (c, p) =>
-    c.updateSiteSettings(p as { blogname?: string; description?: string; homepage?: number; posts_page?: number; permalink?: string }),
+  update_site_settings: async (c, p) => {
+    const homepageId = p['homepage'];
+    if (typeof homepageId === 'number' && homepageId > 0) {
+      await assertPublishOrHomepageAllowed({
+        client: c,
+        pageId: homepageId,
+        store: defaultEditabilityGateStore,
+      });
+    }
+    return c.updateSiteSettings(
+      p as { blogname?: string; description?: string; homepage?: number; posts_page?: number; permalink?: string },
+    );
+  },
   // Page tools
   save_page_section_as_template: async (c, p) => {
     const page_id = p['page_id'] as number;
@@ -136,6 +162,10 @@ const OPERATION_EXECUTORS: Record<string, Executor> = {
     
     // Write to page
     if (write_to_page) {
+      assertNativeWriteAllowed({
+        pageId: write_to_page.page_id,
+        elements: composed,
+      });
       await c.updatePageData(write_to_page.page_id, composed);
       results.push(`Written to page ${write_to_page.page_id}`);
     }

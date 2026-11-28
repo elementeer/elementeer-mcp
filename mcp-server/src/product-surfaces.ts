@@ -78,6 +78,7 @@ export const FREE_PRODUCT_SURFACE: ProductSurfaceManifest = {
         'get_site_fingerprint',
         'get_destination_capabilities',
         'validate_elementor_write',
+        'evaluate_page_editability',
       ],
     },
     {
@@ -103,6 +104,8 @@ export const FREE_PRODUCT_SURFACE: ProductSurfaceManifest = {
         'compose_page_from_templates',
         'update_page_data',
         'get_page_data',
+        'publish_page',
+        'set_homepage',
         'save_page_section_as_template',
         'save_full_page_as_template',
       ],
