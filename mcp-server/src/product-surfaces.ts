@@ -79,6 +79,8 @@ export const FREE_PRODUCT_SURFACE: ProductSurfaceManifest = {
         'get_destination_capabilities',
         'validate_elementor_write',
         'evaluate_page_editability',
+        'validate_widget_controls',
+        'convert_responsive_controls',
       ],
     },
     {
@@ -102,6 +104,8 @@ export const FREE_PRODUCT_SURFACE: ProductSurfaceManifest = {
       toolIds: [
         'creator_mode',
         'compose_page_from_templates',
+        'compose_library_page',
+        'patch_composed_page',
         'update_page_data',
         'get_page_data',
         'publish_page',

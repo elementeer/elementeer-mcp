@@ -223,6 +223,10 @@ export const REGISTERED_TOOL_NAMES = [
   'evaluate_page_editability',
   'publish_page',
   'set_homepage',
+  'compose_library_page',
+  'patch_composed_page',
+  'validate_widget_controls',
+  'convert_responsive_controls',
 ] as const;
 
 export type RegisteredToolName = (typeof REGISTERED_TOOL_NAMES)[number];
@@ -1975,6 +1979,10 @@ export const TOOL_TIER_ASSIGNMENTS: ProductSurfaceAssignment[] = [
   { id: 'evaluate_page_editability', label: 'Evaluate page editability', tier: 'free', visibility: 'public', kind: 'tool', rationale: 'Free must evaluate native-elementor editability, fallback budgets, and deterministic content hashes before publishing.' },
   { id: 'publish_page', label: 'Publish page with editability gate', tier: 'free', visibility: 'public', kind: 'tool', rationale: 'Free must enforce fail-closed hash-bound editability gates before publishing pages.' },
   { id: 'set_homepage', label: 'Set homepage with editability gate', tier: 'free', visibility: 'public', kind: 'tool', rationale: 'Free must enforce fail-closed hash-bound editability gates before assigning page_on_front.' },
+  { id: 'compose_library_page', label: 'Compose page from Library components', tier: 'free', visibility: 'public', kind: 'tool', rationale: 'Free must support library-first idempotent page composition with stable componentKey/version/structureHash and CompositionManifest emission.' },
+  { id: 'patch_composed_page', label: 'Granular delta patch on composed page', tier: 'free', visibility: 'public', kind: 'tool', rationale: 'Free must support targeted element patching with hash locking without rewriting unrelated sections or regenerating elementIds.' },
+  { id: 'validate_widget_controls', label: 'Validate installed widget controls', tier: 'free', visibility: 'public', kind: 'tool', rationale: 'Free must validate nav-menu and tp_* widget controls against installed schemas and versions before write.' },
+  { id: 'convert_responsive_controls', label: 'Convert responsive layout controls', tier: 'free', visibility: 'public', kind: 'tool', rationale: 'Free must roundtrip responsive layout/style controls across desktop, tablet, and mobile with Elementor settings and __globals__.' },
 ];
 
 const GOVERNANCE_LEVEL_OVERRIDES: Record<string, 'L0' | 'L1' | 'L2' | 'L3'> = {
@@ -2049,6 +2057,8 @@ const GOVERNANCE_LEVEL_OVERRIDES: Record<string, 'L0' | 'L1' | 'L2' | 'L3'> = {
   'update_media': 'L1',
   'publish_page': 'L1',
   'set_homepage': 'L1',
+  'compose_library_page': 'L1',
+  'patch_composed_page': 'L1',
 };
 
 export const GOVERNANCE_LEVELS: Record<string, 'L0' | 'L1' | 'L2' | 'L3'> = Object.fromEntries(
